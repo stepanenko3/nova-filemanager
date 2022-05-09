@@ -1,0 +1,44 @@
+{
+    "name": "stepanenko3/nova-filemanager",
+    "description": "Filemanager tool for Laravel Nova",
+    "keywords": [
+        "laravel",
+        "nova",
+        "filemanager"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Artem Stepanenko",
+            "email": "stpnnk.artem@gmail.com",
+            "role": "Maintainer & Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0",
+        "laravel/nova": "^4.0"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../nova"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Stepanenko3\\NovaFilemanager\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Stepanenko3\\NovaFilemanager\\FilemanagerServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
