@@ -23,72 +23,69 @@
 </template>
 
 <script>
-import 'viewerjs/dist/viewer.css';
-
-export default {
-    props: {
-        file: {
-            type: Object,
-            default: function () {
-                return { name: '' };
+    export default {
+        props: {
+            file: {
+                type: Object,
+                default: function () {
+                    return { name: '' };
+                },
+                required: true,
             },
-            required: true,
         },
-    },
 
-    data: () => ({
-        loading: true,
-        missing: false,
-        voptions: {
-            inline: true,
-            button: true,
-            navbar: false,
+        data: () => ({
             loading: true,
-            title: false,
-            toolbar: false,
-            tooltip: false,
-            movable: false,
-            zoomable: false,
-            rotatable: false,
-            scalable: true,
-            transition: true,
-            fullscreen: true,
-            keyboard: true,
-            toggleOnDblclick: true,
-            url: 'data-source',
-        },
-        $viewer: null,
-        images: [],
-    }),
+            missing: false,
+            voptions: {
+                inline: true,
+                button: true,
+                navbar: false,
+                loading: true,
+                title: false,
+                toolbar: false,
+                tooltip: false,
+                movable: false,
+                zoomable: false,
+                rotatable: false,
+                scalable: true,
+                transition: true,
+                fullscreen: true,
+                keyboard: true,
+                toggleOnDblclick: true,
+                url: 'data-source',
+            },
+            images: [],
+        }),
 
-    mounted() {
-        Nova.request()
-            .get(this.file.image, {
-                responseType: 'blob',
-            })
-            .then(({ headers, data }) => {
-                const blob = new Blob([data], { type: headers['content-type'] });
-                let newImage = new Image();
-                newImage.src = window.URL.createObjectURL(blob);
-                newImage.className = 'image block w-full self-center';
-                newImage.draggable = false;
-                this.$refs.imageDiv.appendChild(newImage);
-                this.loading = false;
-            })
-            .catch((error) => {
-                if (error && this.file.image) {
-                    // this.missing = true;
-                    // this.$emit('missing', true);
-                    // this.loading = false;
-
+        mounted() {
+            Nova.request()
+                .get(this.file.image, {
+                    responseType: 'blob',
+                })
+                .then(({ headers, data }) => {
+                    const blob = new Blob([data], { type: headers['content-type'] });
                     let newImage = new Image();
-                    newImage.src = this.file.image;
+                    newImage.src = window.URL.createObjectURL(blob);
                     newImage.className = 'image block w-full self-center';
                     newImage.draggable = false;
                     this.$refs.imageDiv.appendChild(newImage);
                     this.loading = false;
-                }
-            });
-    },
-};
+                })
+                .catch((error) => {
+                    if (error && this.file.image) {
+                        // this.missing = true;
+                        // this.$emit('missing', true);
+                        // this.loading = false;
+
+                        let newImage = new Image();
+                        newImage.src = this.file.image;
+                        newImage.className = 'image block w-full self-center';
+                        newImage.draggable = false;
+                        this.$refs.imageDiv.appendChild(newImage);
+                        this.loading = false;
+                    }
+                });
+        },
+    };
 </script>

@@ -7,13 +7,6 @@
         "filemanager"
     ],
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Artem Stepanenko",
-            "email": "stpnnk.artem@gmail.com",
-            "role": "Maintainer & Developer"
-        }
-    ],
     "require": {
         "php": ">=7.1.0",
         "laravel/nova": "^4.0"
@@ -32,7 +25,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Stepanenko3\\NovaFilemanager\\FilemanagerServiceProvider"
+                "Stepanenko3\\NovaFilemanager\\ToolServiceProvider"
             ]
         }
     },

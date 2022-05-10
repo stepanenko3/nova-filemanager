@@ -213,235 +213,235 @@
 </template>
 
 <script>
-import api from '../../api';
-import MimeIconsEnum from '../../tools/MimeIconsEnum'
-import ConfirmationButton from '../ConfirmationButton'
+    import api from '../api';
+    import MimeIconsEnum from '../tools/MimeIconsEnum'
+    import ConfirmationButton from '../components/ConfirmationButton'
 
-export default {
-    props: {
-        active: {
-            type: Boolean,
-            default: false,
-            required: true,
-        },
-        info: {
-            type: Object,
-            default: function () {
-                return { name: '' };
+    export default {
+        props: {
+            active: {
+                type: Boolean,
+                default: false,
+                required: true,
             },
-            required: true,
-        },
-        popup: {
-            type: Boolean,
-            default: false,
-            required: false,
-        },
-        buttons: {
-            default: () => [],
-            required: true,
-        },
-    },
-
-    components: {
-        ConfirmationButton: ConfirmationButton,
-    },
-
-    emits: ['refresh', 'closePreview', 'rename', 'selectFile'],
-
-    data() {
-        return {
-            loaded: false,
-            currentInfo: {},
-            codeLoaded: false,
-            zipLoaded: false,
-            cmOptions: {
-                tabSize: 2,
-                theme: 'dracula',
-                lineNumbers: true,
-                line: true,
-                readOnly: true,
+            info: {
+                type: Object,
+                default: function () {
+                    return { name: '' };
+                },
+                required: true,
             },
-            editingName: false,
-            nameNoExtension: null,
-            nameWidth: null,
-            inputElement: null,
-            correctName: null,
-            mimeIcons: MimeIconsEnum,
-        };
-    },
-
-    methods: {
-        closePreview() {
-            this.correctName = null;
-            this.editingName = false;
-            this.$emit('closePreview', true);
+            popup: {
+                type: Boolean,
+                default: false,
+                required: false,
+            },
+            buttons: {
+                default: () => [],
+                required: true,
+            },
         },
 
-        removeFile() {
-            this.closePreview();
+        components: {
+            ConfirmationButton: ConfirmationButton,
+        },
 
-            return api.removeFile(this.info.path).then((result) => {
-                if (result == true) {
-                    Nova.success(this.__('File removed successfully'));
-                    this.$emit('refresh');
-                } else {
-                    Nova.error(this.__('Error removing the file. Please check permissions'));
+        emits: ['refresh', 'closePreview', 'rename', 'selectFile'],
+
+        data() {
+            return {
+                loaded: false,
+                currentInfo: {},
+                codeLoaded: false,
+                zipLoaded: false,
+                cmOptions: {
+                    tabSize: 2,
+                    theme: 'dracula',
+                    lineNumbers: true,
+                    line: true,
+                    readOnly: true,
+                },
+                editingName: false,
+                nameNoExtension: null,
+                nameWidth: null,
+                inputElement: null,
+                correctName: null,
+                mimeIcons: MimeIconsEnum,
+            };
+        },
+
+        methods: {
+            closePreview() {
+                this.correctName = null;
+                this.editingName = false;
+                this.$emit('closePreview', true);
+            },
+
+            removeFile() {
+                this.closePreview();
+
+                return api.removeFile(this.info.path).then((result) => {
+                    if (result == true) {
+                        Nova.success(this.__('File removed successfully'));
+                        this.$emit('refresh');
+                    } else {
+                        Nova.error(this.__('Error removing the file. Please check permissions'));
+                    }
+                });
+            },
+
+            duplicate() {
+                this.closePreview();
+
+                return api.duplicate(this.info.path).then((result) => {
+                    if (result.success == true) {
+                        this.$emit('refresh');
+                        Nova.success(this.__('File duplicated successfully'));
+                    } else {
+                        Nova.error(this.__('Error duplicating the file. Please check permissions'));
+                    }
+                });
+            },
+
+            rename() {
+                this.correctName = this.nameNoExtension + '.' + this.info.ext;
+
+                return api.rename(this.info.path, this.correctName).then((result) => {
+                    if (result.success == true) {
+                        this.editingName = false;
+                        this.$emit('rename', result.data);
+                        this.$emit('refresh');
+                        Nova.success(this.__('File renamed successfully'));
+                    } else {
+                        Nova.error(this.__('Error renaming the file. Please check permissions'));
+                    }
+                });
+            },
+
+            editName() {
+                this.editingName = true;
+            },
+
+            selectFile() {
+                this.closePreview();
+                this.$emit('selectFile', this.info);
+            },
+
+            handleClose() {
+                this.closePreview();
+            },
+
+            fallbackCopyTextToClipboard(text) {
+                var textArea = document.createElement('textarea');
+                textArea.value = text;
+
+                // Avoid scrolling to bottom
+                textArea.style.top = '0';
+                textArea.style.left = '0';
+                textArea.style.position = 'fixed';
+
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                let status = null;
+                try {
+                    var successful = document.execCommand('copy');
+                    status = !!successful;
+
+                    var msg = successful ? 'successful' : 'unsuccessful';
+                    console.log('Fallback: Copying text command was ' + msg);
+                } catch (err) {
+                    status = false;
+                    console.error('Fallback: Oops, unable to copy', err);
                 }
+
+                document.body.removeChild(textArea);
+                return status;
+            },
+
+            copyTextToClipboard() {
+                if (!navigator.clipboard) {
+                    if (!this.fallbackCopyTextToClipboard(this.info.url)) return;
+
+                    Nova.success(this.__('Text copied to clipboard'));
+                }
+
+                navigator.clipboard.writeText(this.info.url).then(
+                    () => Nova.success(this.__('Text copied to clipboard')),
+                    (err) => console.error('Async: Could not copy text: ', err)
+                );
+            },
+        },
+
+        mounted() {
+            this.loaded = false;
+            this.$nextTick(function () {
+                //
             });
         },
 
-        duplicate() {
-            this.closePreview();
-
-            return api.duplicate(this.info.path).then((result) => {
-                if (result.success == true) {
-                    this.$emit('refresh');
-                    Nova.success(this.__('File duplicated successfully'));
-                } else {
-                    Nova.error(this.__('Error duplicating the file. Please check permissions'));
+        watch: {
+            'info.type': function (type) {
+                if (type == 'audio') {
+                    this.$nextTick(function () {
+                        //
+                    });
                 }
-            });
-        },
 
-        rename() {
-            this.correctName = this.nameNoExtension + '.' + this.info.ext;
-
-            return api.rename(this.info.path, this.correctName).then((result) => {
-                if (result.success == true) {
-                    this.editingName = false;
-                    this.$emit('rename', result.data);
-                    this.$emit('refresh');
-                    Nova.success(this.__('File renamed successfully'));
-                } else {
-                    Nova.error(this.__('Error renaming the file. Please check permissions'));
+                if (type == 'video') {
+                    this.$nextTick(function () {
+                        //
+                    });
                 }
-            });
+
+                if (type == 'text') {
+                    this.$nextTick(function () {
+                        this.cmOptions.mode = this.info.mime;
+                        this.codeLoaded = true;
+                    });
+                }
+
+                if (type == 'pdf') {
+                    this.$nextTick(function () {
+                        //
+                    });
+                }
+
+                if (type == 'zip') {
+                    this.$nextTick(function () {
+                        this.info.source = JSON.parse(this.info.source);
+                        this.zipLoaded = true;
+                    });
+                }
+
+                this.codeLoaded = false;
+                this.zipLoaded = false;
+            },
+
+            'info.name': function (name) {
+                if (name) {
+                    this.nameNoExtension = name.split('.').slice(0, -1).join('.');
+                }
+            },
+
+            nameNoExtension: function (name) {
+                if (name) {
+                    this.nameWidth = (name.length + 1) * 7;
+                }
+            },
         },
-
-        editName() {
-            this.editingName = true;
-        },
-
-        selectFile() {
-            this.closePreview();
-            this.$emit('selectFile', this.info);
-        },
-
-        handleClose() {
-            this.closePreview();
-        },
-
-        fallbackCopyTextToClipboard(text) {
-            var textArea = document.createElement('textarea');
-            textArea.value = text;
-
-            // Avoid scrolling to bottom
-            textArea.style.top = '0';
-            textArea.style.left = '0';
-            textArea.style.position = 'fixed';
-
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-
-            let status = null;
-            try {
-                var successful = document.execCommand('copy');
-                status = !!successful;
-
-                var msg = successful ? 'successful' : 'unsuccessful';
-                console.log('Fallback: Copying text command was ' + msg);
-            } catch (err) {
-                status = false;
-                console.error('Fallback: Oops, unable to copy', err);
-            }
-
-            document.body.removeChild(textArea);
-            return status;
-        },
-
-        copyTextToClipboard() {
-            if (!navigator.clipboard) {
-                if (!this.fallbackCopyTextToClipboard(this.info.url)) return;
-
-                Nova.success(this.__('Text copied to clipboard'));
-            }
-
-            navigator.clipboard.writeText(this.info.url).then(
-                () => Nova.success(this.__('Text copied to clipboard')),
-                (err) => console.error('Async: Could not copy text: ', err)
-            );
-        },
-    },
-
-    mounted() {
-        this.loaded = false;
-        this.$nextTick(function () {
-            //
-        });
-    },
-
-    watch: {
-        'info.type': function (type) {
-            if (type == 'audio') {
-                this.$nextTick(function () {
-                    //
-                });
-            }
-
-            if (type == 'video') {
-                this.$nextTick(function () {
-                    //
-                });
-            }
-
-            if (type == 'text') {
-                this.$nextTick(function () {
-                    this.cmOptions.mode = this.info.mime;
-                    this.codeLoaded = true;
-                });
-            }
-
-            if (type == 'pdf') {
-                this.$nextTick(function () {
-                    //
-                });
-            }
-
-            if (type == 'zip') {
-                this.$nextTick(function () {
-                    this.info.source = JSON.parse(this.info.source);
-                    this.zipLoaded = true;
-                });
-            }
-
-            this.codeLoaded = false;
-            this.zipLoaded = false;
-        },
-
-        'info.name': function (name) {
-            if (name) {
-                this.nameNoExtension = name.split('.').slice(0, -1).join('.');
-            }
-        },
-
-        nameNoExtension: function (name) {
-            if (name) {
-                this.nameWidth = (name.length + 1) * 7;
-            }
-        },
-    },
-};
+    };
 </script>
 
 <style>
-.break-all {
-    word-break: break-all;
-}
-
-@media (min-width: 768px) {
-    .md\:w-2\/5 {
-        width: 40%;
+    .break-all {
+        word-break: break-all;
     }
-}
+
+    @media (min-width: 768px) {
+        .md\:w-2\/5 {
+            width: 40%;
+        }
+    }
 </style>

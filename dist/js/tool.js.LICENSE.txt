@@ -8,7 +8,7 @@
 /*!
  * URI.js - Mutating URLs
  *
- * Version: 1.19.1
+ * Version: 1.19.11
  *
  * Author: Rodney Rehm
  * Web: http://medialize.github.io/URI.js/
@@ -22,7 +22,7 @@
  * URI.js - Mutating URLs
  * IPv6 Support
  *
- * Version: 1.19.1
+ * Version: 1.19.11
  *
  * Author: Rodney Rehm
  * Web: http://medialize.github.io/URI.js/
@@ -36,7 +36,7 @@
  * URI.js - Mutating URLs
  * Second Level Domain (SLD) Support
  *
- * Version: 1.19.1
+ * Version: 1.19.11
  *
  * Author: Rodney Rehm
  * Web: http://medialize.github.io/URI.js/
@@ -44,16 +44,6 @@
  * Licensed under
  *   MIT License http://www.opensource.org/licenses/mit-license
  *
- */
-
-/*!
- * Viewer.js v1.3.5
- * https://fengyuanchen.github.io/viewerjs
- *
- * Copyright 2015-present Chen Fengyuan
- * Released under the MIT license
- *
- * Date: 2019-07-04T11:00:16.790Z
  */
 
 /*! https://mths.be/punycode v1.4.0 by @mathias */

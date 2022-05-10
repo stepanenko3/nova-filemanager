@@ -57,78 +57,78 @@
 </template>
 
 <script>
-import api from '../../api';
+    import api from '../api';
 
-export default {
-    data: () => ({
-        active: false,
-        name: null,
-        type: null,
-        path: null,
-        error: false,
-        errorMsg: '',
-        isDeleting: false,
-    }),
+    export default {
+        data: () => ({
+            active: false,
+            name: null,
+            type: null,
+            path: null,
+            error: false,
+            errorMsg: '',
+            isDeleting: false,
+        }),
 
-    methods: {
-        openModal(type, path) {
-            this.type = type;
-            this.path = path;
-            this.name = path.replace(/^.*[\\/]/, '');
-            this.active = true;
-        },
+        methods: {
+            openModal(type, path) {
+                this.type = type;
+                this.path = path;
+                this.name = path.replace(/^.*[\\/]/, '');
+                this.active = true;
+            },
 
-        handleClose() {
-            this.active = false;
-        },
+            handleClose() {
+                this.active = false;
+            },
 
-        deleteData() {
-            if (this.type == 'folder') {
-                this.deleteFolder();
-            } else {
-                this.deleteFile();
-            }
-        },
-
-        deleteFolder() {
-            return api.removeDirectory(this.path).then((result) => {
-                this.error = false;
-                this.name = null;
-                if (result == true) {
-                    Nova.success(this.__('Deleted successfully'));
-                    this.$emit('refresh', true);
-                    this.handleClose();
+            deleteData() {
+                if (this.type == 'folder') {
+                    this.deleteFolder();
                 } else {
-                    this.error = true;
-                    if (result.error) {
-                        this.errorMsg = result.error;
-                        Nova.error(this.__('Error:') + ' ' + result.error);
-                    } else {
-                        Nova.error(this.__('Error deleting. Please, see your logs'));
-                    }
+                    this.deleteFile();
                 }
-            });
-        },
+            },
 
-        deleteFile() {
-            return api.removeFile(this.path).then((result) => {
-                this.error = false;
-                this.name = null;
-                if (result == true) {
-                    Nova.success(this.__('Deleted successfully'));
-                    this.$emit('refresh', true);
-                    this.handleClose();
-                } else {
-                    this.error = true;
-                    if (result.error) {
-                        this.errorMsg = result.error;
-                        Nova.error(this.__('Error:') + ' ' + result.error);
+            deleteFolder() {
+                return api.removeDirectory(this.path).then((result) => {
+                    this.error = false;
+                    this.name = null;
+                    if (result == true) {
+                        Nova.success(this.__('Deleted successfully'));
+                        this.$emit('refresh', true);
+                        this.handleClose();
                     } else {
-                        Nova.error(this.__('Error deleting. Please, see your logs'));
+                        this.error = true;
+                        if (result.error) {
+                            this.errorMsg = result.error;
+                            Nova.error(this.__('Error:') + ' ' + result.error);
+                        } else {
+                            Nova.error(this.__('Error deleting. Please, see your logs'));
+                        }
                     }
-                }
-            });
+                });
+            },
+
+            deleteFile() {
+                return api.removeFile(this.path).then((result) => {
+                    this.error = false;
+                    this.name = null;
+                    if (result == true) {
+                        Nova.success(this.__('Deleted successfully'));
+                        this.$emit('refresh', true);
+                        this.handleClose();
+                    } else {
+                        this.error = true;
+                        if (result.error) {
+                            this.errorMsg = result.error;
+                            Nova.error(this.__('Error:') + ' ' + result.error);
+                        } else {
+                            Nova.error(this.__('Error deleting. Please, see your logs'));
+                        }
+                    }
+                });
+            },
         },
-    },
-};
+    };
 </script>

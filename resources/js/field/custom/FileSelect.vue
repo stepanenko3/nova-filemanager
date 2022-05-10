@@ -15,13 +15,13 @@
 </template>
 
 <script>
-export default {
-    props: ['value', 'field', 'isReadonly'],
+    export default {
+        props: ['value', 'field', 'isReadonly'],
 
-    methods: {
-        openModalFilemanager() {
-            this.$emit('open-modal');
+        methods: {
+            openModalFilemanager() {
+                this.$emit('open-modal');
+            },
         },
-    },
-};
+    };
 </script>

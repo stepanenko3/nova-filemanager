@@ -39,35 +39,35 @@
 </template>
 
 <script>
-export default {
-    props: {
-        active: {
-            default: false,
-            required: true,
-            type: Boolean,
-        },
-    },
-
-    mounted() {
-        //
-    },
-
-    watch: {
-        // active(value) {
-        //     if (value) {
-        //         this.$refs.confirmButton.focus();
-        //     }
-        // }
-    },
-
-    methods: {
-        handleClose() {
-            this.$emit('close');
+    export default {
+        props: {
+            active: {
+                default: false,
+                required: true,
+                type: Boolean,
+            },
         },
 
-        handleConfirm() {
-            this.$emit('confirm');
+        mounted() {
+            //
         },
-    },
-};
+
+        watch: {
+            // active(value) {
+            //     if (value) {
+            //         this.$refs.confirmButton.focus();
+            //     }
+            // }
+        },
+
+        methods: {
+            handleClose() {
+                this.$emit('close');
+            },
+
+            handleConfirm() {
+                this.$emit('confirm');
+            },
+        },
+    };
 </script>

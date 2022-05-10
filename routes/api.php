@@ -13,18 +13,22 @@ use Stepanenko3\NovaFilemanager\Http\Controllers\FilemanagerToolController;
 | by your tool's "Authorize" middleware by default. Now, go build!
 |
  */
-Route::get('data', FilemanagerToolController::class.'@getData');
-Route::get('{resource}/{attribute}/data', FilemanagerToolController::class.'@getDataField');
-Route::post('actions/move', FilemanagerToolController::class.'@move');
-Route::post('actions/create-folder', FilemanagerToolController::class.'@createFolder');
-Route::post('actions/delete-folder', FilemanagerToolController::class.'@deleteFolder');
-Route::post('actions/get-info', FilemanagerToolController::class.'@getInfo');
-Route::post('actions/remove-file', FilemanagerToolController::class.'@removeFile');
-Route::get('actions/download-file', FilemanagerToolController::class.'@downloadFile');
-Route::post('actions/rename', FilemanagerToolController::class.'@rename');
-Route::post('actions/duplicate', FilemanagerToolController::class.'@duplicate');
 
-Route::post('events/folder', FilemanagerToolController::class.'@folderUploadedEvent');
+Route::controller(FilemanagerToolController::class)
+    ->group(function () {
+        Route::get('data', 'getData');
+        Route::get('{resource}/{attribute}/data', 'getDataField');
+        Route::post('actions/move', 'move');
+        Route::post('actions/create-folder', 'createFolder');
+        Route::post('actions/delete-folder', 'deleteFolder');
+        Route::post('actions/get-info', 'getInfo');
+        Route::post('actions/remove-file', 'removeFile');
+        Route::get('actions/download-file', 'downloadFile');
+        Route::post('actions/rename', 'rename');
+        Route::post('actions/duplicate', 'duplicate');
 
-Route::post('uploads/add', FilemanagerToolController::class.'@upload');
-Route::get('uploads/update', FilemanagerToolController::class.'@updateFile');
+        Route::post('events/folder', 'folderUploadedEvent');
+
+        Route::post('uploads/add', 'upload');
+        Route::get('uploads/update', 'updateFile');
+    });

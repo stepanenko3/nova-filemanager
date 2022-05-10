@@ -22,23 +22,23 @@
 </template>
 
 <script>
-export default {
-    props: ['resourceName', 'field'],
+    export default {
+        props: ['resourceName', 'field'],
 
-    data: () => ({
-        display: 'normal',
-    }),
+        data: () => ({
+            display: 'normal',
+        }),
 
-    mounted() {
-        this.display = this.field.display || 'normal';
-    },
-};
+        mounted() {
+            this.display = this.field.display || 'normal';
+        },
+    };
 </script>
 
 <style>
-.svg-icon > svg {
-    width: 2rem;
-    height: 2rem;
-    fill: var(--80);
-}
+    .svg-icon>svg {
+        width: 2rem;
+        height: 2rem;
+        fill: var(--80);
+    }
 </style>

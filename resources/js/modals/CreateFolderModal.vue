@@ -50,70 +50,66 @@
 </template>
 
 <script>
-import api from '../../api';
+    import api from '../api';
 
-export default {
-    props: {
-        active: {
-            type: Boolean,
-            default: false,
-            required: true,
+    export default {
+        props: {
+            active: {
+                type: Boolean,
+                default: false,
+                required: true,
+            },
+            current: {
+                type: String,
+                default: '/',
+                required: true,
+            },
         },
-        current: {
-            type: String,
-            default: '/',
-            required: true,
-        },
-    },
 
-    data: () => ({
-        folderName: null,
-        error: false,
-        errorMsg: '',
-        isSaving: false,
-    }),
+        data: () => ({
+            folderName: null,
+            error: false,
+            errorMsg: '',
+            isSaving: false,
+        }),
 
-    methods: {
-        createFolder() {
-            if (this.folderName == null) {
-                this.errorMsg = this.__('The folder name is required');
-                this.error = true;
-                return false;
-            }
+        methods: {
+            createFolder() {
+                if (this.folderName == null) {
+                    this.errorMsg = this.__('The folder name is required');
+                    this.error = true;
+                    return false;
+                }
 
-            return api.createFolder(this.folderName, this.current).then((result) => {
+                return api.createFolder(this.folderName, this.current).then((result) => {
+                    this.error = false;
+                    this.folderName = null;
+                    if (result == true) {
+                        this.$emit('closeCreateFolderModal', true);
+                        Nova.success(this.__('Folder created successfully'));
+                        this.$emit('refresh', true);
+                    } else {
+                        this.error = true;
+                        if (result.error) {
+                            this.errorMsg = result.error;
+                            Nova.error(this.__('Error:') + ' ' + result.error);
+                        } else {
+                            this.errorMsg = this.__('The folder name is required');
+                            Nova.error(this.__('Error creating the folder'));
+                        }
+                    }
+                });
+            },
+
+            cancelCreate() {
                 this.error = false;
                 this.folderName = null;
-                if (result == true) {
-                    this.$emit('closeCreateFolderModal', true);
-                    Nova.success(this.__('Folder created successfully'));
-                    this.$emit('refresh', true);
-                } else {
-                    this.error = true;
-                    if (result.error) {
-                        this.errorMsg = result.error;
-                        Nova.error(this.__('Error:') + ' ' + result.error);
-                    } else {
-                        this.errorMsg = this.__('The folder name is required');
-                        Nova.error(this.__('Error creating the folder'));
-                    }
-                }
-            });
-        },
+                this.$emit('closeCreateFolderModal', true);
+            },
 
-        cancelCreate() {
-            this.error = false;
-            this.folderName = null;
-            this.$emit('closeCreateFolderModal', true);
+            handleClose() {
+                this.cancelCreate();
+            },
         },
-
-        handleClose() {
-            this.cancelCreate();
-        },
-    },
-};
+    };
 </script>
-
-<style>
-/* Scoped Styles */
-</style>

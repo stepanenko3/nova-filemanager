@@ -1,7 +1,5 @@
-import VueViewer from 'v-viewer';
+import Tool from './pages/Tool'
 
-Nova.booting((Vue, router, store) => {
-    Vue.use(VueViewer);
-
-    Nova.inertia('NovaFilemanager', require('./components/Tool').default);
-});
+Nova.booting((app, store) => {
+  Nova.inertia('NovaFilemanager', Tool)
+})

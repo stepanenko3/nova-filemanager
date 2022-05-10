@@ -74,200 +74,200 @@
 </template>
 
 <script>
-import _ from 'lodash';
-import Progress from '../modules/Progress';
+    import _ from 'lodash';
+    import Progress from '../modules/Progress';
 
-let token = document.head.querySelector('meta[name="csrf-token"]');
+    let token = document.head.querySelector('meta[name="csrf-token"]');
 
-export default {
-    props: {
-        current: {
-            type: String,
-            default: '/',
-            required: true,
-        },
-        visibility: {
-            type: String,
-            default: 'public',
-        },
+    export default {
+        props: {
+            current: {
+                type: String,
+                default: '/',
+                required: true,
+            },
+            visibility: {
+                type: String,
+                default: 'public',
+            },
 
-        rules: {
-            type: Array,
-            default: () => [],
-            required: false,
-        },
-    },
-
-    components: {
-        'progress-module': Progress,
-    },
-
-    data: () => ({
-        token: token.content,
-        files: [],
-        filesUploaded: [],
-        type: 'files',
-        totalPercent: 0,
-        error: false,
-    }),
-
-    methods: {
-        isImage(file) {
-            return file.type.includes('image'); //returns true or false
+            rules: {
+                type: Array,
+                default: () => [],
+                required: false,
+            },
         },
 
-        getRandomArbitrary(min, max) {
-            return Math.random() * (max - min) + min;
+        components: {
+            'progress-module': Progress,
         },
 
-        startUploadingFiles(files, type) {
-            this.files = files;
-            this.type = type;
-            this.filesUploaded = [];
-            this.processFiles();
-        },
+        data: () => ({
+            token: token.content,
+            files: [],
+            filesUploaded: [],
+            type: 'files',
+            totalPercent: 0,
+            error: false,
+        }),
 
-        async processFiles() {
-            Array.from(this.files).forEach((file) => {
-                this.startUpload(file);
-            });
-        },
+        methods: {
+            isImage(file) {
+                return file.type.includes('image'); //returns true or false
+            },
 
-        startUpload(file) {
-            let config = {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-                onUploadProgress: (progressEvent) => {
-                    file.progress = parseInt(
-                        Math.round((progressEvent.loaded * 100) / progressEvent.total)
-                    );
-                },
-            };
+            getRandomArbitrary(min, max) {
+                return Math.random() * (max - min) + min;
+            },
 
-            let filePath;
+            startUploadingFiles(files, type) {
+                this.files = files;
+                this.type = type;
+                this.filesUploaded = [];
+                this.processFiles();
+            },
 
-            if (file.file.webkitRelativePath) {
-                filePath = file.file.webkitRelativePath.replace('/' + file.file.name, '');
-            } else if (file.file.filepath) {
-                filePath = file.file.filepath;
-            } else {
-                filePath = '/';
-            }
+            async processFiles() {
+                Array.from(this.files).forEach((file) => {
+                    this.startUpload(file);
+                });
+            },
 
-            let data = new FormData();
-            data.append('file', file.file);
-            data.append('current', this.current + '/' + filePath);
-            data.append('visibility', this.visibility);
+            startUpload(file) {
+                let config = {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    onUploadProgress: (progressEvent) => {
+                        file.progress = parseInt(
+                            Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                        );
+                    },
+                };
 
-            if (this.type == 'files') {
-                data.append('rules', JSON.stringify(this.rules));
-                this.uploadFileToServer(file, data, config);
-            } else {
-                this.uploadFolderToServer(file, data, config);
-            }
-        },
+                let filePath;
 
-        uploadFileToServer(file, data, config) {
-            Nova.request()
-                .post('/nova-vendor/stepanenko3/nova-filemanager/uploads/add', data, config)
-                .then((response) => {
-                    if (response.data.success == true) {
-                        _.forEach(this.files, (fileUpload) => {
-                            if (fileUpload.name == response.data.name) {
-                                fileUpload.upload = true;
-                            }
-                        });
-                        this.filesUploaded.push(file.id);
+                if (file.file.webkitRelativePath) {
+                    filePath = file.file.webkitRelativePath.replace('/' + file.file.name, '');
+                } else if (file.file.filepath) {
+                    filePath = file.file.filepath;
+                } else {
+                    filePath = '/';
+                }
+
+                let data = new FormData();
+                data.append('file', file.file);
+                data.append('current', this.current + '/' + filePath);
+                data.append('visibility', this.visibility);
+
+                if (this.type == 'files') {
+                    data.append('rules', JSON.stringify(this.rules));
+                    this.uploadFileToServer(file, data, config);
+                } else {
+                    this.uploadFolderToServer(file, data, config);
+                }
+            },
+
+            uploadFileToServer(file, data, config) {
+                Nova.request()
+                    .post('/nova-vendor/stepanenko3/nova-filemanager/uploads/add', data, config)
+                    .then((response) => {
+                        if (response.data.success == true) {
+                            _.forEach(this.files, (fileUpload) => {
+                                if (fileUpload.name == response.data.name) {
+                                    fileUpload.upload = true;
+                                }
+                            });
+                            this.filesUploaded.push(file.id);
+
+                            setTimeout(() => {
+                                this.$emit('removeFile', file.id);
+                            }, 2000);
+                        } else {
+                            Nova.error(
+                                this.__(
+                                    'Error uploading the file. Check your MaxFilesize or permissions'
+                                )
+                            );
+                        }
+                    })
+                    .catch((error) => {
+                        if (error.response.data.errors) {
+                            let errors = error.response.data.errors;
+                            let errorsArray = Object.values(errors).flat();
+
+                            let errorMessage = errorsArray.join('<br>');
+
+                            Nova.error(errorMessage);
+                        } else {
+                            Nova.error(
+                                this.__(
+                                    'Error uploading the file. Check your MaxFilesize or permissions'
+                                )
+                            );
+                        }
+
+                        file.error = true;
 
                         setTimeout(() => {
                             this.$emit('removeFile', file.id);
-                        }, 2000);
-                    } else {
+                        }, 1000);
+                    });
+            },
+
+            uploadFolderToServer(file, data, config) {
+                data.append('folder', true);
+
+                Nova.request()
+                    .post('/nova-vendor/stepanenko3/nova-filemanager/uploads/add', data, config)
+                    .then((response) => {
+                        if (response.data.success == true) {
+                            _.forEach(this.files, (fileUpload) => {
+                                if (fileUpload.name == response.data.name) {
+                                    fileUpload.upload = true;
+                                }
+                            });
+
+                            this.filesUploaded.push(file.id);
+
+                            this.totalPercent = (100 * this.filesUploaded.length) / this.files.length;
+
+                            setTimeout(() => {
+                                this.$emit('removeFile', file.id);
+                            }, 2000);
+                        } else {
+                            Nova.error(
+                                this.__(
+                                    'Error uploading the file. Check your MaxFilesize or permissions'
+                                )
+                            );
+                        }
+                    })
+                    .catch(() => {
+                        this.error = true;
                         Nova.error(
-                            this.__(
-                                'Error uploading the file. Check your MaxFilesize or permissions'
-                            )
+                            this.__('Error uploading the file. Check your MaxFilesize or permissions')
                         );
-                    }
-                })
-                .catch((error) => {
-                    if (error.response.data.errors) {
-                        let errors = error.response.data.errors;
-                        let errorsArray = Object.values(errors).flat();
-
-                        let errorMessage = errorsArray.join('<br>');
-
-                        Nova.error(errorMessage);
-                    } else {
-                        Nova.error(
-                            this.__(
-                                'Error uploading the file. Check your MaxFilesize or permissions'
-                            )
-                        );
-                    }
-
-                    file.error = true;
-
-                    setTimeout(() => {
-                        this.$emit('removeFile', file.id);
-                    }, 1000);
-                });
-        },
-
-        uploadFolderToServer(file, data, config) {
-            data.append('folder', true);
-
-            Nova.request()
-                .post('/nova-vendor/stepanenko3/nova-filemanager/uploads/add', data, config)
-                .then((response) => {
-                    if (response.data.success == true) {
-                        _.forEach(this.files, (fileUpload) => {
-                            if (fileUpload.name == response.data.name) {
-                                fileUpload.upload = true;
-                            }
-                        });
-
-                        this.filesUploaded.push(file.id);
-
-                        this.totalPercent = (100 * this.filesUploaded.length) / this.files.length;
-
                         setTimeout(() => {
                             this.$emit('removeFile', file.id);
-                        }, 2000);
-                    } else {
-                        Nova.error(
-                            this.__(
-                                'Error uploading the file. Check your MaxFilesize or permissions'
-                            )
-                        );
-                    }
-                })
-                .catch(() => {
-                    this.error = true;
-                    Nova.error(
-                        this.__('Error uploading the file. Check your MaxFilesize or permissions')
-                    );
-                    setTimeout(() => {
-                        this.$emit('removeFile', file.id);
-                    }, 1000);
-                });
+                        }, 1000);
+                    });
+            },
         },
-    },
 
-    filters: {
-        truncate: function (text, stop, clamp) {
-            return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '');
+        filters: {
+            truncate: function (text, stop, clamp) {
+                return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '');
+            },
         },
-    },
-};
+    };
 </script>
 
-<style scoped lang="scss">
-.stack-uploads {
-    right: 10px;
-    bottom: 10px;
-    width: 300px;
-    z-index: 99;
-}
+<style scoped>
+    .stack-uploads {
+        right: 10px;
+        bottom: 10px;
+        width: 300px;
+        z-index: 99;
+    }
 </style>

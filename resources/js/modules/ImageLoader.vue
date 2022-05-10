@@ -186,147 +186,147 @@
 </template>
 
 <script>
-import findIndex from 'lodash/findIndex';
-import MimeIconsEnum from '../tools/MimeIconsEnum'
+    import findIndex from 'lodash/findIndex';
+    import MimeIconsEnum from '../tools/MimeIconsEnum'
 
-export default {
-    components: {
-        //
-    },
+    export default {
+        components: {
+            //
+        },
 
-    props: {
-        file: {
-            type: Object,
-            default: function () {
-                return { name: '' };
+        props: {
+            file: {
+                type: Object,
+                default: function () {
+                    return { name: '' };
+                },
+                required: true,
             },
-            required: true,
-        },
-        view: {
-            type: String,
-            default: 'grid',
-            required: false,
-        },
-        multiSelecting: {
-            type: Boolean,
-            default: false,
-            required: false,
-        },
-        selectedFiles: {
-            type: Array,
-            default: () => [],
-            required: false,
-        },
-        deletePermission: {
-            type: Boolean,
-            required: false,
-            default: true,
-        },
-        renamePermission: {
-            type: Boolean,
-            required: false,
-            default: true,
-        },
-    },
-
-    data: () => ({
-        loading: true,
-        missing: false,
-        mimeIcons: MimeIconsEnum,
-    }),
-
-    computed: {
-        selected() {
-            return (
-                findIndex(this.selectedFiles, { type: this.file.type, path: this.file.path }) >= 0
-            );
+            view: {
+                type: String,
+                default: 'grid',
+                required: false,
+            },
+            multiSelecting: {
+                type: Boolean,
+                default: false,
+                required: false,
+            },
+            selectedFiles: {
+                type: Array,
+                default: () => [],
+                required: false,
+            },
+            deletePermission: {
+                type: Boolean,
+                required: false,
+                default: true,
+            },
+            renamePermission: {
+                type: Boolean,
+                required: false,
+                default: true,
+            },
         },
 
-        shouldShowHover() {
-            if (this.deletePermission) {
-                return true;
-            }
+        data: () => ({
+            loading: true,
+            missing: false,
+            mimeIcons: MimeIconsEnum,
+        }),
 
-            if (this.renamePermission) {
-                return true;
-            }
+        computed: {
+            selected() {
+                return (
+                    findIndex(this.selectedFiles, { type: this.file.type, path: this.file.path }) >= 0
+                );
+            },
 
-            if (this.multiSelecting) {
-                return true;
-            }
+            shouldShowHover() {
+                if (this.deletePermission) {
+                    return true;
+                }
 
-            return false;
-        },
-    },
+                if (this.renamePermission) {
+                    return true;
+                }
 
-    mounted() {
-        if (this.file.mime !== 'image') {
-            this.loading = false;
-        }
-    },
-    methods: {
-        imageOnLoad() {
-            this.loading = false;
-        },
+                if (this.multiSelecting) {
+                    return true;
+                }
 
-        imageOnError() {
-            this.missing = true;
-            this.$emit('missing', true);
-            this.loading = false;
+                return false;
+            },
         },
 
-        truncate(text, stop, clamp = '...') {
-            return text.slice(0, stop) + (stop < text.length ? clamp : '');
-        },
-
-        clickStrategy() {
-            return this.multiSelecting ? this.select() : this.showInfo();
-        },
-
-        select() {
-            this.$emit('select', {
-                type: this.file.type,
-                path: this.file.path,
-            });
-        },
-
-        showInfo() {
-            this.$emit('showInfo', this.file);
-        },
-
-        deleteFile(e) {
-            this.stopDefaultActions(e);
-            this.$emit('delete', 'file', this.file.path);
-        },
-
-        renameFile(e) {
-            this.stopDefaultActions(e);
-            this.$emit('rename', 'file', this.file.path);
-        },
-
-        stopDefaultActions(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        },
-    },
-    watch: {
-        'file.loading': function (value) {
-            if (value == true) {
-                this.loading = true;
-            } else {
+        mounted() {
+            if (this.file.mime !== 'image') {
                 this.loading = false;
             }
         },
-    },
-};
+        methods: {
+            imageOnLoad() {
+                this.loading = false;
+            },
+
+            imageOnError() {
+                this.missing = true;
+                this.$emit('missing', true);
+                this.loading = false;
+            },
+
+            truncate(text, stop, clamp = '...') {
+                return text.slice(0, stop) + (stop < text.length ? clamp : '');
+            },
+
+            clickStrategy() {
+                return this.multiSelecting ? this.select() : this.showInfo();
+            },
+
+            select() {
+                this.$emit('select', {
+                    type: this.file.type,
+                    path: this.file.path,
+                });
+            },
+
+            showInfo() {
+                this.$emit('showInfo', this.file);
+            },
+
+            deleteFile(e) {
+                this.stopDefaultActions(e);
+                this.$emit('delete', 'file', this.file.path);
+            },
+
+            renameFile(e) {
+                this.stopDefaultActions(e);
+                this.$emit('rename', 'file', this.file.path);
+            },
+
+            stopDefaultActions(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            },
+        },
+        watch: {
+            'file.loading': function (value) {
+                if (value == true) {
+                    this.loading = true;
+                } else {
+                    this.loading = false;
+                }
+            },
+        },
+    };
 </script>
 
 <style>
-.bg-center {
-    background-position: center;
-}
+    .bg-center {
+        background-position: center;
+    }
 
-.bg-cover {
-    background-size: cover;
-}
+    .bg-cover {
+        background-size: cover;
+    }
 </style>

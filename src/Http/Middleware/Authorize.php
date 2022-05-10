@@ -2,21 +2,33 @@
 
 namespace Stepanenko3\NovaFilemanager\Http\Middleware;
 
-use Closure;
-use Illuminate\Http\Request;
+use Laravel\Nova\Nova;
 use Stepanenko3\NovaFilemanager\FilemanagerTool;
-use Symfony\Component\HttpFoundation\Response;
 
 class Authorize
 {
     /**
-     * @param Request $request
-     * @param Closure $next
+     * Handle the incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure(\Illuminate\Http\Request):mixed  $next
+     * @return \Illuminate\Http\Response
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, $next)
     {
-        return app(FilemanagerTool::class)->authorize($request)
-            ? $next($request)
-            : abort(403);
+        $tool = collect(Nova::registeredTools())->first([$this, 'matchesTool']);
+
+        return optional($tool)->authorize($request) ? $next($request) : abort(403);
+    }
+
+    /**
+     * Determine whether this tool belongs to the package.
+     *
+     * @param  \Laravel\Nova\Tool  $tool
+     * @return bool
+     */
+    public function matchesTool($tool)
+    {
+        return $tool instanceof FilemanagerTool;
     }
 }

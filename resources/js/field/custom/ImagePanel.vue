@@ -28,30 +28,30 @@
 </template>
 
 <script>
-import ImageDetail from '../../modules/ImageDetail';
+    import ImageDetail from '../../modules/ImageDetail';
 
-export default {
-    components: [ImageDetail],
+    export default {
+        components: [ImageDetail],
 
-    props: {
-        field: {
-            type: Object,
-            required: true,
+        props: {
+            field: {
+                type: Object,
+                required: true,
+            },
+            fieldName: {
+                type: String,
+                default: '',
+            },
         },
-        fieldName: {
-            type: String,
-            default: '',
-        },
-    },
 
-    data: () => ({
-        loaded: true,
-    }),
+        data: () => ({
+            loaded: true,
+        }),
 
-    computed: {
-        label() {
-            return this.fieldName || this.field.name;
+        computed: {
+            label() {
+                return this.fieldName || this.field.name;
+            },
         },
-    },
-};
+    };
 </script>

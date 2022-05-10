@@ -96,174 +96,174 @@
 </template>
 
 <script>
-import { FormField, HandlesValidationErrors } from 'laravel-nova';
+    import { FormField, HandlesValidationErrors } from 'laravel-nova';
 
-import FilemanagerModal from '../components/modals/FilemanagerModal';
-import CreateFolderModal from '../components/modals/CreateFolderModal';
-import DetailModal from '../components/modals/DetailModal';
-import ConfirmRemoveFileModal from '../components/modals/ConfirmRemoveFileModal';
-import ConfirmDeleteModal from '../components/modals/ConfirmDeleteModal';
-import RenameModal from '../components/modals/RenameModal';
+    import FilemanagerModal from '../modals/FilemanagerModal';
+    import CreateFolderModal from '../modals/CreateFolderModal';
+    import DetailModal from '../modals/DetailModal';
+    import ConfirmRemoveFileModal from '../modals/ConfirmRemoveFileModal';
+    import ConfirmDeleteModal from '../modals/ConfirmDeleteModal';
+    import RenameModal from '../modals/RenameModal';
 
-import UploadProgress from '../components/UploadProgress';
-import ImageDetail from '../modules/ImageDetail';
-import FileSelect from './custom/FileSelect';
+    import UploadProgress from '../components/UploadProgress';
+    import ImageDetail from '../modules/ImageDetail';
+    import FileSelect from './custom/FileSelect';
 
-import api from '../api';
+    import api from '../api';
 
-export default {
-    mixins: [FormField, HandlesValidationErrors],
+    export default {
+        mixins: [FormField, HandlesValidationErrors],
 
-    props: ['resourceName', 'resourceId', 'field'],
+        props: ['resourceName', 'resourceId', 'field'],
 
-    components: {
-        FileSelect: FileSelect,
-        UploadProgress: UploadProgress,
-        ImageDetail: ImageDetail,
+        components: {
+            FileSelect: FileSelect,
+            UploadProgress: UploadProgress,
+            ImageDetail: ImageDetail,
 
-        FilemanagerModal: FilemanagerModal,
-        CreateFolderModal: CreateFolderModal,
-        DetailModal: DetailModal,
-        ConfirmRemoveFileModal: ConfirmRemoveFileModal,
-        RenameModal: RenameModal,
-        ConfirmDeleteModal: ConfirmDeleteModal,
-    },
-
-    data: () => ({
-        openModal: false,
-        showCreateFolder: false,
-        defaultFolder: null,
-        currentPath: '/',
-
-        //modalFile
-        info: {},
-        activeInfo: false,
-        popupDetailsLoaded: false,
-
-        //uploader
-        filesToUpload: {},
-        uploadType: null,
-        folderUploadedName: null,
-
-        removeModalOpen: false,
-    }),
-
-    methods: {
-        openModalCreateFolder() {
-            this.showCreateFolder = true;
-        },
-        closeModalCreateFolder() {
-            this.showCreateFolder = false;
+            FilemanagerModal: FilemanagerModal,
+            CreateFolderModal: CreateFolderModal,
+            DetailModal: DetailModal,
+            ConfirmRemoveFileModal: ConfirmRemoveFileModal,
+            RenameModal: RenameModal,
+            ConfirmDeleteModal: ConfirmDeleteModal,
         },
 
-        refreshCurrent() {
-            this.$refs.filemanager.getData(this.currentPath);
-        },
+        data: () => ({
+            openModal: false,
+            showCreateFolder: false,
+            defaultFolder: null,
+            currentPath: '/',
 
-        openFilemanagerModal() {
-            this.setCurrentPath();
-            this.openModal = true;
-        },
+            //modalFile
+            info: {},
+            activeInfo: false,
+            popupDetailsLoaded: false,
 
-        closeFilemanagerModal() {
-            this.openModal = false;
-        },
+            //uploader
+            filesToUpload: {},
+            uploadType: null,
+            folderUploadedName: null,
 
-        updateCurrentPath(val) {
-            this.currentPath = val;
-        },
+            removeModalOpen: false,
+        }),
 
-        showInfoItem(item) {
-            this.activeInfo = true;
-            this.info = item;
-        },
+        methods: {
+            openModalCreateFolder() {
+                this.showCreateFolder = true;
+            },
+            closeModalCreateFolder() {
+                this.showCreateFolder = false;
+            },
 
-        closePreview() {
-            this.info = {};
-            this.activeInfo = false;
-            this.popupDetailsLoaded = false;
-        },
+            refreshCurrent() {
+                this.$refs.filemanager.getData(this.currentPath);
+            },
 
-        uploadFiles(files, type, firstFolderName) {
-            this.filesToUpload = files;
-            this.uploadType = type;
-            this.folderUploadedName = firstFolderName;
-            this.$refs.uploader.startUploadingFiles(files, type);
-        },
+            openFilemanagerModal() {
+                this.setCurrentPath();
+                this.openModal = true;
+            },
 
-        removeFileFromUpload(uploadedFileId) {
-            let index = this.filesToUpload.map((item) => item.id).indexOf(uploadedFileId);
+            closeFilemanagerModal() {
+                this.openModal = false;
+            },
 
-            this.$delete(this.filesToUpload, index);
-            if (this.filesToUpload.length === 0) {
-                if (this.uploadType == 'folders') {
-                    this.callFolderEvent(this.folderUploadedName);
+            updateCurrentPath(val) {
+                this.currentPath = val;
+            },
+
+            showInfoItem(item) {
+                this.activeInfo = true;
+                this.info = item;
+            },
+
+            closePreview() {
+                this.info = {};
+                this.activeInfo = false;
+                this.popupDetailsLoaded = false;
+            },
+
+            uploadFiles(files, type, firstFolderName) {
+                this.filesToUpload = files;
+                this.uploadType = type;
+                this.folderUploadedName = firstFolderName;
+                this.$refs.uploader.startUploadingFiles(files, type);
+            },
+
+            removeFileFromUpload(uploadedFileId) {
+                let index = this.filesToUpload.map((item) => item.id).indexOf(uploadedFileId);
+
+                this.$delete(this.filesToUpload, index);
+                if (this.filesToUpload.length === 0) {
+                    if (this.uploadType == 'folders') {
+                        this.callFolderEvent(this.folderUploadedName);
+                    }
+
+                    this.folderUploadedName = null;
+                    this.uploadType = null;
+
+                    this.refreshCurrent();
                 }
+            },
 
-                this.folderUploadedName = null;
-                this.uploadType = null;
+            setCurrentPath() {
+                if (this.field.folder != null) {
+                    this.defaultFolder = this.field.folder;
+                    this.currentPath = this.field.folder;
+                } else {
+                    this.defaultFolder = '/';
+                    this.currentPath = '/';
+                }
+            },
 
-                this.refreshCurrent();
-            }
+            removeFile() {
+                this.field.value = null;
+                this.value = '';
+                this.removeModalOpen = false;
+            },
+
+            fileRenamed(item) {
+                this.info = item;
+            },
+
+            openRemoveModal() {
+                this.removeModalOpen = true;
+            },
+
+            closeRemoveModal() {
+                this.removeModalOpen = false;
+            },
+
+            callFolderEvent(path) {
+                api.eventFolderUploaded(this.currentPathFolder + '/' + path);
+            },
+
+            /*
+             * Set the initial, internal value for the field.
+             */
+            setInitialValue() {
+                this.value = this.field.value || '';
+            },
+
+            /**
+             * Fill the given FormData object with the field's internal value.
+             */
+            fill(formData) {
+                formData.append(this.field.attribute, this.value || '');
+            },
+
+            /**
+             * Update the field's internal value.
+             */
+            setValue(file) {
+                this.value = file.path;
+                this.closeFilemanagerModal();
+            },
         },
 
-        setCurrentPath() {
-            if (this.field.folder != null) {
-                this.defaultFolder = this.field.folder;
-                this.currentPath = this.field.folder;
-            } else {
-                this.defaultFolder = '/';
-                this.currentPath = '/';
-            }
+        created() {
+            this.setCurrentPath();
         },
-
-        removeFile() {
-            this.field.value = null;
-            this.value = '';
-            this.removeModalOpen = false;
-        },
-
-        fileRenamed(item) {
-            this.info = item;
-        },
-
-        openRemoveModal() {
-            this.removeModalOpen = true;
-        },
-
-        closeRemoveModal() {
-            this.removeModalOpen = false;
-        },
-
-        callFolderEvent(path) {
-            api.eventFolderUploaded(this.currentPathFolder + '/' + path);
-        },
-
-        /*
-         * Set the initial, internal value for the field.
-         */
-        setInitialValue() {
-            this.value = this.field.value || '';
-        },
-
-        /**
-         * Fill the given FormData object with the field's internal value.
-         */
-        fill(formData) {
-            formData.append(this.field.attribute, this.value || '');
-        },
-
-        /**
-         * Update the field's internal value.
-         */
-        setValue(file) {
-            this.value = file.path;
-            this.closeFilemanagerModal();
-        },
-    },
-
-    created() {
-        this.setCurrentPath();
-    },
-};
+    };
 </script>

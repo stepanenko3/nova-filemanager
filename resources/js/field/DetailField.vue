@@ -12,21 +12,21 @@
 </template>
 
 <script>
-import ImagePanel from './custom/ImagePanel';
+    import ImagePanel from './custom/ImagePanel';
 
-export default {
-    props: ['resource', 'resourceName', 'resourceId', 'field'],
+    export default {
+        props: ['resource', 'resourceName', 'resourceId', 'field'],
 
-    components: {
-        ImagePanel: ImagePanel,
-    },
+        components: {
+            ImagePanel: ImagePanel,
+        },
 
-    data: () => ({
-        display: 'normal',
-    }),
+        data: () => ({
+            display: 'normal',
+        }),
 
-    mounted() {
-        this.display = this.field.display || 'normal';
-    },
-};
+        mounted() {
+            this.display = this.field.display || 'normal';
+        },
+    };
 </script>

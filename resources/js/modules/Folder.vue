@@ -146,98 +146,98 @@
 </template>
 
 <script>
-import findIndex from 'lodash/findIndex'
-import MimeIconsEnum from '../tools/MimeIconsEnum'
+    import findIndex from 'lodash/findIndex'
+    import MimeIconsEnum from '../tools/MimeIconsEnum'
 
-export default {
-    props: {
-        file: {
-            type: Object,
-            default: function () {
-                return { name: '' };
+    export default {
+        props: {
+            file: {
+                type: Object,
+                default: function () {
+                    return { name: '' };
+                },
+                required: true,
             },
-            required: true,
-        },
-        view: {
-            type: String,
-            default: 'grid',
-            required: false,
-        },
-        multiSelecting: {
-            type: Boolean,
-            default: false,
-            required: false,
-        },
-        selectedFiles: {
-            type: Array,
-            default: () => [],
-            required: false,
-        },
-        deletePermission: {
-            type: Boolean,
-            required: false,
-            default: true,
-        },
-        renamePermission: {
-            type: Boolean,
-            required: false,
-            default: true,
-        },
-    },
-
-    data: () => ({
-        loading: true,
-        missing: false,
-        dragOver: false,
-        mimeIcons: MimeIconsEnum,
-    }),
-
-    mounted() {
-        this.loading = false;
-    },
-
-    computed: {
-        selected() {
-            return (
-                findIndex(this.selectedFiles, { type: this.file.type, path: this.file.path }) >= 0
-            );
-        },
-    },
-
-    methods: {
-        truncate(text, stop, clamp = '...') {
-            return text.slice(0, stop) + (stop < text.length ? clamp : '');
+            view: {
+                type: String,
+                default: 'grid',
+                required: false,
+            },
+            multiSelecting: {
+                type: Boolean,
+                default: false,
+                required: false,
+            },
+            selectedFiles: {
+                type: Array,
+                default: () => [],
+                required: false,
+            },
+            deletePermission: {
+                type: Boolean,
+                required: false,
+                default: true,
+            },
+            renamePermission: {
+                type: Boolean,
+                required: false,
+                default: true,
+            },
         },
 
-        clickStrategy() {
-            return this.multiSelecting ? this.select() : this.goToFolder();
+        data: () => ({
+            loading: true,
+            missing: false,
+            dragOver: false,
+            mimeIcons: MimeIconsEnum,
+        }),
+
+        mounted() {
+            this.loading = false;
         },
 
-        goToFolder() {
-            this.$emit('goToFolderEvent', this.file.path);
+        computed: {
+            selected() {
+                return (
+                    findIndex(this.selectedFiles, { type: this.file.type, path: this.file.path }) >= 0
+                );
+            },
         },
 
-        deleteFolder(e) {
-            this.stopDefaultActions(e);
-            this.$emit('delete', 'folder', this.file.path);
-        },
+        methods: {
+            truncate(text, stop, clamp = '...') {
+                return text.slice(0, stop) + (stop < text.length ? clamp : '');
+            },
 
-        editFolder(e) {
-            this.stopDefaultActions(e);
-            this.$emit('rename', 'folder', this.file.path);
-        },
+            clickStrategy() {
+                return this.multiSelecting ? this.select() : this.goToFolder();
+            },
 
-        stopDefaultActions(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        },
+            goToFolder() {
+                this.$emit('goToFolderEvent', this.file.path);
+            },
 
-        select() {
-            this.$emit('select', {
-                type: this.file.type,
-                path: this.file.path,
-            });
+            deleteFolder(e) {
+                this.stopDefaultActions(e);
+                this.$emit('delete', 'folder', this.file.path);
+            },
+
+            editFolder(e) {
+                this.stopDefaultActions(e);
+                this.$emit('rename', 'folder', this.file.path);
+            },
+
+            stopDefaultActions(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            },
+
+            select() {
+                this.$emit('select', {
+                    type: this.file.type,
+                    path: this.file.path,
+                });
+            },
         },
-    },
-};
+    };
 </script>
