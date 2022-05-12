@@ -1,6 +1,6 @@
 import IndexField from './field/IndexField'
-import DetailField from './field/IndexField'
-import FormField from './field/IndexField'
+import DetailField from './field/DetailField'
+import FormField from './field/FormField'
 
 Nova.booting((Vue, router, store) => {
     Vue.component('index-filemanager-field', IndexField);

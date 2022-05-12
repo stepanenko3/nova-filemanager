@@ -297,7 +297,6 @@ class FileManagerService
                         $offset = $offset + 1;
                         $newName = $matchName . '(' . $offset . ').' . $ext;
                     }
-
                 } else {
                     $newName = $basename;
                 }

@@ -6,7 +6,7 @@
             </div>
         </template>
 
-        {{ this.file.image }}
+        {{ file.image }}
 
         <div ref="imageDiv" class="image-block flex justify-center w-full h-full"></div>
 

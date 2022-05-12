@@ -8,10 +8,12 @@ use Stepanenko3\NovaFilemanager\Traits\CoverHelpers;
 use Laravel\Nova\Contracts\Cover;
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Laravel\Nova\Fields\SupportsDependentFields;
 
 class FilemanagerField extends Field implements Cover
 {
-    use CoverHelpers;
+    use CoverHelpers,
+        SupportsDependentFields;
 
     /**
      * The field's component.
