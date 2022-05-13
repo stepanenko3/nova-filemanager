@@ -104,6 +104,31 @@ class FilemanagerField extends Field implements Cover
         return $this->withMeta(['display' => 'image']);
     }
 
+    public function detailDisplayAsImage()
+    {
+        return $this->withMeta(['displayDetail' => 'image']);
+    }
+
+    public function indexDisplayAsImage()
+    {
+        return $this->withMeta(['displayIndex' => 'image']);
+    }
+
+    public function displayNormal()
+    {
+        return $this->withMeta(['display' => 'normal']);
+    }
+
+    public function detailDisplayNormal()
+    {
+        return $this->withMeta(['displayDetail' => 'normal']);
+    }
+
+    public function indexDisplayNormal()
+    {
+        return $this->withMeta(['displayIndex' => 'normal']);
+    }
+
     /**
      * Set current folder for the field.
      *

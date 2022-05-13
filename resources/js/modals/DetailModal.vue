@@ -18,53 +18,7 @@
             </ModalHeader>
 
             <div class="flex flex-col md:flex-row">
-                <div
-                    class="w-full md:w-3/5 flex-shrink-0 flex items-center justify-center"
-                    style="min-height: 400px"
-                >
-                    <template v-if="info.type == 'image'">
-                        <img class="h-full w-full" :src="info.image" style="object-fit: contain" />
-                    </template>
-
-                    <template v-else-if="info.type == 'audio'">
-                        <audio ref="audio" controls>
-                            <source :src="info.src" :type="info.mime" />
-                        </audio>
-                    </template>
-
-                    <template v-else-if="info.type == 'video'">
-                        <video ref="video" controls crossorigin playsinline>
-                            <source :src="info.url" :type="info.mime" />
-                        </video>
-                    </template>
-
-                    <template v-else-if="info.type == 'text'">
-                        <pre class="p-4" v-if="codeLoaded"><code
-                            ref="code"
-                            v-html="info.source"
-                        ></code></pre>
-                    </template>
-
-                    <!-- <template v-else-if="info.type == 'zip'">
-                        <TreeView
-                            v-if="zipLoaded"
-                            :json="info.source"
-                            :name="info.name"
-                        ></TreeView>
-                    </template> -->
-
-                    <template v-else-if="info.type == 'pdf'">
-                        <object :data="info.url" type="application/pdf" width="100%" height="100%">
-                            <iframe :src="info.url" width="100%" height="100%" style="border: none">
-                                <object class="no-preview" v-html="info.image"></object>
-                            </iframe>
-                        </object>
-                    </template>
-
-                    <template v-else>
-                        <Icon :type="mimeIcons[info.mime] || mimeIcons.text" width="64" height="64" />
-                    </template>
-                </div>
+                <DetailView class="w-full md:w-3/5 flex-shrink-0 " :field="info" />
                 <div class="w-full md:w-2/5 p-4 bg-gray-100 dark:bg-gray-900">
                     <div class="w-full mb-2">
                         <div class="mb-1">{{ __('Name') }}:</div>
@@ -228,6 +182,7 @@
     import api from '../api';
     import MimeIconsEnum from '../tools/MimeIconsEnum'
     import ConfirmationButton from '../components/ConfirmationButton'
+    import DetailView from '../modules/DetailView'
 
     export default {
         props: {
@@ -256,6 +211,7 @@
 
         components: {
             ConfirmationButton: ConfirmationButton,
+            DetailView: DetailView,
         },
 
         emits: ['refresh', 'closePreview', 'rename', 'selectFile'],
@@ -264,7 +220,6 @@
             return {
                 loaded: false,
                 currentInfo: {},
-                codeLoaded: false,
                 zipLoaded: false,
                 cmOptions: {
                     tabSize: 2,
@@ -409,8 +364,7 @@
 
                 if (type == 'text') {
                     this.$nextTick(function () {
-                        this.cmOptions.mode = this.info.mime;
-                        this.codeLoaded = true;
+                        //
                     });
                 }
 
@@ -427,7 +381,6 @@
                     });
                 }
 
-                this.codeLoaded = false;
                 this.zipLoaded = false;
             },
 

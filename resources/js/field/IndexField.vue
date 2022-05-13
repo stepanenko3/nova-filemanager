@@ -12,7 +12,11 @@
                     class="w-8 h-8"
                     :class="{ 'rounded-full': field.rounded, rounded: !field.rounded }"
                 />
-                <div v-else v-html="field.image" class="svg-icon"></div>
+                <div
+                    v-else
+                    v-html="field.image"
+                    class="svg-icon"
+                ></div>
             </template>
             <template v-else>
                 <span class="pl-2">&mdash;</span>
@@ -30,7 +34,7 @@
         }),
 
         mounted() {
-            this.display = this.field.display || 'normal';
+            this.display = this.field.displayIndex || this.field.display || 'normal';
         },
     };
 </script>
