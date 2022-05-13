@@ -4,7 +4,7 @@
         id="filemanager-manager-container"
         v-cloak
     >
-        <div class="flex p-4 flex-wrap border-b border-gray-200 dark:border-gray-700">
+        <div class="flex p-4 mb-4 flex-wrap border-b border-gray-200 dark:border-gray-700">
             <OutlineButton
                 @click="$emit('refresh')"
                 class="mr-2"
@@ -110,7 +110,7 @@
             />
         </div>
 
-        <div class="px-4 mt-4 mb-2">
+        <div class="px-4 mb-2">
             <nav class="bg-gray-100 dark:bg-gray-900 rounded-lg w-full py-3 px-4">
                 <ol class="flex text-90">
                     <li>

@@ -142,7 +142,7 @@
                         </span>
                     </div>
 
-                    <div class="w-full mb-2" v-if="info.url">
+                    <div class="w-full mb-4" v-if="info.url">
                         <div class="mb-1">{{ __('Url') }}:</div>
                         <div class="w-full mt-1 flex items-center">
                             <div
@@ -161,26 +161,39 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center flex-wrap mt-4">
-                        <DefaultButton class="mr-4" v-if="popup" @click="selectFile">
+                    <div class="grid md:grid-cols-12 gap-4">
+                        <DefaultButton class="md:col-span-4" v-if="popup" @click="selectFile">
+                            <Icon
+                                type="check-circle"
+                                class="mr-1"
+                                width="18"
+                                height="18"
+                            />
+
                             {{ __('Choose') }}
                         </DefaultButton>
 
                         <a
-                            class="mr-4"
+                            class="md:col-span-4 flex"
                             v-if="buttons.download_file"
                             :href="`/nova-vendor/stepanenko3/nova-filemanager/actions/download-file?file=${this.info.path}`"
                         >
-                            <DefaultButton>
-                                <Icon type="download" class="mr-1" width="18" height="18" />
+                            <DefaultButton class="flex-grow">
+                                <Icon
+                                    type="download"
+                                    class="mr-1"
+                                    width="18"
+                                    height="18"
+                                />
+
                                 {{ __('Download') }}
                             </DefaultButton>
                         </a>
 
                         <ConfirmationButton
+                            class="md:col-span-4"
                             v-if="buttons.delete_file"
                             :messages="[__('Delete'), __('Are you sure?'), __('Deleting...')]"
-                            class="mr-3"
                             @success="removeFile"
                         >
                             <template v-slot:start>
@@ -191,11 +204,10 @@
                             </template>
                         </ConfirmationButton>
 
-
                         <ConfirmationButton
+                            class="md:col-span-4"
                             v-if="buttons.duplicate_file || true"
                             :messages="[__('Duplicate'), __('Are you sure?'), __('Duplicating...')]"
-                            class="mr-3"
                             @success="duplicate"
                         >
                             <template v-slot:start>
@@ -443,5 +455,9 @@
         .md\:w-2\/5 {
             width: 40%;
         }
+    }
+
+    .gap-4 {
+        gap: 1rem;
     }
 </style>
