@@ -27,7 +27,6 @@ yarn check-format
 
 ## Screenshots
 
-![screenshot of tool](screenshots/tool-dark.png)
 ![screenshot of tool](screenshots/tool-inside.png)
 ![screenshot of tool](screenshots/tool-inside-dark.png)
 ![screenshot of tool](screenshots/tool-list.png)
