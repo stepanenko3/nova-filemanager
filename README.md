@@ -6,14 +6,7 @@
 
 A Filemanager Tool and Field for Laravel Nova
 
-##### Filemanager Tool preview
-
-![FileManager Tool](https://user-images.githubusercontent.com/42798230/44862985-d3d57b80-ac73-11e8-9169-2e76a3584ea4.gif)
-
-##### Filemanager Field preview
-
-![FileManager Field](https://user-images.githubusercontent.com/42798230/44864362-5f9cd700-ac77-11e8-9e0f-330d18a81598.gif)
-
+![screenshot of tool](screenshots/tool.png)
 
 ### Installation
 
@@ -25,13 +18,21 @@ composer require stepanenko3/nova-filemanager
 
 [https://stepanenko3.github.io/nova-filemanager/](https://stepanenko3.github.io/nova-filemanager)
 
-
 ### Testing
 
 ``` bash
 yarn lint
 yarn check-format
 ```
+
+## Screenshots
+
+![screenshot of tool](screenshots/tool-dark.png)
+![screenshot of tool](screenshots/tool-inside.png)
+![screenshot of tool](screenshots/tool-inside-dark.png)
+![screenshot of tool](screenshots/tool-list.png)
+![screenshot of tool](screenshots/tool-detail.png)
+![screenshot of tool](screenshots/tool-detail-dark.png)
 
 ### Changelog
 
