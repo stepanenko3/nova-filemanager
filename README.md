@@ -8,21 +8,10 @@ A Filemanager Tool and Field for Laravel Nova
 
 ![screenshot of tool](screenshots/tool.png)
 
-### Installation
+## Installation
 
 ```bash
 composer require stepanenko3/nova-filemanager
-```
-
-### Docs
-
-[https://stepanenko3.github.io/nova-filemanager/](https://stepanenko3.github.io/nova-filemanager)
-
-### Testing
-
-``` bash
-yarn lint
-yarn check-format
 ```
 
 ## Screenshots
@@ -37,10 +26,6 @@ yarn check-format
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
 
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
 ### Security
 
 If you discover any security related issues, please using the issue tracker.
@@ -51,6 +36,10 @@ If you discover any security related issues, please using the issue tracker.
 - [Eric Lagarda](https://github.com/Krato)
 - [Spatie Nova Tool Skeleton](https://github.com/spatie/skeleton-nova-tool)
 
+## Contributing
+
+Thank you for considering contributing to this package! Please create a pull request with your contributions with detailed explanation of the changes you are proposing.
+
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+This package is open-sourced software licensed under the [MIT license](LICENSE.md).
