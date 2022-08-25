@@ -24,7 +24,7 @@ trait GetFiles
 
     protected function listContents(string $folder)
     {
-        return $this->storage->listContents($folder)
+        return collect($this->storage->listContents($folder))
             ->map(function (StorageAttributes $attributes) {
                 $path = $attributes->path();
 
