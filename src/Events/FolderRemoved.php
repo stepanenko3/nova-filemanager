@@ -9,24 +9,18 @@ class FolderRemoved
 {
     use SerializesModels;
 
-    /**
-     * @var mixed
-     */
-    public $storage;
+    public string $disk;
 
-    /**
-     * @var mixed
-     */
-    public $folderPath;
+    public string $folderPath;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(FilesystemAdapter $storage, string $folderPath)
+    public function __construct(string $disk, string $folderPath)
     {
-        $this->storage = $storage;
+        $this->disk = $disk;
         $this->folderPath = $folderPath;
     }
 }

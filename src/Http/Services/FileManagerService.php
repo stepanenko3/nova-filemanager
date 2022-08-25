@@ -160,7 +160,7 @@ class FileManagerService
     public function deleteDirectory($path)
     {
         if ($this->storage->deleteDirectory($path)) {
-            event(new FolderRemoved($this->storage, $path));
+            event(new FolderRemoved($this->disk, $path));
 
             return response()->json(true);
         } else {
@@ -190,8 +190,8 @@ class FileManagerService
             $this->setVisibility($currentFolder, $fileName, $visibility);
 
             if (!$uploadingFolder) {
-                $this->checkJobs($this->storage, $currentFolder . $fileName);
-                event(new FileUploaded($this->storage, $currentFolder . $fileName));
+                $this->checkJobs($this->disk, $currentFolder . $fileName);
+                event(new FileUploaded($this->disk, $currentFolder . $fileName));
             }
 
             return response()->json(['success' => true, 'name' => $fileName]);
@@ -267,7 +267,7 @@ class FileManagerService
     public function removeFile($file)
     {
         if ($this->storage->delete($file)) {
-            event(new FileRemoved($this->storage, $file));
+            event(new FileRemoved($this->disk, $file));
 
             return response()->json(true);
         } else {
@@ -411,7 +411,7 @@ class FileManagerService
      */
     public function folderUploadedEvent($path)
     {
-        event(new FolderUploaded($this->storage, $path));
+        event(new FolderUploaded($this->disk, $path));
 
         return response()->json(['success' => true]);
     }
@@ -483,7 +483,7 @@ class FileManagerService
      * @param $currentPath
      * @param $fileName
      */
-    private function checkJobs($storage, $filePath)
+    private function checkJobs($disk, $filePath)
     {
         $ext = pathinfo($filePath, PATHINFO_EXTENSION);
 
@@ -504,7 +504,7 @@ class FileManagerService
             $filterFind = array_key_first($find->toArray());
 
             if ($jobClass = $availableJobs->get($filterFind)) {
-                $job = new $jobClass($storage, $filePath);
+                $job = new $jobClass($disk, $filePath);
 
                 if ($customQueue = config('filemanager.queue_name')) {
                     $job->onQueue($customQueue);

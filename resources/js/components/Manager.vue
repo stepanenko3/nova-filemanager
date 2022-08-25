@@ -25,7 +25,6 @@
                 </DefaultButton>
                 <input
                     type="file"
-                    class="hidden"
                     multiple="true"
                     @change="uploadFilesByButton"
                 />

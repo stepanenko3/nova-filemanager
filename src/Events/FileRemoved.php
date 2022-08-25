@@ -9,24 +9,18 @@ class FileRemoved
 {
     use SerializesModels;
 
-    /**
-     * @var mixed
-     */
-    public $storage;
+    public string $disk;
 
-    /**
-     * @var mixed
-     */
-    public $filePath;
+    public string $filePath;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(FilesystemAdapter $storage, string $filePath)
+    public function __construct(string $disk, string $filePath)
     {
-        $this->storage = $storage;
+        $this->disk = $disk;
         $this->filePath = $filePath;
     }
 }

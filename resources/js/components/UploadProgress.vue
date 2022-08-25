@@ -60,7 +60,8 @@
                             <div class="text-danger">{{ __('Error on upload') }}</div>
                         </template>
                         <template v-else>
-                            {{ file.name | truncate(15) }}
+                            {{ truncate(file.name, 15) }}
+
                             <small v-if="file.progress == 100" class="text-success uppercase">{{
                                 __('Success')
                             }}</small>
@@ -112,6 +113,10 @@
         }),
 
         methods: {
+            truncate(text, stop, clamp = '...') {
+                return text.slice(0, stop) + (stop < text.length ? clamp : '');
+            },
+
             isImage(file) {
                 return file.type.includes('image'); //returns true or false
             },
@@ -252,12 +257,6 @@
                             this.$emit('removeFile', file.id);
                         }, 1000);
                     });
-            },
-        },
-
-        filters: {
-            truncate: function (text, stop, clamp) {
-                return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '');
             },
         },
     };

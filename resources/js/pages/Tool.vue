@@ -56,11 +56,11 @@
                 @createFolder="showModalCreateFolder"
             />
 
-            <!-- <UploadProgress
+            <UploadProgress
                 ref="uploader"
                 :current="currentPath"
                 @removeFile="removeFileFromUpload"
-            ></UploadProgress> -->
+            ></UploadProgress>
         </Card>
     </div>
 </template>

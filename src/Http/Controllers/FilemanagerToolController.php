@@ -12,7 +12,7 @@ class FilemanagerToolController extends Controller
     /**
      * @var mixed
      */
-    protected $service;
+    protected FileManagerService $service;
 
     /**
      * @param FileManagerService $filemanagerService
