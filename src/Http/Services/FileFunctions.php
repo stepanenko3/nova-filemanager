@@ -2,8 +2,47 @@
 
 namespace Stepanenko3\NovaFilemanager\Http\Services;
 
+use Illuminate\Support\Str;
+
 trait FileFunctions
 {
+    public function getFileType(string $mime): string
+    {
+        $types = [
+            'dir' => ['directory'],
+
+            'image' => ['image/'],
+
+            'audio' => ['audio/'],
+
+            'video' => ['video/'],
+
+            'pdf' => ['application/pdf'],
+
+            'compressed' => ['zip', 'rar', 'tar', 'gz', '7z', 'pkg'],
+
+            'text' => [
+                'text/',
+                'rtf',
+                'json',
+                'javascript',
+                'xml',
+                'sql',
+            ],
+
+            'word' => ['wordprocessingml'],
+
+        ];
+
+        foreach($types as $type => $contents) {
+            if (Str::contains($mime, $contents)) {
+                return $type;
+            }
+        }
+
+        return 'file';
+    }
+
     /**
      * @param $path
      *
@@ -11,7 +50,7 @@ trait FileFunctions
      */
     public function checkPerms($path)
     {
-        clearstatcache(null, $path);
+        clearstatcache(false, $path);
 
         return decoct(fileperms($path) & 0777);
     }

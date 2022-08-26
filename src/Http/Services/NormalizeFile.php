@@ -50,9 +50,9 @@ class NormalizeFile
             'mime' => $this->getCorrectMimeFileType(),
             'path' => $this->storagePath,
             'size' => $this->getFileSize(),
-            'url'  => $this->cleanSlashes($this->storage->url($this->storagePath)),
+            'url' => $this->cleanSlashes($this->storage->url($this->storagePath)),
             'date' => $this->modificationDate(),
-            'ext'  => $this->file->getExtension(),
+            'ext' => $this->file->getExtension(),
         ]);
 
         $data = $this->setExtras($data);
@@ -67,63 +67,64 @@ class NormalizeFile
     private function setExtras(Collection $data)
     {
         $mime = $this->storage->mimeType($this->storagePath);
+        $type = $this->getFileType($mime);
 
-        // Image
-        if (Str::contains($mime, 'image') || $data['ext'] == 'svg') {
-            $data->put('type', 'image');
-            $data->put('dimensions', $this->getDimensions($this->storage->mimeType($this->storagePath)));
-        }
+        switch($type) {
+            case 'image':
+                $data->put('type', 'image');
+                $data->put('dimensions', $this->getDimensions($this->storage->mimeType($this->storagePath)));
+                $data->put('image', $this->storage->url($this->storagePath));
+                break;
 
-        // Video
-        if (Str::contains($mime, 'audio')) {
-            $data->put('type', 'audio');
-            $src = str_replace(env('APP_URL'), '', $this->storage->url($this->storagePath));
-            $data->put('src', $src);
-        }
+            case 'audio':
+                $data->put('type', 'audio');
+                $src = str_replace(env('APP_URL'), '', $this->storage->url($this->storagePath));
+                $data->put('src', $src);
+                break;
 
-        // Video
-        if (Str::contains($mime, 'video')) {
-            $data->put('type', 'video');
-        }
+            case 'video':
+                $data->put('type', 'video');
+                break;
 
-        // text
-        if ($this->availablesTextExtensions() && Str::contains($mime, 'text')) {
-            $data->put('type', 'text');
+            case 'text':
+                $data->put('type', 'text');
 
-            if ($data['size']) {
-                $size = $this->file->getSize();
-                if ($size < 350000) {
-                    $data->put('source', $this->storage->get($this->storagePath));
-                } else {
-                    $data->put('source', __('Only files below 350 Kb will be shown'));
+                if ($data['size']) {
+                    $size = $this->file->getSize();
+                    if ($size < 350000) {
+                        $data->put('source', $this->storage->get($this->storagePath));
+                    } else {
+                        $data->put('source', __('Only files below 350 Kb will be shown'));
+                    }
                 }
-            }
+                break;
+
+            case 'pdf':
+                $data->put('type', 'pdf');
+                break;
+
+            case 'wordprocessingml':
+                $data->put('type', 'word');
+                // $data->put('source', $this->storage->get($this->storagePath));
+                break;
+
+            case 'compressed':
+                // zip
+                if (Str::contains($mime, 'application/zip')) {
+                    $data->put('type', 'zip');
+                    $data->put('source', $this->readZip());
+                }
+
+                // // rar
+                // if (Str::contains($mime, 'rar')) {
+                //     $data->put('type', 'zip');
+                //     $data->put('source', $this->readRar());
+                // }
+                break;
+
+            default:
+                $data->put('type', 'file');
         }
-
-        // text
-        if (Str::contains($mime, 'pdf')) {
-            $data->put('type', 'pdf');
-        }
-
-        // docx
-        if (Str::contains($mime, 'wordprocessingml')) {
-            $data->put('type', 'word');
-            // $data->put('source', $this->storage->get($this->storagePath));
-        }
-
-        // zip
-        if (Str::contains($mime, 'zip')) {
-            $data->put('type', 'zip');
-            $data->put('source', $this->readZip());
-        }
-
-        // // rar
-        // if (Str::contains($mime, 'rar')) {
-        //     $data->put('type', 'zip');
-        //     $data->put('source', $this->readRar());
-        // }
-
-        $data->put('image', $this->getImage($mime, $data['ext']));
 
         return $data;
     }
@@ -134,18 +135,6 @@ class NormalizeFile
             return ($this->file->getSize() != 0) ? $this->formatBytes($this->file->getSize(), 0) : 0;
         } catch (\Exception $e) {
             return false;
-        }
-    }
-
-    /**
-     * Returns the image or the svg icon preview.
-     *
-     * @return mixed
-     */
-    private function getImage($mime, $extension = false)
-    {
-        if (Str::contains($mime, 'image') || $extension == 'svg') {
-            return $this->storage->url($this->storagePath);
         }
     }
 

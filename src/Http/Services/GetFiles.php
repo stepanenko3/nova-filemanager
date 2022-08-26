@@ -96,18 +96,18 @@ trait GetFiles
             $this->accept($file)
         ) {
             $fileInfo = [
-                'id'         => $id,
-                'name'       => trim($file['basename']),
-                'path'       => $this->cleanSlashes($file['path']),
-                'type'       => $file['type'],
-                'mime'       => $this->getFileType($file),
-                'ext'        => (isset($file['extension'])) ? $file['extension'] : false,
-                'size'       => ($file['size'] != 0) ? $file['size'] : 0,
+                'id' => $id,
+                'name' => trim($file['basename']),
+                'path' => $this->cleanSlashes($file['path']),
+                'type' => $file['type'],
+                'mime' => $this->getFileType($file['mimeType']),
+                'ext' => (isset($file['extension'])) ? $file['extension'] : false,
+                'size' => ($file['size'] != 0) ? $file['size'] : 0,
                 'size_human' => ($file['size'] != 0) ? $this->formatBytes($file['size'], 0) : 0,
-                'thumb'      => $this->getThumbFile($file),
-                'asset'      => $this->cleanSlashes($this->storage->url($file['basename'])),
-                'can'        => true,
-                'loading'    => false,
+                'thumb' => $this->getThumbFile($file),
+                'asset' => $this->cleanSlashes($this->storage->url($file['basename'])),
+                'can' => true,
+                'loading' => false,
             ];
 
             if (isset($file['lastModified'])) {
@@ -255,83 +255,6 @@ trait GetFiles
     }
 
     /**
-     * @param $file
-     *
-     * @return bool|string
-     */
-    public function getFileType($file)
-    {
-        if ($file['type'] == 'dir') {
-            return 'dir';
-        }
-
-        $mime = $file['mimeType'];
-        $extension = $file['extension'];
-
-        if (Str::contains($mime, 'directory')) {
-            return 'dir';
-        }
-
-        if (Str::contains($mime, 'image') || $extension == 'svg') {
-            return 'image';
-        }
-
-        if (Str::contains($mime, 'pdf')) {
-            return 'pdf';
-        }
-
-        if (Str::contains($mime, 'audio')) {
-            return 'audio';
-        }
-
-        if (Str::contains($mime, 'video')) {
-            return 'video';
-        }
-
-        if (Str::contains($mime, 'zip')) {
-            return 'file';
-        }
-
-        if (Str::contains($mime, 'rar')) {
-            return 'file';
-        }
-
-        if (Str::contains($mime, 'octet-stream')) {
-            return 'file';
-        }
-
-        if (Str::contains($mime, 'excel')) {
-            return 'text';
-        }
-
-        if (Str::contains($mime, 'word')) {
-            return 'text';
-        }
-
-        if (Str::contains($mime, 'css')) {
-            return 'text';
-        }
-
-        if (Str::contains($mime, 'javascript')) {
-            return 'text';
-        }
-
-        if (Str::contains($mime, 'plain')) {
-            return 'text';
-        }
-
-        if (Str::contains($mime, 'rtf')) {
-            return 'text';
-        }
-
-        if (Str::contains($mime, 'text')) {
-            return 'text';
-        }
-
-        return false;
-    }
-
-    /**
      * Return the Type of file.
      *
      * @param $file
@@ -445,20 +368,20 @@ trait GetFiles
             }
 
             return [
-                'id'                => 'folder_back',
-                'name'              => __('Go up'),
-                'path'              => $this->cleanSlashes($folderPath),
-                'type'              => 'dir',
-                'mime'              => 'dirBack',
-                'ext'               => false,
-                'size'              => 0,
-                'size_human'        => 0,
-                'thumb'             => null,
-                'asset'             => $this->cleanSlashes($this->storage->url($folderPath)),
-                'can'               => true,
-                'loading'           => false,
+                'id' => 'folder_back',
+                'name' => __('Go up'),
+                'path' => $this->cleanSlashes($folderPath),
+                'type' => 'dir',
+                'mime' => 'dirBack',
+                'ext' => false,
+                'size' => 0,
+                'size_human' => 0,
+                'thumb' => null,
+                'asset' => $this->cleanSlashes($this->storage->url($folderPath)),
+                'can' => true,
+                'loading' => false,
                 'last_modification' => false,
-                'date'              => false,
+                'date' => false,
             ];
         }
     }

@@ -17,7 +17,13 @@
         </template>
 
         <template v-else-if="field.type == 'text'">
-            <pre class="p-4"><code
+            <pre class="p-4" style="
+                width: 100%;
+                word-break: break-all;
+                word-wrap: break-word;
+                display: block;
+                overflow: auto;
+            "><code
                 ref="code"
                 v-html="field.source"
             ></code></pre>

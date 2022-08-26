@@ -117,11 +117,11 @@ class FileManagerService
         }
 
         return response()->json([
-            'files'   => $files,
-            'path'    => $this->getPaths($folder),
+            'files' => $files,
+            'path' => $this->getPaths($folder),
             'filters' => $filters,
             'buttons' => $this->getButtons(),
-            'parent'  => $parent,
+            'parent' => $parent,
         ]);
     }
 
@@ -468,14 +468,14 @@ class FileManagerService
     private function getButtons()
     {
         return config('filemanager.buttons', [
-            'create_folder'   => true,
-            'upload_button'   => true,
+            'create_folder' => true,
+            'upload_button' => true,
             'select_multiple' => true,
-            'upload_drag'     => true,
-            'rename_folder'   => true,
-            'delete_folder'   => true,
-            'rename_file'     => true,
-            'delete_file'     => true,
+            'upload_drag' => true,
+            'rename_folder' => true,
+            'delete_folder' => true,
+            'rename_file' => true,
+            'delete_file' => true,
         ]);
     }
 
