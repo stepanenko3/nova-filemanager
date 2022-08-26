@@ -39,13 +39,13 @@
                 @refresh="refreshCurrent"
             />
 
-            <!-- <UploadProgress
+            <UploadProgress
                 ref="uploader"
                 :current="currentPath"
                 :visibility="currentField.visibility"
                 :rules="currentField.upload_rules"
                 @removeFile="removeFileFromUpload"
-            ></UploadProgress> -->
+            ></UploadProgress>
 
             <FileSelect
                 :id="currentField.name"
