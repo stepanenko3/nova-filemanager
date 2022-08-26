@@ -23,14 +23,6 @@
             ></code></pre>
         </template>
 
-        <!-- <template v-else-if="field.type == 'zip'">
-            <TreeView
-                v-if="zipLoaded"
-                :json="field.source"
-                :name="field.name"
-            ></TreeView>
-        </template> -->
-
         <template v-else-if="field.type == 'pdf'">
             <object :data="field.url" type="application/pdf" width="100%" height="100%">
                 <iframe :src="field.url" width="100%" height="100%" style="border: none">

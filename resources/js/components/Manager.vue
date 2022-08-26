@@ -16,19 +16,21 @@
                 </svg>
             </OutlineButton>
 
-            <label
-                v-if="buttons.upload_button"
-                class="mr-2"
-            >
-                <DefaultButton>
+            <template v-if="buttons.upload_button">
+                <DefaultButton
+                    class="mr-2"
+                    @click="$refs.uploadFileInput.click()"
+                >
                     {{ __('Upload') }}
                 </DefaultButton>
                 <input
+                    ref="uploadFileInput"
                     type="file"
+                    class="hidden"
                     multiple="true"
                     @change="uploadFilesByButton"
                 />
-            </label>
+            </template>
 
             <DefaultButton
                 v-if="buttons.create_folder"
