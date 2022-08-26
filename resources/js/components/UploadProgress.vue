@@ -1,5 +1,5 @@
 <template>
-    <div class="stack-uploads fixed pin-b bg-white shadow" v-if="files.length > 0">
+    <div class="stack-uploads fixed bg-white dark:bg-gray-800 rounded-lg shadow" v-if="files.length > 0">
         <div class="files p-4" v-if="type == 'folders'">
             <transition name="fade">
                 <div class="flex flex-wrap w-full items-center">
@@ -16,13 +16,17 @@
                     </div>
                     <div class="w-2/3 text-xs">
                         <template v-if="error">
-                            <div class="text-danger">{{ __('Error on upload') }}</div>
+                            <div class="text-danger">
+                                {{ __('Error on upload') }}
+                                </div>
                         </template>
                         <template v-else>
                             {{ __('Uploading Folder') }}
+
                             <small v-if="totalPercent == 100" class="text-success uppercase">{{
                                 __('Success')
                             }}</small>
+
                             <progress-module
                                 :percent="totalPercent"
                                 type="folder"
@@ -33,43 +37,43 @@
             </transition>
         </div>
 
-        <div class="files p-4" v-for="(file, indexFiles) in files" v-bind:key="indexFiles" v-else>
-            <transition name="fade">
-                <div
-                    class="flex flex-wrap w-full items-center"
-                    v-bind:key="indexFiles"
-                    v-if="file.upload == true"
-                >
-                    <div class="preview w-1/3">
-                        <img
-                            class="rounded-full w-12 h-12"
-                            v-if="isImage(file)"
-                            :src="file.preview"
-                        />
-                        <div
-                            v-else
-                            class="rounded-full bg-50 w-12 h-12 flex justify-center items-center"
-                        >
-                            <div class="uppercase">
-                                {{ file.preview }}
-                            </div>
+        <div class="p-4" v-for="(file, indexFiles) in files" v-bind:key="indexFiles" v-else>
+            <div
+                class="flex flex-wrap w-full items-center"
+                v-bind:key="indexFiles"
+                v-if="file.upload == true"
+            >
+                <div class="mr-4">
+                    <img
+                        class="rounded-full w-12 h-12"
+                        v-if="isImage(file)"
+                        :src="file.preview"
+                    />
+                    <div
+                        v-else
+                        class="rounded-full bg-50 w-12 h-12 flex justify-center items-center"
+                    >
+                        <div class="uppercase">
+                            {{ file.preview }}
                         </div>
                     </div>
-                    <div class="w-2/3 text-xs">
-                        <template v-if="file.error">
-                            <div class="text-danger">{{ __('Error on upload') }}</div>
-                        </template>
-                        <template v-else>
-                            {{ truncate(file.name, 15) }}
-
-                            <small v-if="file.progress == 100" class="text-success uppercase">{{
-                                __('Success')
-                            }}</small>
-                            <progress-module :file="file"></progress-module>
-                        </template>
-                    </div>
                 </div>
-            </transition>
+
+                <div class="text-xs">
+                    <template v-if="file.error">
+                        <div class="text-danger">{{ __('Error on upload') }}</div>
+                    </template>
+                    <template v-else>
+                        {{ truncate(file.name, 15) }}
+
+                        <small v-if="file.progress == 100" class="text-success uppercase">{{
+                            __('Success')
+                        }}</small>
+
+                        <progress-module :file="file"></progress-module>
+                    </template>
+                </div>
+            </div>
         </div>
     </div>
 </template>
