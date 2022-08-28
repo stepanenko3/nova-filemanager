@@ -1,6 +1,6 @@
 <?php
 
-namespace Stepanenko3\NovaFilemanager\Http\Services;
+namespace Stepanenko3\NovaFilemanager\Services;
 
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\Request;
@@ -59,7 +59,9 @@ class FileManagerService
     {
         $this->disk = config('filemanager.disk', 'public');
 
-        $this->exceptFiles = collect([]);
+        $this->exceptFiles = collect([
+            '.DS_Store',
+        ]);
         $this->exceptFolders = collect([]);
         $this->exceptExtensions = collect([]);
         $this->globalFilter = null;
@@ -94,6 +96,7 @@ class FileManagerService
         $this->setRelativePath($folder);
 
         $order = $request->get('sort');
+
         if (!$order) {
             $order = config('filemanager.order', 'mime');
         }
@@ -107,21 +110,17 @@ class FileManagerService
         $parent = (object) [];
 
         if ($files->count() > 0) {
-            $folders = $files->filter(function ($file) {
-                return $file->type == 'dir';
-            });
-
             if ($folder !== '/') {
                 $parent = $this->generateParent($folder);
             }
         }
 
         return response()->json([
-            'files'   => $files,
-            'path'    => $this->getPaths($folder),
+            'files' => $files,
+            'path' => $this->getPaths($folder),
             'filters' => $filters,
             'buttons' => $this->getButtons(),
-            'parent'  => $parent,
+            'parent' => $parent,
         ]);
     }
 
@@ -160,7 +159,7 @@ class FileManagerService
     public function deleteDirectory($path)
     {
         if ($this->storage->deleteDirectory($path)) {
-            event(new FolderRemoved($this->storage, $path));
+            event(new FolderRemoved($this->disk, $path));
 
             return response()->json(true);
         } else {
@@ -190,8 +189,8 @@ class FileManagerService
             $this->setVisibility($currentFolder, $fileName, $visibility);
 
             if (!$uploadingFolder) {
-                $this->checkJobs($this->storage, $currentFolder . $fileName);
-                event(new FileUploaded($this->storage, $currentFolder . $fileName));
+                $this->checkJobs($this->disk, $currentFolder . $fileName);
+                event(new FileUploaded($this->disk, $currentFolder . $fileName));
             }
 
             return response()->json(['success' => true, 'name' => $fileName]);
@@ -226,13 +225,19 @@ class FileManagerService
      */
     public function getFileInfo($file)
     {
-        $fullPath = $this->storage->path($file);
         try {
-            $info = new NormalizeFile($this->storage, $fullPath, $file);
+            $info = new NormalizeFile(
+                storage: $this->storage,
+                path: $file,
+                withExtras: true,
+            );
 
             return response()->json($info->toArray());
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 404);
         }
     }
 
@@ -249,9 +254,10 @@ class FileManagerService
             return [];
         }
 
-        $fullPath = $this->storage->path($file);
-
-        $info = new NormalizeFile($this->storage, $fullPath, $file);
+        $info = new NormalizeFile(
+            storage: $this->storage,
+            path: $file,
+        );
 
         return $info->toArray();
     }
@@ -267,7 +273,7 @@ class FileManagerService
     public function removeFile($file)
     {
         if ($this->storage->delete($file)) {
-            event(new FileRemoved($this->storage, $file));
+            event(new FileRemoved($this->disk, $file));
 
             return response()->json(true);
         } else {
@@ -302,9 +308,10 @@ class FileManagerService
                 }
 
                 if ($this->storage->copy($file, $path . $newName)) {
-                    $fullPath = $this->storage->path($path . $newName);
-
-                    $info = new NormalizeFile($this->storage, $fullPath, $path . $newName);
+                    $info = new NormalizeFile(
+                        storage: $this->storage,
+                        path: $path . $newName,
+                    );
 
                     return response()->json(['success' => true, 'data' => $info->toArray()]);
                 }
@@ -323,9 +330,10 @@ class FileManagerService
 
         try {
             if ($this->storage->move($file, $path . $newName)) {
-                $fullPath = $this->storage->path($path . $newName);
-
-                $info = new NormalizeFile($this->storage, $fullPath, $path . $newName);
+                $info = new NormalizeFile(
+                    storage: $this->storage,
+                    path: $path . $newName,
+                );
 
                 return response()->json(['success' => true, 'data' => $info->toArray()]);
             }
@@ -378,9 +386,10 @@ class FileManagerService
             $this->storage->deleteDirectory($dir);
         }
 
-        $fullPath = $this->storage->path($newDir);
-
-        $info = new NormalizeFile($this->storage, $fullPath, $newDir);
+        $info = new NormalizeFile(
+            storage: $this->storage,
+            path: $newDir,
+        );
 
         return response()->json(['success' => true, 'data' => $info->toArray()]);
     }
@@ -411,7 +420,7 @@ class FileManagerService
      */
     public function folderUploadedEvent($path)
     {
-        event(new FolderUploaded($this->storage, $path));
+        event(new FolderUploaded($this->disk, $path));
 
         return response()->json(['success' => true]);
     }
@@ -450,16 +459,19 @@ class FileManagerService
     private function getAvailableFilters($files)
     {
         $filters = config('filemanager.filters', []);
-        if (count($filters) > 0) {
-            return collect($filters)->filter(function ($extensions) use ($files) {
-                foreach ($files as $file) {
-                    if (in_array($file->ext, $extensions)) {
-                        return true;
-                    }
-                }
 
-                return false;
-            })->toArray();
+        if (count($filters) > 0) {
+            return collect($filters)
+                ->filter(function ($extensions) use ($files) {
+                    foreach ($files as $file) {
+                        if (in_array($file['ext'], $extensions)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                })
+                ->toArray();
         }
 
         return [];
@@ -468,14 +480,14 @@ class FileManagerService
     private function getButtons()
     {
         return config('filemanager.buttons', [
-            'create_folder'   => true,
-            'upload_button'   => true,
+            'create_folder' => true,
+            'upload_button' => true,
             'select_multiple' => true,
-            'upload_drag'     => true,
-            'rename_folder'   => true,
-            'delete_folder'   => true,
-            'rename_file'     => true,
-            'delete_file'     => true,
+            'upload_drag' => true,
+            'rename_folder' => true,
+            'delete_folder' => true,
+            'rename_file' => true,
+            'delete_file' => true,
         ]);
     }
 
@@ -483,7 +495,7 @@ class FileManagerService
      * @param $currentPath
      * @param $fileName
      */
-    private function checkJobs($storage, $filePath)
+    private function checkJobs($disk, $filePath)
     {
         $ext = pathinfo($filePath, PATHINFO_EXTENSION);
 
@@ -504,7 +516,7 @@ class FileManagerService
             $filterFind = array_key_first($find->toArray());
 
             if ($jobClass = $availableJobs->get($filterFind)) {
-                $job = new $jobClass($storage, $filePath);
+                $job = new $jobClass($disk, $filePath);
 
                 if ($customQueue = config('filemanager.queue_name')) {
                     $job->onQueue($customQueue);

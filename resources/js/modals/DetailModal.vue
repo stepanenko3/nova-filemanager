@@ -19,12 +19,12 @@
 
             <div class="flex flex-col md:flex-row">
                 <DetailView class="w-full md:w-3/5 flex-shrink-0 " :field="info" />
-                <div class="w-full md:w-2/5 p-4 bg-gray-100 dark:bg-gray-900">
+                <div class="w-full md:w-2/5 p-4 bg-white dark:bg-gray-800">
                     <div class="w-full mb-2">
                         <div class="mb-1">{{ __('Name') }}:</div>
                         <div class="w-full mt-1 flex items-center">
                             <span
-                                class="flex-grow bg-white dark:bg-gray-800 rounded-lg px-2 py-1 truncate"
+                                class="flex-grow bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1 truncate"
                                 v-if="!editingName"
                             >
                                 {{ info.name }}
@@ -45,7 +45,7 @@
                                         type="text"
                                         v-bind:ref="'inputName'"
                                         v-model="nameNoExtension"
-                                        class="w-full bg-white dark:bg-gray-800 rounded-lg px-2 py-1"
+                                        class="w-full bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1"
                                     />
 
                                     <Icon
@@ -68,30 +68,30 @@
                         </div>
                     </div>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.mime">
+                    <div class="w-full flex items-center mb-2" v-if="info.mimeType">
                         <span class="mr-2"> {{ __('Mime Type') }}: </span>
-                        <span class="bg-white dark:bg-gray-800 rounded-lg px-2 py-1 break-all">
+                        <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1 break-all">
                             {{ info.mime }}
                         </span>
                     </div>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.date">
+                    <div class="w-full flex items-center mb-2" v-if="info.lastModifiedText">
                         <span class="mr-2"> {{ __('Last Modification') }}: </span>
-                        <span class="bg-white dark:bg-gray-800 rounded-lg px-2 py-1">
-                            {{ info.date }}
+                        <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
+                            {{ info.lastModifiedText }}
                         </span>
                     </div>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.size">
+                    <div class="w-full flex items-center mb-2" v-if="info.sizeText">
                         <span class="mr-2"> {{ __('Size') }}: </span>
-                        <span class="bg-white dark:bg-gray-800 rounded-lg px-2 py-1">
-                            {{ info.size }}
+                        <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
+                            {{ info.sizeText }}
                         </span>
                     </div>
 
                     <div class="w-full flex items-center mb-2" v-if="info.dimensions">
                         <span class="mr-2"> {{ __('Dimensions') }}: </span>
-                        <span class="bg-white dark:bg-gray-800 rounded-lg px-2 py-1">
+                        <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
                             {{ info.dimensions }}
                         </span>
                     </div>
@@ -100,7 +100,7 @@
                         <div class="mb-1">{{ __('Url') }}:</div>
                         <div class="w-full mt-1 flex items-center">
                             <div
-                                class="flex-grow bg-white dark:bg-gray-800 rounded-lg px-2 py-1 truncate"
+                                class="flex-grow bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1 truncate"
                             >
                                 {{ info.url }}
                             </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="progress mt-2 w-5/6">
+    <div class="progress mt-2 rounded-lg overflow-hidden">
         <div
             class="progress-bar file"
             :style="{ width: progressByFile }"
@@ -73,17 +73,11 @@
     }
 
     .progress .progress-bar {
-            animation-duration: 3s;
-            animation-name: width;
-            background-image: linear-gradient(to right,
-                    #4cd964,
-                    #5ac8fa,
-                    #007aff,
-                    #34aadc,
-                    #5856d6,
-                    #ff2d55);
-            background-size: 24em 0.25em;
-            height: 100%;
-            position: relative;
-        }
+        animation-duration: 3s;
+        animation-name: width;
+        background: #4cd964;
+        background-size: 24em 0.25em;
+        height: 100%;
+        position: relative;
+    }
 </style>

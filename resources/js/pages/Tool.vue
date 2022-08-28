@@ -56,11 +56,11 @@
                 @createFolder="showModalCreateFolder"
             />
 
-            <!-- <UploadProgress
+            <UploadProgress
                 ref="uploader"
                 :current="currentPath"
                 @removeFile="removeFileFromUpload"
-            ></UploadProgress> -->
+            ></UploadProgress>
         </Card>
     </div>
 </template>
@@ -210,7 +210,10 @@
             removeFileFromUpload(uploadedFileId) {
                 let index = this.filesToUpload.map((item) => item.id).indexOf(uploadedFileId);
 
-                this.$delete(this.filesToUpload, index);
+                if (index > -1) {
+                    this.filesToUpload.splice(index, 1);
+                }
+
                 if (this.filesToUpload.length === 0) {
                     if (this.uploadType == 'folders') {
                         this.callFolderEvent(this.folderUploadedName);

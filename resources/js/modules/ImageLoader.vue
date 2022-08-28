@@ -14,15 +14,15 @@
             </div>
 
             <div
-                v-if="file.mime != 'image'"
+                v-if="file.mimeType != 'image'"
                 class="flex-grow flex items-center justify-center p-4"
                 style="height: 160px"
             >
-                <Icon :type="mimeIcons[file.mime] || mimeIcons.text" width="48" height="48" />
+                <Icon :type="mimeIcons[file.mimeType] || mimeIcons.text" width="48" height="48" />
             </div>
 
             <img
-                v-if="file.mime == 'image'"
+                v-if="file.mimeType == 'image'"
                 :src="file.thumb"
                 class="block w-full flex-grow"
                 style="object-fit: contain; height: 160px"
@@ -122,14 +122,14 @@
                 </div>
 
                 <div
-                    v-if="file.mime != 'image'"
+                    v-if="file.mimeType != 'image'"
                     class="w-10 h-10 flex items-center justify-start"
                 >
-                    <Icon :type="mimeIcons[file.mime] || mimeIcons.text" width="32" height="32" />
+                    <Icon :type="mimeIcons[file.mimeType] || mimeIcons.text" width="32" height="32" />
                 </div>
 
                 <img
-                    v-if="file.mime == 'image'"
+                    v-if="file.mimeType == 'image'"
                     :src="file.thumb"
                     class="block w-10 h-10"
                     style="object-fit: contain"
@@ -153,11 +153,11 @@
             </td>
 
             <td class="text-center p-2 border-t border-gray-100 dark:border-gray-700 whitespace-nowrap cursor-pointer dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                {{ file.size_human }}
+                {{ file.sizeText }}
             </td>
 
             <td class="text-center p-2 border-t border-gray-100 dark:border-gray-700 whitespace-nowrap cursor-pointer dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                {{ file.date }}
+                {{ file.lastModifiedText }}
             </td>
 
             <td class="text-center py-1 pl-2 border-t border-gray-100 dark:border-gray-700 whitespace-nowrap cursor-pointer dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
@@ -260,7 +260,7 @@
         },
 
         mounted() {
-            if (this.file.mime !== 'image') {
+            if (this.file.mimeType !== 'image') {
                 this.loading = false;
             }
         },

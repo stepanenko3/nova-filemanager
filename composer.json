@@ -9,12 +9,13 @@
     "license": "MIT",
     "require": {
         "php": ">=7.1.0",
-        "laravel/nova": "^4.0"
+        "laravel/nova": "^4.0",
+        "stepanenko3/laravel-helpers": "*"
     },
     "repositories": [
         {
             "type": "path",
-            "url": "../nova"
+            "url": "../../snotax/vendor/laravel/nova"
         }
     ],
     "autoload": {

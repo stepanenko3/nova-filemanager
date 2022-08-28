@@ -17,7 +17,6 @@ class FilemanagerTool extends Tool
     public function boot()
     {
         Nova::script('nova-filemanager', __DIR__.'/../dist/js/tool.js');
-        // Nova::style('nova-filemanager', __DIR__.'/../dist/css/tool.css');
     }
 
     /**
@@ -29,6 +28,7 @@ class FilemanagerTool extends Tool
     public function menu(Request $request)
     {
         return MenuSection::make(__(config('nova-filemanager.navigation_label', 'Filemanager')))
-            ->path('/' . config('nova-filemanager.path', 'filemanager'));
+            ->path('/' . config('nova-filemanager.path', 'filemanager'))
+            ->icon('folder');
     }
 }
