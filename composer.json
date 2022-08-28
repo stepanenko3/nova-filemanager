@@ -12,12 +12,6 @@
         "laravel/nova": "^4.0",
         "stepanenko3/laravel-helpers": "*"
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../../snotax/vendor/laravel/nova"
-        }
-    ],
     "autoload": {
         "psr-4": {
             "Stepanenko3\\NovaFilemanager\\": "src/"
