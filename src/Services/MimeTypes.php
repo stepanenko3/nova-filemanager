@@ -1,6 +1,6 @@
 <?php
 
-namespace Stepanenko3\NovaFilemanager\Http\Services;
+namespace Stepanenko3\NovaFilemanager\Services;
 
 class MimeTypes
 {

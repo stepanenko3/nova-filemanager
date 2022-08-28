@@ -68,24 +68,24 @@
                         </div>
                     </div>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.mime">
+                    <div class="w-full flex items-center mb-2" v-if="info.mimeType">
                         <span class="mr-2"> {{ __('Mime Type') }}: </span>
                         <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1 break-all">
                             {{ info.mime }}
                         </span>
                     </div>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.date">
+                    <div class="w-full flex items-center mb-2" v-if="info.lastModifiedText">
                         <span class="mr-2"> {{ __('Last Modification') }}: </span>
                         <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
-                            {{ info.date }}
+                            {{ info.lastModifiedText }}
                         </span>
                     </div>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.size">
+                    <div class="w-full flex items-center mb-2" v-if="info.sizeText">
                         <span class="mr-2"> {{ __('Size') }}: </span>
                         <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
-                            {{ info.size }}
+                            {{ info.sizeText }}
                         </span>
                     </div>
 

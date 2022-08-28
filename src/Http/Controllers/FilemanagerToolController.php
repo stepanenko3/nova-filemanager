@@ -4,7 +4,7 @@ namespace Stepanenko3\NovaFilemanager\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Stepanenko3\NovaFilemanager\Http\Services\FileManagerService;
+use Stepanenko3\NovaFilemanager\Services\FileManagerService;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 class FilemanagerToolController extends Controller

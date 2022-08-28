@@ -1,8 +1,9 @@
 <?php
 
-namespace Stepanenko3\NovaFilemanager\Http\Services;
+namespace Stepanenko3\NovaFilemanager\Traits;
 
 use Illuminate\Support\Str;
+use Stepanenko3\NovaFilemanager\Services\MimeTypes;
 
 trait FileFunctions
 {
@@ -26,12 +27,11 @@ trait FileFunctions
                 'rtf',
                 'json',
                 'javascript',
-                'xml',
+                '/xml',
                 'sql',
             ],
 
             'word' => ['wordprocessingml'],
-
         ];
 
         foreach($types as $type => $contents) {
@@ -44,62 +44,67 @@ trait FileFunctions
     }
 
     /**
-     * @param $path
-     *
-     * @return string
+     * Generates an id based on file.
      */
-    public function checkPerms($path)
+    public function generateId(string $path): string
+    {
+        return md5(trim($path));
+    }
+
+    private function getCorrectMimeFileType(?string $extension, string $mime): string
+    {
+        $types = MimeTypes::checkMimeType($extension);
+
+        if (count($types) > 0) {
+            return reset($types);
+        }
+
+        // If no type
+
+        return $mime;
+    }
+
+    private function getDimensions(string $path, string $mime): string|bool
+    {
+        if (env('FILEMANAGER_DISK') != 'public') {
+            return false;
+        }
+
+        if (Str::contains($mime, 'image')) {
+            [$width, $height] = getimagesize($path);
+
+            if (!empty($width) && !empty($height)) {
+                return $width . 'x' . $height;
+            }
+        }
+
+        return false;
+    }
+
+    public function checkPerms(string $path): string
     {
         clearstatcache(false, $path);
 
         return decoct(fileperms($path) & 0777);
     }
 
-    /**
-     * @param $size
-     * @param int $level
-     * @param int $precision
-     * @param int $base
-     *
-     * @return string
-     */
-    public function formatBytes($size, $level = 0, $precision = 2, $base = 1024)
-    {
-        $unit = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        $times = floor(log($size, $base));
-
-        return sprintf('%.' . $precision . 'f', $size / pow($base, ($times + $level))) . ' ' . $unit[$times + $level];
-    }
-
-    /**
-     * Clean Slashes.
-     *
-     * @param $str
-     *
-     * @return string
-     */
-    public function cleanSlashes($str)
+    public function cleanSlashes(?string $str): string
     {
         return preg_replace('/([^:])(\/{2,})/', '$1/', $str);
     }
 
-    /**
-     * Cleanup filename.
-     *
-     * @param  string  $str
-     *
-     * @return string
-     */
-    public function fixFilename($str)
+    public function fixFilename(string $str): string
     {
         if (!mb_detect_encoding($str, 'UTF-8', true)) {
             $str = utf8_encode($str);
         }
+
         if (function_exists('transliterator_transliterate')) {
             $str = transliterator_transliterate('Any-Latin; Latin-ASCII', $str);
         } else {
             $str = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
         }
+
         $str = preg_replace("/[^a-zA-Z0-9\.\[\]_| -]/", '', $str);
 
         $str = str_replace(['"', "'", '/', '\\'], '', $str);
@@ -108,14 +113,7 @@ trait FileFunctions
         return trim($str);
     }
 
-    /**
-     * Cleanup directory name.
-     *
-     * @param  string  $str
-     *
-     * @return  string
-     */
-    public function fixDirname($str)
+    public function fixDirname(string $str): string
     {
         return str_replace(['.', '~', '/', '\\'], '', $str);
     }

@@ -3,7 +3,7 @@
 namespace Stepanenko3\NovaFilemanager;
 
 use Illuminate\Validation\Rule;
-use Stepanenko3\NovaFilemanager\Http\Services\FileManagerService;
+use Stepanenko3\NovaFilemanager\Services\FileManagerService;
 use Stepanenko3\NovaFilemanager\Traits\CoverHelpers;
 use Laravel\Nova\Contracts\Cover;
 use Laravel\Nova\Fields\Field;

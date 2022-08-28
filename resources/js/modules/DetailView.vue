@@ -1,22 +1,22 @@
 <template>
     <div class="flex items-center justify-center" :class="class" style="min-height: 400px">
-        <template v-if="field.type == 'image'">
-            <img class="h-full w-full" :src="field.image" style="object-fit: contain" />
+        <template v-if="field.mimeType == 'image'">
+            <img class="h-full w-full" :src="field.url" style="object-fit: contain" />
         </template>
 
-        <template v-else-if="field.type == 'audio'">
+        <template v-else-if="field.mimeType == 'audio'">
             <audio ref="audio" controls>
-                <source :src="field.src" :type="field.mime" />
+                <source :src="field.url" :type="field.mime" />
             </audio>
         </template>
 
-        <template v-else-if="field.type == 'video'">
+        <template v-else-if="field.mimeType == 'video'">
             <video ref="video" controls crossorigin playsinline>
                 <source :src="field.url" :type="field.mime" />
             </video>
         </template>
 
-        <template v-else-if="field.type == 'text'">
+        <template v-else-if="field.mimeType == 'text'">
             <pre class="p-4" style="
                 width: 100%;
                 word-break: break-all;
@@ -29,7 +29,7 @@
             ></code></pre>
         </template>
 
-        <template v-else-if="field.type == 'pdf'">
+        <template v-else-if="field.mimeType == 'pdf'">
             <object :data="field.url" type="application/pdf" width="100%" height="100%">
                 <iframe :src="field.url" width="100%" height="100%" style="border: none">
                     <object class="no-preview" v-html="field.image"></object>
@@ -38,7 +38,7 @@
         </template>
 
         <template v-else>
-            <Icon :type="mimeIcons[field.mime] || mimeIcons.text" width="64" height="64" />
+            <Icon :type="mimeIcons[field.mimeType] || mimeIcons.text" width="64" height="64" />
         </template>
     </div>
 </template>

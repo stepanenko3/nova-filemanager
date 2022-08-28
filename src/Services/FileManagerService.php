@@ -1,6 +1,6 @@
 <?php
 
-namespace Stepanenko3\NovaFilemanager\Http\Services;
+namespace Stepanenko3\NovaFilemanager\Services;
 
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Http\Request;
@@ -59,7 +59,9 @@ class FileManagerService
     {
         $this->disk = config('filemanager.disk', 'public');
 
-        $this->exceptFiles = collect([]);
+        $this->exceptFiles = collect([
+            '.DS_Store',
+        ]);
         $this->exceptFolders = collect([]);
         $this->exceptExtensions = collect([]);
         $this->globalFilter = null;
@@ -94,6 +96,7 @@ class FileManagerService
         $this->setRelativePath($folder);
 
         $order = $request->get('sort');
+
         if (!$order) {
             $order = config('filemanager.order', 'mime');
         }
@@ -107,10 +110,6 @@ class FileManagerService
         $parent = (object) [];
 
         if ($files->count() > 0) {
-            $folders = $files->filter(function ($file) {
-                return $file->type == 'dir';
-            });
-
             if ($folder !== '/') {
                 $parent = $this->generateParent($folder);
             }
@@ -226,13 +225,19 @@ class FileManagerService
      */
     public function getFileInfo($file)
     {
-        $fullPath = $this->storage->path($file);
         try {
-            $info = new NormalizeFile($this->storage, $fullPath, $file);
+            $info = new NormalizeFile(
+                storage: $this->storage,
+                path: $file,
+                withExtras: true,
+            );
 
             return response()->json($info->toArray());
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 404);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 404);
         }
     }
 
@@ -249,9 +254,10 @@ class FileManagerService
             return [];
         }
 
-        $fullPath = $this->storage->path($file);
-
-        $info = new NormalizeFile($this->storage, $fullPath, $file);
+        $info = new NormalizeFile(
+            storage: $this->storage,
+            path: $file,
+        );
 
         return $info->toArray();
     }
@@ -302,9 +308,10 @@ class FileManagerService
                 }
 
                 if ($this->storage->copy($file, $path . $newName)) {
-                    $fullPath = $this->storage->path($path . $newName);
-
-                    $info = new NormalizeFile($this->storage, $fullPath, $path . $newName);
+                    $info = new NormalizeFile(
+                        storage: $this->storage,
+                        path: $path . $newName,
+                    );
 
                     return response()->json(['success' => true, 'data' => $info->toArray()]);
                 }
@@ -323,9 +330,10 @@ class FileManagerService
 
         try {
             if ($this->storage->move($file, $path . $newName)) {
-                $fullPath = $this->storage->path($path . $newName);
-
-                $info = new NormalizeFile($this->storage, $fullPath, $path . $newName);
+                $info = new NormalizeFile(
+                    storage: $this->storage,
+                    path: $path . $newName,
+                );
 
                 return response()->json(['success' => true, 'data' => $info->toArray()]);
             }
@@ -378,9 +386,10 @@ class FileManagerService
             $this->storage->deleteDirectory($dir);
         }
 
-        $fullPath = $this->storage->path($newDir);
-
-        $info = new NormalizeFile($this->storage, $fullPath, $newDir);
+        $info = new NormalizeFile(
+            storage: $this->storage,
+            path: $newDir,
+        );
 
         return response()->json(['success' => true, 'data' => $info->toArray()]);
     }
@@ -450,16 +459,19 @@ class FileManagerService
     private function getAvailableFilters($files)
     {
         $filters = config('filemanager.filters', []);
-        if (count($filters) > 0) {
-            return collect($filters)->filter(function ($extensions) use ($files) {
-                foreach ($files as $file) {
-                    if (in_array($file->ext, $extensions)) {
-                        return true;
-                    }
-                }
 
-                return false;
-            })->toArray();
+        if (count($filters) > 0) {
+            return collect($filters)
+                ->filter(function ($extensions) use ($files) {
+                    foreach ($files as $file) {
+                        if (in_array($file['ext'], $extensions)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                })
+                ->toArray();
         }
 
         return [];

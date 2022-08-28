@@ -18,7 +18,7 @@
                 class="flex-grow flex items-center justify-center p-4"
                 style="height: 160px"
             >
-                <Icon :type="mimeIcons[file.mime] || mimeIcons.dir" width="48" height="48" />
+                <Icon :type="mimeIcons[file.mimeType] || mimeIcons.dir" width="48" height="48" />
             </div>
 
             <div
@@ -105,7 +105,7 @@
                 </div>
 
                 <div class="flex-grow flex items-center justify-start">
-                    <Icon :type="mimeIcons[file.mime] || mimeIcons.dir" width="32" height="32" />
+                    <Icon :type="mimeIcons[file.mimeType] || mimeIcons.dir" width="32" height="32" />
                 </div>
             </td>
 
@@ -114,11 +114,11 @@
             </td>
 
             <td class="text-center p-2 border-t border-gray-100 dark:border-gray-700 whitespace-nowrap cursor-pointer dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                {{ file.fize? file.size_human : '-' }}
+                {{ file.sizeText || '-' }}
             </td>
 
             <td class="text-center p-2 border-t border-gray-100 dark:border-gray-700 whitespace-nowrap cursor-pointer dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                {{ file.date || '-' }}
+                {{ file.lastModifiedText || '-' }}
             </td>
             <td class="text-center py-1 pl-2 border-t border-gray-100 dark:border-gray-700 whitespace-nowrap cursor-pointer dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
                 <div class="flex items-center justify-end" v-if="file.id != 'folder_back'">

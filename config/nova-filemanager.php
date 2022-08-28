@@ -101,9 +101,9 @@ return [
     | Naming strategy
     |--------------------------------------------------------------------------
     | Resolve the upload file name with a class that extends
-    | Stepanenko3\NovaFilemanager\Http\Services\AbstractNamingStrategy
+    | Stepanenko3\NovaFilemanager\Services\AbstractNamingStrategy
      */
-    'naming' => Stepanenko3\NovaFilemanager\Http\Services\DefaultNamingStrategy::class,
+    'naming' => Stepanenko3\NovaFilemanager\Services\DefaultNamingStrategy::class,
 
     /*
     |--------------------------------------------------------------------------

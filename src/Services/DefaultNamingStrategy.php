@@ -1,6 +1,6 @@
 <?php
 
-namespace Stepanenko3\NovaFilemanager\Http\Services;
+namespace Stepanenko3\NovaFilemanager\Services;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
