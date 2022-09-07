@@ -1,117 +1,127 @@
 <template>
-    <Modal
-        :show="active"
-        @closing="handleClose"
-        @close-via-escape="handleClose"
-        maxWidth=""
+    <div
+        class="filemanager-preview flex flex-col justify-start bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700"
+        :class="{
+            'filemanager-preview--active': active,
+            'filemanager-preview--full': full,
+        }"
     >
-        <div
-            class="mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
-            style="max-width: 1080px"
-        >
-            <ModalHeader class="flex items-center justify-between">
-                <div>
-                    {{ __('Preview of') }}
-                    <span class="text-primary-500">
-                        {{ info.name }}
-                    </span>
-                </div>
+        <div class="flex items-center px-2 py-1">
+            <ToolbarButton @click.prevent="handleClose">
+                <Icon type="x" width="18" height="18" />
+            </ToolbarButton>
 
-                <OutlineButton @click="closePreview">
-                   <Icon type="x" width="16" height="16" />
-                </OutlineButton>
-            </ModalHeader>
+            <ToolbarButton
+                @click.prevent="full = !full"
+                :class="{ 'text-green-500': full }"
+            >
+                <Icon type="arrows-expand" width="18" height="18" />
+            </ToolbarButton>
 
-            <div class="flex flex-col md:flex-row">
-                <DetailView class="w-full md:w-3/5 flex-shrink-0 " :field="info" />
+            <div class="flex items-center ml-auto">
+                <ToolbarButton
+                    class="md:col-span-4 text-green-500"
+                    v-if="popup"
+                    @click="select"
+                >
+                    <Icon
+                        type="check-circle"
+                        width="18"
+                        height="18"
+                    />
+                </ToolbarButton>
 
-                <div class="w-full md:w-2/5 p-4 bg-white dark:bg-gray-800">
-                    <div class="w-full mb-2">
-                        <div class="mb-1">{{ __('Name') }}:</div>
-                        <div class="w-full mt-1 flex items-center">
-                            <span
-                                class="flex-grow bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1 truncate"
-                                v-if="!editingName"
-                            >
-                                {{ info.name }}
-                            </span>
+                <a
+                    class="md:col-span-4 flex"
+                    :href="`/nova-vendor/nova-filemanager/files/download?disk=${this.disk}&path=${this.info.path}`"
+                >
+                    <ToolbarButton class="flex-grow">
+                        <Icon type="download" width="18" height="18" />
+                    </ToolbarButton>
+                </a>
 
-                            <Icon
-                                v-if="!editingName"
-                                width="16"
-                                height="16"
-                                type="pencil-alt"
-                                @click="editName"
-                                class="ml-2 cursor-pointer hover:opacity-50 flex-shrink-0"
-                            />
+                <ToolbarButton
+                    @click.prevent="rename"
+                >
+                    <Icon type="pencil-alt" width="18" height="18" />
+                </ToolbarButton>
 
-                            <template v-else-if="editingName">
-                                <input
-                                    type="text"
-                                    v-bind:ref="'inputName'"
-                                    v-model="nameNoExtension"
-                                    class="w-full bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1"
-                                />
+                <ToolbarButton
+                    @click.prevent="duplicate"
+                >
+                    <Icon type="duplicate" width="18" height="18" />
+                </ToolbarButton>
 
-                                <Icon
-                                    width="16"
-                                    height="16"
-                                    type="check-circle"
-                                    @click="rename"
-                                    class="ml-2 text-green-500 cursor-pointer hover:opacity-50 flex-shrink-0"
-                                />
+                <ToolbarButton
+                    @click.prevent="deleteFile"
+                    class="text-red-500"
+                >
+                    <Icon type="trash" width="18" height="18" />
+                </ToolbarButton>
+            </div>
+        </div>
 
-                                <Icon
-                                    width="16"
-                                    height="16"
-                                    type="x-circle"
-                                    @click="editingName = !editingName"
-                                    class="ml-2 cursor-pointer hover:opacity-50 flex-shrink-0"
-                                />
-                            </template>
-                        </div>
-                    </div>
+        <div class="filemanager-preview__content">
+            <div class="px-4 font-bold text-sm py-2">
+                {{ info.name }}
+            </div>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.mime">
-                        <span class="mr-2"> {{ __('Mime Type') }}: </span>
-                        <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1 break-all">
-                            {{ info.mime }}
-                        </span>
-                    </div>
+            <DetailView class="w-full bg-gray-100 dark:bg-gray-900" :field="info" />
 
-                    <div class="w-full flex items-center mb-2" v-if="info.lastModifiedReadable">
-                        <span class="mr-2"> {{ __('Last Modification') }}: </span>
-                        <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
-                            {{ info.lastModifiedReadable }}
-                        </span>
-                    </div>
+            <table class="table text-left w-full">
+                <tr v-if="info.mime">
+                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-5 pr-5 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        {{ __('Mime Type') }}:
+                    </td>
+                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-5 pr-5 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        {{ info.mime }}
+                    </td>
+                </tr>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.sizeReadable">
-                        <span class="mr-2"> {{ __('Size') }}: </span>
-                        <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
-                            {{ info.sizeReadable }}
-                        </span>
-                    </div>
+                <tr v-if="info.lastModifiedReadable">
+                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-5 pr-5 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        {{ __('Last Modification') }}:
+                    </td>
+                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-5 pr-5 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        {{ info.lastModifiedReadable }}
+                    </td>
+                </tr>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.meta.width && info.meta.height">
-                        <span class="mr-2"> {{ __('Dimensions') }}: </span>
-                        <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
-                            {{ info.meta.width }}x{{ info.meta.height }}
-                        </span>
-                    </div>
+                <tr v-if="info.sizeReadable">
+                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-5 pr-5 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        {{ __('Size') }}:
+                    </td>
+                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-5 pr-5 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        {{ info.sizeReadable }}
+                    </td>
+                </tr>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.meta.aspectRatio">
-                        <span class="mr-2"> {{ __('Aspect Ratio') }}: </span>
-                        <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
-                            {{ info.meta.aspectRatio }}
-                        </span>
-                    </div>
+                <tr v-if="info.meta.width && info.meta.height">
+                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-5 pr-5 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        {{ __('Dimensions') }}:
+                    </td>
+                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-5 pr-5 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        {{ info.meta.width }}x{{ info.meta.height }}
+                    </td>
+                </tr>
 
-                    <div class="w-full mb-4" v-if="info.url">
-                        <div class="mb-1">{{ __('Url') }}:</div>
-                        <div class="w-full mt-1 flex items-center">
+                <tr v-if="info.meta.aspectRatio">
+                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-5 pr-5 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        {{ __('Aspect Ratio') }}:
+                    </td>
+                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-5 pr-5 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        {{ info.meta.aspectRatio }}
+                    </td>
+                </tr>
+
+                <tr v-if="info.url">
+                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-5 pr-5 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        {{ __('Url') }}:
+                    </td>
+                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-5 pr-5 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        <div class="flex items-center">
                             <div
-                                class="flex-grow bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1 truncate"
+                                class="flex-grow truncate"
                             >
                                 {{ info.url }}
                             </div>
@@ -124,75 +134,17 @@
                                 class="ml-2 cursor-pointer hover:opacity-50 flex-shrink-0"
                             />
                         </div>
-                    </div>
-
-                    <div class="grid md:grid-cols-12 gap-4">
-                        <DefaultButton
-                            class="md:col-span-4"
-                            v-if="popup"
-                            @click="selectFile"
-                        >
-                            <Icon
-                                type="check-circle"
-                                class="mr-1"
-                                width="18"
-                                height="18"
-                            />
-
-                            {{ __('Choose') }}
-                        </DefaultButton>
-
-                        <a
-                            class="md:col-span-4 flex"
-                            :href="`/nova-vendor/nova-filemanager/files/download?disk=${this.disk}&path=${this.info.path}`"
-                        >
-                            <DefaultButton class="flex-grow">
-                                <Icon
-                                    type="download"
-                                    class="mr-1"
-                                    width="18"
-                                    height="18"
-                                />
-
-                                {{ __('Download') }}
-                            </DefaultButton>
-                        </a>
-
-                        <ConfirmationButton
-                            class="md:col-span-4"
-                            :messages="[__('Delete'), __('Are you sure?'), __('Deleting...')]"
-                            @success="removeFile"
-                        >
-                            <template v-slot:start>
-                                <Icon type="trash" class="mr-1" width="18" height="18" />
-                            </template>
-                            <template v-slot:finish>
-                                <Icon type="check" class="mr-1" width="18" height="18" />
-                            </template>
-                        </ConfirmationButton>
-
-                        <ConfirmationButton
-                            class="md:col-span-4"
-                            :messages="[__('Duplicate'), __('Are you sure?'), __('Duplicating...')]"
-                            @success="duplicate"
-                        >
-                            <template v-slot:start>
-                                <Icon type="duplicate" class="mr-1" width="18" height="18" />
-                            </template>
-                            <template v-slot:finish>
-                                <Icon type="check" class="mr-1" width="18" height="18" />
-                            </template>
-                        </ConfirmationButton>
-                    </div>
-                </div>
-            </div>
+                    </td>
+                </tr>
+            </table>
         </div>
-    </Modal>
+    </div>
 </template>
 
 <script>
     import api from '../api';
     import MimeIconsEnum from '../tools/MimeIconsEnum'
+    import ToolbarButton from '../components/ToolbarButton'
     import ConfirmationButton from '../components/ConfirmationButton'
     import DetailView from '../modules/DetailView'
 
@@ -223,92 +175,38 @@
         },
 
         components: {
+            ToolbarButton: ToolbarButton,
             ConfirmationButton: ConfirmationButton,
             DetailView: DetailView,
         },
 
-        emits: ['refresh', 'closePreview', 'rename', 'selectFile'],
-
         data() {
             return {
-                loaded: false,
-                currentInfo: {},
-                zipLoaded: false,
-                cmOptions: {
-                    tabSize: 2,
-                    theme: 'dracula',
-                    lineNumbers: true,
-                    line: true,
-                    readOnly: true,
-                },
-                editingName: false,
-                nameNoExtension: null,
-                nameWidth: null,
-                inputElement: null,
-                correctName: null,
+                full: false,
                 mimeIcons: MimeIconsEnum,
             };
         },
 
         methods: {
-            closePreview() {
-                this.correctName = null;
-                this.editingName = false;
-                this.$emit('closePreview', true);
-            },
-
-            removeFile() {
-                this.closePreview();
-
-                return api.removeFile(this.info.path).then((result) => {
-                    if (result == true) {
-                        Nova.success(this.__('File removed successfully'));
-                        this.$emit('refresh');
-                    } else {
-                        Nova.error(this.__('Error removing the file. Please check permissions'));
-                    }
-                });
-            },
-
-            duplicate() {
-                this.closePreview();
-
-                return api.duplicate(this.info.path).then((result) => {
-                    if (result.success == true) {
-                        this.$emit('refresh');
-                        Nova.success(this.__('File duplicated successfully'));
-                    } else {
-                        Nova.error(this.__('Error duplicating the file. Please check permissions'));
-                    }
-                });
+            handleClose() {
+                this.$emit('close', true);
             },
 
             rename() {
-                this.correctName = this.nameNoExtension + '.' + this.info.ext;
-
-                return api.rename(this.info.path, this.correctName).then((result) => {
-                    if (result.success == true) {
-                        this.editingName = false;
-                        this.$emit('rename', result.data);
-                        this.$emit('refresh');
-                        Nova.success(this.__('File renamed successfully'));
-                    } else {
-                        Nova.error(this.__('Error renaming the file. Please check permissions'));
-                    }
-                });
+                this.$emit('rename', 'file', this.info.path);
             },
 
-            editName() {
-                this.editingName = true;
+            deleteFile() {
+                this.$emit('delete', 'file', this.info.path);
             },
 
-            selectFile() {
-                this.closePreview();
-                this.$emit('selectFile', this.info);
+            duplicate() {
+                this.$emit('duplicate', 'file', this.info.path);
             },
 
-            handleClose() {
-                this.closePreview();
+            select() {
+                this.handleClose();
+                this.$emit('select', this.info);
             },
 
             fallbackCopyTextToClipboard(text) {
@@ -353,77 +251,39 @@
                 );
             },
         },
-
-        mounted() {
-            this.loaded = false;
-            this.$nextTick(function () {
-                //
-            });
-        },
-
-        watch: {
-            'info.type': function (type) {
-                if (type == 'audio') {
-                    this.$nextTick(function () {
-                        //
-                    });
-                }
-
-                if (type == 'video') {
-                    this.$nextTick(function () {
-                        //
-                    });
-                }
-
-                if (type == 'text') {
-                    this.$nextTick(function () {
-                        //
-                    });
-                }
-
-                if (type == 'pdf') {
-                    this.$nextTick(function () {
-                        //
-                    });
-                }
-
-                if (type == 'zip') {
-                    this.$nextTick(function () {
-                        this.info.source = JSON.parse(this.info.source);
-                        this.zipLoaded = true;
-                    });
-                }
-
-                this.zipLoaded = false;
-            },
-
-            'info.name': function (name) {
-                if (name) {
-                    this.nameNoExtension = name.split('.').slice(0, -1).join('.');
-                }
-            },
-
-            nameNoExtension: function (name) {
-                if (name) {
-                    this.nameWidth = (name.length + 1) * 7;
-                }
-            },
-        },
     };
 </script>
 
 <style>
-    .break-all {
-        word-break: break-all;
+    .filemanager-preview {
+        position: fixed;
+        top: 8px;
+        right: 8px;
+        height: calc(100% - 16px);
+        width: 420px;
+        max-width: calc(100% - 16px);
+        z-index: 50;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translate3d(32px, 0, 0);
+        transition: transform .3s, opacity .3s;
     }
 
-    @media (min-width: 768px) {
-        .md\:w-2\/5 {
-            width: 40%;
-        }
+    .filemanager-preview--active {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: all;
+        transform: translate3d(0, 0, 0);
     }
 
-    .gap-4 {
-        gap: 1rem;
+    .filemanager-preview--full {
+        width: calc(100% - 16px);
+    }
+
+    .filemanager-preview__content {
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex-shrink: 1;
     }
 </style>

@@ -9,9 +9,11 @@
             :info="info"
             :active="activeInfo"
             :disk="disk"
-            @closePreview="closePreview"
-            @refresh="refreshCurrent"
-            @rename="fileRenamed"
+
+            @close="closePreview"
+            @rename="openRenameModal"
+            @delete="openDeleteModal"
+            @duplicate=""
         />
 
         <CreateFolderModal
@@ -196,6 +198,7 @@
                     return;
                 }
 
+                this.files.currentPage = 1;
                 this.path = path;
                 this.filter = null;
                 this.search = '';
@@ -248,7 +251,7 @@
                     return;
                 }
 
-                this.page = 1;
+                this.files.currentPage = 1;
                 this.filter = filter;
                 this.refresh();
             },
@@ -258,7 +261,7 @@
                     return;
                 }
 
-                this.page = 1;
+                this.files.currentPage = 1;
                 this.search = search;
                 this.refresh();
             },
@@ -268,7 +271,7 @@
                     return;
                 }
 
-                this.page = 1;
+                this.files.currentPage = 1;
 
                 this.getData(
                     this.path,
