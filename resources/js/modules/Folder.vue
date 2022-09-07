@@ -192,7 +192,9 @@
             },
 
             clickStrategy() {
-                return this.multiSelecting ? this.select() : this.goToFolder();
+                return this.multiSelecting && this.dir.id !== 'parent'
+                    ? this.select()
+                    : this.goToFolder();
             },
 
             goToFolder() {
