@@ -126,14 +126,14 @@
                     </td>
                     <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900 break-word whitespace-normal line-4">
                         <div
-                            class="inline-flex items-start leading-4"
+                            class="inline-flex items-start leading-4 cursor-pointer hover:opacity-50"
                             @click="copyTextToClipboard"
                         >
                             <Icon
                                 width="16"
                                 height="16"
                                 type="clipboard"
-                                class="mr-2 cursor-pointer hover:opacity-50 flex-shrink-0"
+                                class="mr-2 flex-shrink-0"
                             />
 
                             <span>
