@@ -8,7 +8,7 @@
             ref="detailPopup"
             :info="info"
             :active="activeInfo"
-            :buttons="buttons"
+            :disk="disk"
             @closePreview="closePreview"
             @refresh="refreshCurrent"
             @rename="fileRenamed"
@@ -16,52 +16,74 @@
 
         <CreateFolderModal
             :active="showCreateFolder"
-            :current="currentPath"
-            @closeCreateFolderModal="closeModalCreateFolder"
+            :path="path"
+            :disk="disk"
+            @close="closeModalCreateFolder"
             @refresh="refreshCurrent"
         />
 
-        <RenameModal ref="renameModal" @refresh="refreshCurrent" />
+        <RenameModal
+            ref="renameModal"
+            :disk="disk"
+            @refresh="refreshCurrent"
+        />
 
-        <ConfirmDeleteModal ref="confirmDelete" @refresh="refreshCurrent" />
+        <ConfirmDeleteModal
+            ref="confirmDelete"
+            :disk="disk"
+            @refresh="refreshCurrent"
+        />
 
         <ConfirmMultiDeleteModal
             ref="confirmMultiDelete"
+            :disk="disk"
             :selectedFiles="selectedFiles"
             @refresh="refreshCurrent"
         />
 
-        <Card class="relative" id="filemanager-manager">
+        <div class="relative" id="filemanager-manager">
             <Manager
                 ref="manager"
-                :files="files"
+
+                :card="true"
+
+                :loading="loading"
                 :path="path"
-                :current="currentPath"
-                :parent="parent"
-                :loading="loadingfiles"
+                :search="search"
+                :disk="disk"
+                :disks="disks"
+                :files="files"
+                :breadcrumbs="breadcrumbs"
+                :directories="directories"
+                :filter="filter"
                 :filters="filters"
-                :selectedFiles="selectedFiles"
-                :buttons="buttons"
                 :multiSelecting="multiSelecting"
-                @updated:multiSelecting="multiSelecting = $event"
-                @goToFolderManager="goToFolder"
-                @goToFolderManagerNav="goToFolderNav"
-                @refresh="refreshCurrent"
-                @uploadFiles="uploadFiles"
-                @showInfoItem="showInfoItem"
-                @rename="openRenameModal"
-                @delete="openDeleteModal"
-                @multiDelete="openMultiDeleteModal"
+                :selectedFiles="selectedFiles"
+                :pageLimits="pageLimits"
+
+                @refresh="refresh"
+                @goToFolder="goToFolder"
+                @goToPage="goToPage"
                 @select="select"
+                @delete="openDeleteModal"
+                @rename="openRenameModal"
+                @multiDelete="openMultiDeleteModal"
                 @createFolder="showModalCreateFolder"
+                @showInfo="showInfo"
+
+                @update:search="setSearch"
+                @update:disk="setDisk"
+                @update:filter="setFilter"
+                @update:perPage="setPerPage"
+                @update:multiSelecting="multiSelecting = $event"
             />
 
-            <UploadProgress
+            <!-- <UploadProgress
                 ref="uploader"
                 :current="currentPath"
                 @removeFile="removeFileFromUpload"
-            ></UploadProgress>
-        </Card>
+            ></UploadProgress> -->
+        </div>
     </div>
 </template>
 
@@ -92,62 +114,181 @@
         },
 
         data: () => ({
-            loaded: false,
-            loadingfiles: false,
-            activeDisk: null,
-            activeDiskBackups: [],
-            backupStatusses: [],
-            showCreateFolder: false,
-            currentPath: '/',
-            files: [],
-            parent: {},
-            path: [],
-            info: {},
-            filesToUpload: [],
-            uploadType: null,
-            folderUploadedName: null,
-            activeInfo: false,
+            loading: true,
+            path: '/',
+            search: '',
+            disk: null,
+            disks: [],
+            files: {},
+            breadcrumbs: [],
+            directories: [],
+            filter: null,
             filters: [],
             multiSelecting: false,
-            selectedFiles: [], // { type: 'folder/file', path: '...'' }
-            buttons: [],
+            selectedFiles: [],
+            pageLimits: [],
+            info: {},
+            showInfo: false,
+
+            showCreateFolder: false,
         }),
 
         async created() {
-            let currentUrl = new URI();
-
-            if (currentUrl.hasQuery('path')) {
-                let params = currentUrl.query(true);
-                this.currentPath = params.path;
-            }
-
-            await this.getData(this.currentPath);
-
-            this.loaded = true;
+            await this.getDisks();
+            await this.refresh();
         },
 
         methods: {
-            getData(pathToList) {
-                this.files = [];
-                this.parent = {};
-                this.path = [];
-                this.loadingfiles = true;
+            getDisks() {
                 return api
-                    .getData(pathToList)
+                    .getDisks()
                     .then((result) => {
-                        this.files = result.files;
-                        this.path = result.path;
-                        this.filters = result.filters;
-                        this.parent = result.parent;
-                        this.buttons = result.buttons;
-
-                        this.loadingfiles = false;
+                        this.disks = result;
                     })
                     .catch(() => {
-                        this.loadingfiles = false;
-                        this.filters = [];
                         Nova.error(this.__('Error reading the folder. Please check your logs'));
                     });
+            },
+
+            refresh() {
+                return this.getData(
+                    this.path,
+                    this.disk,
+                    this.files.currentPage || 1,
+                    this.files.perPage || 15,
+                    this.search,
+                    this.filter,
+                );
+            },
+
+            getData(path = '/', disk = null, page = 1, perPage = 10, search = null, filter = null) {
+                this.loading = true;
+
+                return api
+                    .getData(
+                        path,
+                        disk,
+                        page,
+                        perPage,
+                        search,
+                        filter,
+                    )
+                    .then((result) => {
+                        this.path = result.path;
+                        this.disk = result.disk;
+
+                        this.breadcrumbs = result.breadcrumbs;
+                        this.directories = result.directories;
+                        this.filters = result.filters;
+                        this.files = result.files;
+                        this.pageLimits = result.pageLimits;
+
+                        this.loading = false;
+                    })
+                    .catch(() => {
+                        this.loading = false;
+                        Nova.error(this.__('Error reading the folder. Please check your logs'));
+                    });
+            },
+
+            goToFolder(path) {
+                if (this.path === path) {
+                    return;
+                }
+
+                this.path = path;
+                this.filter = null;
+                this.search = '';
+
+                this.refresh();
+            },
+
+            goToPage(page) {
+                if (this.files.currentPage === page) {
+                    return;
+                }
+
+                this.getData(
+                    this.path,
+                    this.disk,
+                    page,
+                    this.files.perPage || 15,
+                    this.search,
+                    this.filter,
+                );
+            },
+
+            reset() {
+                this.breadcrumbs = [];
+                this.directories = [];
+                this.filters = [];
+                this.files = [];
+                this.loading = false;
+            },
+
+            setDisk(disk) {
+                if (this.disk === disk) {
+                    return;
+                }
+
+                this.reset();
+
+                this.path = '/';
+                this.filter = null;
+                this.search = '';
+
+                this.selectedFiles = [];
+
+                this.disk = disk;
+                this.refresh();
+            },
+
+            setFilter(filter) {
+                if (this.filter === filter) {
+                    return;
+                }
+
+                this.page = 1;
+                this.filter = filter;
+                this.refresh();
+            },
+
+            setSearch(search) {
+                if (this.search === search) {
+                    return;
+                }
+
+                this.page = 1;
+                this.search = search;
+                this.refresh();
+            },
+
+            setPerPage(perPage) {
+                if (this.files.perPage === perPage) {
+                    return;
+                }
+
+                this.page = 1;
+
+                this.getData(
+                    this.path,
+                    this.disk,
+                    this.files.currentPage || 1,
+                    perPage,
+                    this.search,
+                    this.filter,
+                );
+            },
+
+            select(file) {
+                const findIndex = _.findIndex(this.selectedFiles, file);
+
+                if (findIndex >= 0) {
+                    this.selectedFiles.splice(findIndex, 1);
+                    return;
+                }
+
+                this.selectedFiles.push(file);
             },
 
             showModalCreateFolder() {
@@ -161,31 +302,25 @@
             refreshCurrent() {
                 this.closePreview();
                 this.refreshMultiSelected();
-                this.getData(this.currentPath);
+                this.refresh();
             },
 
-            refreshCurrentAfterUpload() {
-                this.getData(this.currentPath);
-                this.filesToUpload = [];
-            },
+            // refreshCurrentAfterUpload() {
+            //     this.getData(this.currentPath);
+            //     this.filesToUpload = [];
+            // },
 
-            goToFolder(path) {
-                this.getData(path);
-                this.currentPath = path;
-                history.pushState(null, null, '?path=' + path);
-            },
+            // goToFolderNav(path) {
+            //     this.getData(path);
+            //     this.currentPath = path;
+            //     if (this.currentPath == '/') {
+            //         history.pushState(null, null, '?path=' + path);
+            //     } else {
+            //         history.pushState(null, null, '?path=' + path);
+            //     }
+            // },
 
-            goToFolderNav(path) {
-                this.getData(path);
-                this.currentPath = path;
-                if (this.currentPath == '/') {
-                    history.pushState(null, null, '?path=' + path);
-                } else {
-                    history.pushState(null, null, '?path=' + path);
-                }
-            },
-
-            showInfoItem(item) {
+            showInfo(item) {
                 this.activeInfo = true;
                 this.info = item;
             },
@@ -193,37 +328,36 @@
             closePreview() {
                 this.info = {};
                 this.activeInfo = false;
-                this.popupDetailsLoaded = false;
             },
 
             fileRenamed(item) {
                 this.info = item;
             },
 
-            uploadFiles(files, type, firstFolderName) {
-                this.filesToUpload = files;
-                this.uploadType = type;
-                this.folderUploadedName = firstFolderName;
-                this.$refs.uploader.startUploadingFiles(files, type);
-            },
+            // uploadFiles(files, type, firstFolderName) {
+            //     this.filesToUpload = files;
+            //     this.uploadType = type;
+            //     this.folderUploadedName = firstFolderName;
+            //     this.$refs.uploader.startUploadingFiles(files, type);
+            // },
 
-            removeFileFromUpload(uploadedFileId) {
-                let index = this.filesToUpload.map((item) => item.id).indexOf(uploadedFileId);
+            // removeFileFromUpload(uploadedFileId) {
+            //     let index = this.filesToUpload.map((item) => item.id).indexOf(uploadedFileId);
 
-                if (index > -1) {
-                    this.filesToUpload.splice(index, 1);
-                }
+            //     if (index > -1) {
+            //         this.filesToUpload.splice(index, 1);
+            //     }
 
-                if (this.filesToUpload.length === 0) {
-                    if (this.uploadType == 'folders') {
-                        this.callFolderEvent(this.folderUploadedName);
-                    }
+            //     if (this.filesToUpload.length === 0) {
+            //         if (this.uploadType == 'folders') {
+            //             this.callFolderEvent(this.folderUploadedName);
+            //         }
 
-                    this.folderUploadedName = null;
-                    this.uploadType = null;
-                    this.refreshCurrent();
-                }
-            },
+            //         this.folderUploadedName = null;
+            //         this.uploadType = null;
+            //         this.refreshCurrent();
+            //     }
+            // },
 
             openRenameModal(type, path) {
                 this.$refs.renameModal.openModal(type, path);
@@ -242,53 +376,16 @@
                 this.selectedFiles = [];
             },
 
-            callFolderEvent(path) {
-                api.eventFolderUploaded(this.currentPath + '/' + path);
-            },
-
-            select(file) {
-                const findIndex = _.findIndex(this.selectedFiles, file);
-
-                if (findIndex >= 0) {
-                    this.selectedFiles.splice(findIndex, 1);
-                    return;
-                }
-                this.selectedFiles.push(file);
-            },
+            // callFolderEvent(path) {
+            //     api.eventFolderUploaded(this.currentPath + '/' + path);
+            // },
         },
 
         watch: {
-            currentPath() {
-                this.multiSelecting = false;
-                this.selectedFiles = [];
-            },
+            // currentPath() {
+            //     this.multiSelecting = false;
+            //     this.selectedFiles = [];
+            // },
         },
     };
 </script>
-
-<style scoped>
-    .manual_upload > input[type='file'] {
-        display: none;
-    }
-
-    .btn-small {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-        padding-top: 0.3rem;
-        fill: currentColor;
-    }
-
-    .rotate svg {
-        animation: fa-spin 2s infinite linear;
-    }
-
-    @keyframes fa-spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(359deg);
-        }
-    }
-</style>

@@ -1,5 +1,5 @@
 <template>
-    <Modal :show="active" @closing="handleClose" @close-via-escape="handleClose" class="z-100">
+    <Modal :show="active" @closing="cancelCreate" @close-via-escape="cancelCreate" class="z-100">
         <div class="mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
             <ModalHeader v-text="__('Create folder')" />
 
@@ -13,8 +13,9 @@
                     required
                     @keyup.enter="createFolder"
                 />
+
                 <p class="my-2 text-danger" v-if="error">
-                    {{ errorMsg }}
+                    {{ error }}
                 </p>
             </div>
 
@@ -39,6 +40,7 @@
                         <template v-if="isSaving">
                             {{ __('Creating') }}
                         </template>
+
                         <template v-else>
                             {{ __('Create') }}
                         </template>
@@ -50,66 +52,79 @@
 </template>
 
 <script>
-    import api from '../api';
+import api from "../api";
 
-    export default {
-        props: {
-            active: {
-                type: Boolean,
-                default: false,
-                required: true,
-            },
-            current: {
-                type: String,
-                default: '/',
-                required: true,
-            },
+export default {
+    props: {
+        active: {
+            type: Boolean,
+            default: false,
+            required: true,
         },
+        disk: {
+            type: String,
+            default: "",
+            required: true,
+        },
+        path: {
+            type: String,
+            default: "/",
+            required: true,
+        },
+    },
 
-        data: () => ({
-            folderName: null,
-            error: false,
-            errorMsg: '',
-            isSaving: false,
-        }),
+    data: () => ({
+        folderName: null,
+        error: null,
+        isSaving: false,
+    }),
 
-        methods: {
-            createFolder() {
-                if (this.folderName == null) {
-                    this.errorMsg = this.__('The folder name is required');
-                    this.error = true;
-                    return false;
-                }
+    methods: {
+        createFolder() {
+            if (this.folderName == null) {
+                this.error = this.__("The folder name is required");
 
-                return api.createFolder(this.folderName, this.current).then((result) => {
-                    this.error = false;
-                    this.folderName = null;
-                    if (result == true) {
-                        this.$emit('closeCreateFolderModal', true);
-                        Nova.success(this.__('Folder created successfully'));
-                        this.$emit('refresh', true);
-                    } else {
-                        this.error = true;
-                        if (result.error) {
-                            this.errorMsg = result.error;
-                            Nova.error(this.__('Error:') + ' ' + result.error);
-                        } else {
-                            this.errorMsg = this.__('The folder name is required');
-                            Nova.error(this.__('Error creating the folder'));
-                        }
-                    }
-                });
-            },
+                return false;
+            }
 
-            cancelCreate() {
-                this.error = false;
+            const processResponse = (result) => {
                 this.folderName = null;
-                this.$emit('closeCreateFolderModal', true);
-            },
 
-            handleClose() {
-                this.cancelCreate();
-            },
+                if (!result.errors || result.errors.length <= 0) {
+                    this.error = null;
+
+                    this.$emit("close", true);
+
+                    Nova.success(result.message);
+
+                    this.$emit("refresh", true);
+                } else {
+                    this.error = result.message;
+
+                    Nova.error(this.__("Error:") + " " + result.message);
+                }
+            };
+
+            return api
+                .folderCreate(this.disk, `${this.path}/${this.folderName}`)
+                .then((r) =>
+                    processResponse(
+                        r.response && r.response.data ? r.response.data : r
+                    )
+                )
+                .catch((r) =>
+                    processResponse(
+                        r.response && r.response.data ? r.response.data : r
+                    )
+                );
         },
-    };
+
+        cancelCreate() {
+            this.error = null;
+            this.folderName = null;
+
+            this.$emit("close", true);
+        },
+    },
+};
 </script>

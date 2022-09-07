@@ -10,12 +10,16 @@
     "require": {
         "php": ">=7.1.0",
         "laravel/nova": "^4.0",
-        "stepanenko3/laravel-helpers": "*"
+        "stepanenko3/laravel-helpers": "*",
+        "stepanenko3/laravel-pagination": "*"
     },
     "autoload": {
         "psr-4": {
             "Stepanenko3\\NovaFilemanager\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     },
     "extra": {
         "laravel": {

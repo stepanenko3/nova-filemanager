@@ -1,9 +1,10 @@
 <?php
 
+
 namespace Stepanenko3\NovaFilemanager\Http\Middleware;
 
-use Laravel\Nova\Nova;
 use Stepanenko3\NovaFilemanager\FilemanagerTool;
+use Laravel\Nova\Nova;
 
 class Authorize
 {

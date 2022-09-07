@@ -10,14 +10,17 @@
                     <p>
                         {{ __('Are you sure you want to remove this folder?') }}
                     </p>
+
                     <p class="text-sm mt-2">
                         {{ __('Remember: The folder and all his contents will be delete from your storage') }}
                     </p>
                 </template>
+
                 <template v-else>
                     <p>
                         {{ __('Are you sure you want to remove this file?') }}
                     </p>
+
                     <p class="text-sm mt-2">
                         {{ __('Remember: The file will be delete from your storage') }}
                     </p>
@@ -39,13 +42,14 @@
                         type="submit"
                         component="DangerButton"
                         dusk="confirm-button"
-                        :disabled="isDeleting"
-                        :loading="isDeleting"
+                        :disabled="loading"
+                        :loading="loading"
                         @click.prevent="deleteData"
                     >
-                        <template v-if="isDeleting">
+                        <template v-if="loading">
                             {{ __('Deleting') }}
                         </template>
+
                         <template v-else>
                             {{ __('Delete') }}
                         </template>
@@ -57,78 +61,93 @@
 </template>
 
 <script>
-    import api from '../api';
+import api from '../api';
 
-    export default {
-        data: () => ({
-            active: false,
-            name: null,
-            type: null,
-            path: null,
-            error: false,
-            errorMsg: '',
-            isDeleting: false,
-        }),
-
-        methods: {
-            openModal(type, path) {
-                this.type = type;
-                this.path = path;
-                this.name = path.replace(/^.*[\\/]/, '');
-                this.active = true;
-            },
-
-            handleClose() {
-                this.active = false;
-            },
-
-            deleteData() {
-                if (this.type == 'folder') {
-                    this.deleteFolder();
-                } else {
-                    this.deleteFile();
-                }
-            },
-
-            deleteFolder() {
-                return api.removeDirectory(this.path).then((result) => {
-                    this.error = false;
-                    this.name = null;
-                    if (result == true) {
-                        Nova.success(this.__('Deleted successfully'));
-                        this.$emit('refresh', true);
-                        this.handleClose();
-                    } else {
-                        this.error = true;
-                        if (result.error) {
-                            this.errorMsg = result.error;
-                            Nova.error(this.__('Error:') + ' ' + result.error);
-                        } else {
-                            Nova.error(this.__('Error deleting. Please, see your logs'));
-                        }
-                    }
-                });
-            },
-
-            deleteFile() {
-                return api.removeFile(this.path).then((result) => {
-                    this.error = false;
-                    this.name = null;
-                    if (result == true) {
-                        Nova.success(this.__('Deleted successfully'));
-                        this.$emit('refresh', true);
-                        this.handleClose();
-                    } else {
-                        this.error = true;
-                        if (result.error) {
-                            this.errorMsg = result.error;
-                            Nova.error(this.__('Error:') + ' ' + result.error);
-                        } else {
-                            Nova.error(this.__('Error deleting. Please, see your logs'));
-                        }
-                    }
-                });
-            },
+export default {
+    props: {
+        disk: {
+            type: String,
+            default: '',
+            required: true,
         },
-    };
+    },
+
+    data: () => ({
+        active: false,
+        name: null,
+        type: null,
+        path: null,
+        error: null,
+        loading: false,
+    }),
+
+    methods: {
+        openModal(type, path) {
+            this.type = type;
+            this.path = path;
+            this.name = path.replace(/^.*[\\/]/, '');
+            this.active = true;
+        },
+
+        handleClose() {
+            this.active = false;
+        },
+
+        deleteData() {
+            if (this.type == 'folder') {
+                this.deleteFolder();
+            } else {
+                this.deleteFile();
+            }
+        },
+
+        deleteFolder() {
+            return api
+                .folderDelete(this.disk, this.path)
+                .then((r) =>
+                    this.processResponse(
+                        r.response && r.response.data ? r.response.data : r
+                    )
+                )
+                .catch((r) =>
+                    this.processResponse(
+                        r.response && r.response.data ? r.response.data : r
+                    )
+                );
+        },
+
+        deleteFile() {
+            return api
+                .fileDelete(this.disk, this.path)
+                .then((r) =>
+                    this.processResponse(
+                        r.response && r.response.data ? r.response.data : r
+                    )
+                )
+                .catch((r) =>
+                    this.processResponse(
+                        r.response && r.response.data ? r.response.data : r
+                    )
+                );
+        },
+
+        processResponse(result) {
+            this.name = null;
+
+            if (!result.errors || result.errors.length <= 0) {
+                this.error = null;
+
+                this.handleClose();
+
+                Nova.success(result.message);
+
+                this.$emit('refresh', true);
+            } else {
+                this.error = result.message;
+
+                Nova.error(this.__('Error:') + ' ' + result.message);
+            }
+        },
+    },
+};
 </script>

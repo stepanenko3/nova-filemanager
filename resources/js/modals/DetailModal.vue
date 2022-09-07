@@ -1,5 +1,10 @@
 <template>
-    <Modal :show="active" @closing="handleClose" @close-via-escape="handleClose" maxWidth="">
+    <Modal
+        :show="active"
+        @closing="handleClose"
+        @close-via-escape="handleClose"
+        maxWidth=""
+    >
         <div
             class="mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
             style="max-width: 1080px"
@@ -19,6 +24,7 @@
 
             <div class="flex flex-col md:flex-row">
                 <DetailView class="w-full md:w-3/5 flex-shrink-0 " :field="info" />
+
                 <div class="w-full md:w-2/5 p-4 bg-white dark:bg-gray-800">
                     <div class="w-full mb-2">
                         <div class="mb-1">{{ __('Name') }}:</div>
@@ -30,69 +36,74 @@
                                 {{ info.name }}
                             </span>
 
-                            <template v-if="buttons.rename_file">
-                                <Icon
-                                    v-if="!editingName"
-                                    width="16"
-                                    height="16"
-                                    type="pencil-alt"
-                                    @click="editName"
-                                    class="ml-2 cursor-pointer hover:opacity-50 flex-shrink-0"
+                            <Icon
+                                v-if="!editingName"
+                                width="16"
+                                height="16"
+                                type="pencil-alt"
+                                @click="editName"
+                                class="ml-2 cursor-pointer hover:opacity-50 flex-shrink-0"
+                            />
+
+                            <template v-else-if="editingName">
+                                <input
+                                    type="text"
+                                    v-bind:ref="'inputName'"
+                                    v-model="nameNoExtension"
+                                    class="w-full bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1"
                                 />
 
-                                <template v-else-if="editingName">
-                                    <input
-                                        type="text"
-                                        v-bind:ref="'inputName'"
-                                        v-model="nameNoExtension"
-                                        class="w-full bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1"
-                                    />
+                                <Icon
+                                    width="16"
+                                    height="16"
+                                    type="check-circle"
+                                    @click="rename"
+                                    class="ml-2 text-green-500 cursor-pointer hover:opacity-50 flex-shrink-0"
+                                />
 
-                                    <Icon
-                                        width="16"
-                                        height="16"
-                                        type="check-circle"
-                                        @click="rename"
-                                        class="ml-2 text-green-500 cursor-pointer hover:opacity-50 flex-shrink-0"
-                                    />
-
-                                    <Icon
-                                        width="16"
-                                        height="16"
-                                        type="x-circle"
-                                        @click="editingName = !editingName"
-                                        class="ml-2 cursor-pointer hover:opacity-50 flex-shrink-0"
-                                    />
-                                </template>
+                                <Icon
+                                    width="16"
+                                    height="16"
+                                    type="x-circle"
+                                    @click="editingName = !editingName"
+                                    class="ml-2 cursor-pointer hover:opacity-50 flex-shrink-0"
+                                />
                             </template>
                         </div>
                     </div>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.mimeType">
+                    <div class="w-full flex items-center mb-2" v-if="info.mime">
                         <span class="mr-2"> {{ __('Mime Type') }}: </span>
                         <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1 break-all">
                             {{ info.mime }}
                         </span>
                     </div>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.lastModifiedText">
+                    <div class="w-full flex items-center mb-2" v-if="info.lastModifiedReadable">
                         <span class="mr-2"> {{ __('Last Modification') }}: </span>
                         <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
-                            {{ info.lastModifiedText }}
+                            {{ info.lastModifiedReadable }}
                         </span>
                     </div>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.sizeText">
+                    <div class="w-full flex items-center mb-2" v-if="info.sizeReadable">
                         <span class="mr-2"> {{ __('Size') }}: </span>
                         <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
-                            {{ info.sizeText }}
+                            {{ info.sizeReadable }}
                         </span>
                     </div>
 
-                    <div class="w-full flex items-center mb-2" v-if="info.dimensions">
+                    <div class="w-full flex items-center mb-2" v-if="info.meta.width && info.meta.height">
                         <span class="mr-2"> {{ __('Dimensions') }}: </span>
                         <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
-                            {{ info.dimensions }}
+                            {{ info.meta.width }}x{{ info.meta.height }}
+                        </span>
+                    </div>
+
+                    <div class="w-full flex items-center mb-2" v-if="info.meta.aspectRatio">
+                        <span class="mr-2"> {{ __('Aspect Ratio') }}: </span>
+                        <span class="bg-gray-100 dark:bg-gray-900 rounded-lg px-2 py-1">
+                            {{ info.meta.aspectRatio }}
                         </span>
                     </div>
 
@@ -116,7 +127,11 @@
                     </div>
 
                     <div class="grid md:grid-cols-12 gap-4">
-                        <DefaultButton class="md:col-span-4" v-if="popup" @click="selectFile">
+                        <DefaultButton
+                            class="md:col-span-4"
+                            v-if="popup"
+                            @click="selectFile"
+                        >
                             <Icon
                                 type="check-circle"
                                 class="mr-1"
@@ -129,8 +144,7 @@
 
                         <a
                             class="md:col-span-4 flex"
-                            v-if="buttons.download_file"
-                            :href="`/nova-vendor/stepanenko3/nova-filemanager/actions/download-file?file=${this.info.path}`"
+                            :href="`/nova-vendor/nova-filemanager/files/download?disk=${this.disk}&path=${this.info.path}`"
                         >
                             <DefaultButton class="flex-grow">
                                 <Icon
@@ -146,7 +160,6 @@
 
                         <ConfirmationButton
                             class="md:col-span-4"
-                            v-if="buttons.delete_file"
                             :messages="[__('Delete'), __('Are you sure?'), __('Deleting...')]"
                             @success="removeFile"
                         >
@@ -160,7 +173,6 @@
 
                         <ConfirmationButton
                             class="md:col-span-4"
-                            v-if="buttons.duplicate_file || true"
                             :messages="[__('Duplicate'), __('Are you sure?'), __('Duplicating...')]"
                             @success="duplicate"
                         >
@@ -198,14 +210,15 @@
                 },
                 required: true,
             },
+            disk: {
+                type: String,
+                default: '',
+                required: true,
+            },
             popup: {
                 type: Boolean,
                 default: false,
                 required: false,
-            },
-            buttons: {
-                default: () => [],
-                required: true,
             },
         },
 

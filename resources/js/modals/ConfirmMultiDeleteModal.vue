@@ -7,9 +7,16 @@
                 <p>
                     {{ __('Are you sure you want to remove selected files or folders?') }}
                 </p>
+
                 <p class="text-sm mt-2">
                     {{ __('Remember: The file and folder and all his contents will be delete from your storage') }}
                 </p>
+
+                <div class="text-sm mt-2">
+                    <p v-for="file in selectedFiles">
+                        {{ file.path }}
+                    </p>
+                </div>
             </div>
 
             <ModalFooter>
@@ -27,13 +34,14 @@
                         component="DangerButton"
                         type="submit"
                         dusk="confirm-button"
-                        :disabled="isDeleting"
-                        :loading="isDeleting"
+                        :disabled="loading"
+                        :loading="loading"
                         @click.prevent="deleteData"
                     >
-                        <template v-if="isDeleting">
+                        <template v-if="loading">
                             {{ __('Deleting') }}
                         </template>
+
                         <template v-else>
                             {{ __('Delete') }}
                         </template>
@@ -49,6 +57,11 @@
 
     export default {
         props: {
+            disk: {
+                type: String,
+                default: '',
+                required: true,
+            },
             selectedFiles: {
                 type: Array,
                 required: true,
@@ -57,9 +70,8 @@
 
         data: () => ({
             active: false,
-            error: false,
-            errorMsg: '',
-            isDeleting: false,
+            error: null,
+            loading: false,
         }),
 
         methods: {
@@ -72,53 +84,67 @@
             },
 
             async deleteData() {
-                this.isDeleting = true;
+                this.loading = true;
 
                 for (const file of this.selectedFiles) {
-                    if (file.type == 'dir') {
-                        await this.deleteFolder(file);
+                    if (this.type == 'folder') {
+                        await this.deleteFolder(file.path);
                     } else {
-                        await this.deleteFile(file);
+                        await this.deleteFile(file.path);
                     }
                 }
 
-                this.isDeleting = false;
+                this.loading = false;
                 this.$emit('refresh', true);
                 this.handleClose();
             },
 
-            deleteFolder(file) {
-                return api.removeDirectory(file.path).then((result) => {
-                    this.error = false;
-                    if (result == true) {
-                        Nova.success(this.__('Deleted successfully'));
-                    } else {
-                        this.error = true;
-                        if (result.error) {
-                            this.errorMsg = result.error;
-                            Nova.error(this.__('Error:') + ' ' + result.error);
-                        } else {
-                            Nova.error(this.__('Error deleting. Please, see your logs'));
-                        }
-                    }
-                });
+            deleteFolder(path) {
+                return api
+                    .folderDelete(this.disk, path)
+                    .then((r) =>
+                        this.processResponse(
+                            r.response && r.response.data ? r.response.data : r
+                        )
+                    )
+                    .catch((r) =>
+                        this.processResponse(
+                            r.response && r.response.data ? r.response.data : r
+                        )
+                    );
             },
 
-            deleteFile(file) {
-                return api.removeFile(file.path).then((result) => {
-                    this.error = false;
-                    if (result == true) {
-                        Nova.success(this.__('Deleted successfully'));
-                    } else {
-                        this.error = true;
-                        if (result.error) {
-                            this.errorMsg = result.error;
-                            Nova.error(this.__('Error:') + ' ' + result.error);
-                        } else {
-                            Nova.error(this.__('Error deleting. Please, see your logs'));
-                        }
-                    }
-                });
+            deleteFile(path) {
+                return api
+                    .fileDelete(this.disk, path)
+                    .then((r) =>
+                        this.processResponse(
+                            r.response && r.response.data ? r.response.data : r
+                        )
+                    )
+                    .catch((r) =>
+                        this.processResponse(
+                            r.response && r.response.data ? r.response.data : r
+                        )
+                    );
+            },
+
+            processResponse(result) {
+                this.name = null;
+
+                if (!result.errors || result.errors.length <= 0) {
+                    this.error = null;
+
+                    this.handleClose();
+
+                    Nova.success(result.message);
+
+                    this.$emit('refresh', true);
+                } else {
+                    this.error = result.message;
+
+                    Nova.error(this.__('Error:') + ' ' + result.message);
+                }
             },
         },
     };

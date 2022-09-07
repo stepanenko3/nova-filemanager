@@ -1,7 +1,8 @@
 <?php
 
+
+use Stepanenko3\NovaFilemanager\Http\Controllers\Pages\ToolController;
 use Illuminate\Support\Facades\Route;
-use Laravel\Nova\Http\Requests\NovaRequest;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,4 @@ use Laravel\Nova\Http\Requests\NovaRequest;
 |
 */
 
-Route::get('/', function (NovaRequest $request) {
-    return inertia('NovaFilemanager');
-});
+Route::get('/', ToolController::class)->name('nova-filemanager.tool');

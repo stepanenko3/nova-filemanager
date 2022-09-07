@@ -120,6 +120,7 @@
             activeDiskBackups: [],
             backupStatusses: [],
             showCreateFolder: false,
+            pagination: {},
             files: [],
             parent: {},
             path: [],
@@ -145,6 +146,7 @@
 
         methods: {
             getData(folder) {
+                this.pagination = {};
                 this.files = [];
                 this.parent = {};
                 this.path = [];
@@ -152,7 +154,8 @@
 
                 api.getDataField(this.resource, this.name, folder, this.filter)
                     .then((result) => {
-                        this.files = result.files;
+                        this.pagination = result.data;
+                        this.files = result.data.data;
                         this.path = result.path;
                         this.filters = result.filters;
 

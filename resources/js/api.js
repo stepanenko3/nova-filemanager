@@ -1,87 +1,91 @@
 export default {
-    getData(folder) {
+    getData(path = '/', disk = null, page = 1, perPage = 10, search = null, filter = null) {
         return Nova.request()
-            .get('/nova-vendor/stepanenko3/nova-filemanager/data', {
+            .get('/nova-vendor/nova-filemanager', {
                 params: {
-                    folder,
-                },
-            })
-            .then((response) => response.data);
-    },
-
-    getDataField(resource, attribute, folder, filter) {
-        return Nova.request()
-            .get(`/nova-vendor/stepanenko3/nova-filemanager/${resource}/${attribute}/data`, {
-                params: {
-                    folder,
+                    path,
+                    disk,
+                    page,
+                    perPage,
+                    search,
                     filter,
                 },
             })
             .then((response) => response.data);
     },
 
-    uploadFile() {
+    getDisks() {
         return Nova.request()
-            .post('/nova-vendor/stepanenko3/nova-filemanager/uploads/add')
+            .get('/nova-vendor/nova-filemanager/disks/available')
             .then((response) => response.data);
     },
 
-    moveFile(oldPath, newPath) {
+    fileDelete(disk, path) {
         return Nova.request()
-            .post('/nova-vendor/stepanenko3/nova-filemanager/actions/move', {
-                old: oldPath,
-                path: newPath,
-            })
-            .then((response) => response.data);
-    },
-
-    createFolder(folderName, currentFolder) {
-        return Nova.request()
-            .post('/nova-vendor/stepanenko3/nova-filemanager/actions/create-folder', {
-                folder: folderName,
-                current: currentFolder,
-            })
-            .then((response) => response.data);
-    },
-
-    removeDirectory(currentFolder) {
-        return Nova.request()
-            .post('/nova-vendor/stepanenko3/nova-filemanager/actions/delete-folder', {
-                current: currentFolder,
-            })
-            .then((response) => response.data);
-    },
-
-    getInfo(file) {
-        return Nova.request()
-            .post('/nova-vendor/stepanenko3/nova-filemanager/actions/get-info', { file: file })
-            .then((response) => response.data);
-    },
-
-    removeFile(file) {
-        return Nova.request()
-            .post('/nova-vendor/stepanenko3/nova-filemanager/actions/remove-file', { file: file })
-            .then((response) => response.data);
-    },
-
-    rename(path, name) {
-        return Nova.request()
-            .post('/nova-vendor/stepanenko3/nova-filemanager/actions/rename', {
+            .post('/nova-vendor/nova-filemanager/files/delete', {
+                disk: disk,
                 path: path,
-                name: name,
             })
             .then((response) => response.data);
     },
 
-    eventFolderUploaded(path) {
+    fileDownload(path) {
         return Nova.request()
-            .post('/nova-vendor/stepanenko3/nova-filemanager/events/folder', { path: path })
+            .post('/nova-vendor/nova-filemanager/files/download', {
+                path: path,
+            })
             .then((response) => response.data);
     },
 
-    duplicate(path) {
+    fileRename(disk, oldPath, newPath) {
         return Nova.request()
-            .post('/nova-vendor/stepanenko3/nova-filemanager/actions/duplicate', { path: path })
+            .post('/nova-vendor/nova-filemanager/files/rename', {
+                disk: disk,
+                oldPath: oldPath,
+                newPath: newPath,
+            })
+            .then((response) => response.data);
+    },
+
+    fileUpload() {
+        return Nova.request()
+            .post('/nova-vendor/nova-filemanager/files/upload')
+            .then((response) => response.data);
+    },
+
+    fileDuplicate(path) {
+        return Nova.request()
+            .post('/nova-vendor/nova-filemanager/files/duplicate', {
+                path: path,
+            })
+            .then((response) => response.data);
+    },
+
+    folderCreate(disk, path) {
+        return Nova.request()
+            .post('/nova-vendor/nova-filemanager/folders/create', {
+                disk: disk,
+                path: path,
+            })
+            .then((response) => response.data);
+    },
+
+    folderDelete(disk, path) {
+        return Nova.request()
+            .post('/nova-vendor/nova-filemanager/folders/delete', {
+                disk: disk,
+                path: path,
+            })
+            .then((response) => response.data);
+    },
+
+    folderRename(disk, oldPath, newPath) {
+        return Nova.request()
+            .post('/nova-vendor/nova-filemanager/folders/rename', {
+                disk: disk,
+                oldPath: oldPath,
+                newPath: newPath,
+            })
             .then((response) => response.data);
     },
 };
