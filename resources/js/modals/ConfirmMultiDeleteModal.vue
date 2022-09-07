@@ -130,16 +130,12 @@
             },
 
             processResponse(result) {
-                this.name = null;
-
                 if (!result.errors || result.errors.length <= 0) {
                     this.error = null;
 
                     this.handleClose();
 
                     Nova.success(result.message);
-
-                    this.$emit('refresh', true);
                 } else {
                     this.error = result.message;
 
