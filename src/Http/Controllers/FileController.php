@@ -14,6 +14,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Stepanenko3\NovaFilemanager\Events\FileDuplicated;
+use Stepanenko3\NovaFilemanager\Http\Requests\DuplicateFileRequest;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FileController extends Controller
@@ -40,6 +42,24 @@ class FileController extends Controller
 
         return response()->json([
             'message' => __('File renamed successfully.'),
+        ]);
+    }
+
+    public function duplicate(DuplicateFileRequest $request): JsonResponse
+    {
+        $manager = $request->manager();
+        $result = $manager->duplicate($request->path);
+
+        if (!$result) {
+            throw ValidationException::withMessages([
+                'oldPath' => [__('Could not duplicate file !')],
+            ]);
+        }
+
+        event(new FileDuplicated($manager->disk, $request->path));
+
+        return response()->json([
+            'message' => __('File duplicated successfully.'),
         ]);
     }
 

@@ -43,6 +43,8 @@ interface FilemanagerContract
 
     public function rename(string $oldPath, string $newPath): bool;
 
+    public function duplicate(string $path): bool;
+
     public function rmdir(string $path): bool;
 
     public function showHiddenFiles(bool $show = true): self;

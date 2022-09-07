@@ -202,6 +202,38 @@ class FilemanagerService implements FilemanagerContract
         return $this->fileSystem->move($oldPath, $newPath);
     }
 
+    public function duplicate(string $path): bool
+    {
+        if ($this->fileSystem->exists($path)) {
+            $ext = pathinfo($path, PATHINFO_EXTENSION);
+            $basename = pathinfo($path, PATHINFO_BASENAME);
+            $newPath = str_replace($basename, '', $path);
+
+            if (false) { // Check is directory
+                //
+            } else {
+                if (preg_match('/(^.*?)+(?:\((\d+)\))?(\.(?:\w){0,10}$)/si', $basename, $match)) {
+                    $matchName = $match[1];
+                    $offset = (int) $match[2];
+                    $newName = $matchName . '.' . $ext;
+
+                    while ($this->fileSystem->exists($newPath . $newName)) {
+                        $offset = $offset + 1;
+                        $newName = $matchName . '(' . $offset . ').' . $ext;
+                    }
+                } else {
+                    $newName = $basename;
+                }
+
+                if ($this->fileSystem->copy($path, $newPath . $newName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function delete(string $path): bool
     {
         return $this->fileSystem->delete($path);

@@ -53,9 +53,10 @@ export default {
             .then((response) => response.data);
     },
 
-    fileDuplicate(path) {
+    fileDuplicate(disk, path) {
         return Nova.request()
             .post('/nova-vendor/nova-filemanager/files/duplicate', {
+                disk: disk,
                 path: path,
             })
             .then((response) => response.data);

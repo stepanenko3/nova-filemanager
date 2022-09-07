@@ -13,7 +13,7 @@
             @close="closePreview"
             @rename="openRenameModal"
             @delete="openDeleteModal"
-            @duplicate=""
+            @duplicate="openConfirmDuplicateModal"
         />
 
         <CreateFolderModal
@@ -26,6 +26,12 @@
 
         <RenameModal
             ref="renameModal"
+            :disk="disk"
+            @refresh="refreshCurrent"
+        />
+
+        <ConfirmDuplicateModal
+            ref="duplicateModal"
             :disk="disk"
             @refresh="refreshCurrent"
         />
@@ -99,6 +105,7 @@
     import ConfirmMultiDeleteModal from '../modals/ConfirmMultiDeleteModal';
     import RenameModal from '../modals/RenameModal';
     import DetailModal from '../modals/DetailModal';
+    import ConfirmDuplicateModal from '../modals/ConfirmDuplicateModal';
 
     import UploadProgress from '../components/UploadProgress';
     import Manager from '../components/Manager';
@@ -110,6 +117,7 @@
             ConfirmDeleteModal,
             ConfirmMultiDeleteModal,
             DetailModal,
+            ConfirmDuplicateModal,
 
             Manager: Manager,
             UploadProgress: UploadProgress,
@@ -361,6 +369,10 @@
             //         this.refreshCurrent();
             //     }
             // },
+
+            openConfirmDuplicateModal(type, path) {
+                this.$refs.duplicateModal.openModal(type, path);
+            },
 
             openRenameModal(type, path) {
                 this.$refs.renameModal.openModal(type, path);

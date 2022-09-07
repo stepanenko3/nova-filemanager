@@ -29,6 +29,7 @@ Route::as('nova-filemanager.')->middleware('nova')->group(static function () {
         Route::post('upload', [FileController::class, 'upload'])->name('upload');
         Route::post('rename', [FileController::class, 'rename'])->name('rename');
         Route::post('delete', [FileController::class, 'delete'])->name('delete');
+        Route::post('duplicate', [FileController::class, 'duplicate'])->name('duplicate');
         Route::get('download', [FileController::class, 'download'])->name('download');
     });
 
