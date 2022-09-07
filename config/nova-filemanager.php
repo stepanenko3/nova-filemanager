@@ -4,7 +4,10 @@ return [
     'path' => 'filemanager',
 
     'mime_types' => [
-        'image' => ['image/'],
+        'image' => [
+            'image/',
+            'svg',
+        ],
 
         'audio' => ['audio/'],
 

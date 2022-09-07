@@ -10,6 +10,7 @@ use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\UnableToRetrieveMetadata;
+use Stepanenko3\NovaFilemanager\Services\MimeTypes;
 
 abstract class Entity implements Arrayable, EntityContract
 {
@@ -91,7 +92,12 @@ abstract class Entity implements Arrayable, EntityContract
     public function mime(): string
     {
         try {
-            $type = $this->fileSystem->mimeType($this->path);
+            $ext = pathinfo($this->path, PATHINFO_EXTENSION);
+            $types = MimeTypes::checkMimeType($ext);
+
+            $type = $types === false
+                ? $type = $this->fileSystem->mimeType($this->path)
+                : $type = $types[0];
 
             if ($type === false) {
                 throw UnableToRetrieveMetadata::mimeType($this->path);

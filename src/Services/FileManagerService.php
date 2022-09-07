@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Stepanenko3\NovaFilemanager\Services;
 
 use Stepanenko3\NovaFilemanager\Contracts\Entity;
@@ -274,7 +273,13 @@ class FilemanagerService implements FilemanagerContract
     public function makeEntity(string $path): Entity
     {
         try {
-            $mime = $this->fileSystem->mimeType($path);
+            $ext = pathinfo($path, PATHINFO_EXTENSION);
+            $mimes = MimeTypes::checkMimeType($ext);
+
+            $mime = $mimes === false
+                ? $this->fileSystem->mimeType($path)
+                : $mime = $mimes[0];
+
             $type = getFileType($mime);
         } catch (UnableToRetrieveMetadata $e) {
             report($e);
