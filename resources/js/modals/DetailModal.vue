@@ -1,5 +1,11 @@
 <template>
     <div
+        v-if="active"
+        class="fixed inset-0 z-50 bg-gray-500 dark:bg-gray-900 opacity-75"
+        @click.prevent="handleClose"
+    />
+
+    <div
         class="filemanager-preview flex flex-col justify-start bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700"
         :class="{
             'filemanager-preview--active': active,
@@ -285,5 +291,9 @@
         overflow-y: auto;
         overflow-x: hidden;
         flex-shrink: 1;
+    }
+
+    .z-50 {
+        z-index: 50;
     }
 </style>
