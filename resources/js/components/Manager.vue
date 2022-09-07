@@ -71,7 +71,7 @@
     >
         <div
             v-if="loading"
-            class="absolute inset-0 bg-white dark:bg-gray-800 flex items-center justify-center flex-grow z-50"
+            class="absolute inset-0 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center flex-grow z-50"
         >
             <Loader />
         </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center justify-center" :class="class" style="min-height: 250px">
+    <div class="flex items-center justify-center" :class="class" style="min-height: 300px">
         <template v-if="field.type == 'image'">
             <img class="h-full w-full" :src="field.url" style="object-fit: contain" />
         </template>
@@ -23,7 +23,7 @@
         </template>
 
         <template v-else-if="field.type == 'text'">
-            <highlightjs class="w-full" autodetect :code="field.meta.source" />
+            <pre class="w-full p-4"><code v-text="field.meta.source"></code></pre>
         </template>
 
         <template v-else-if="field.type == 'pdf'">
@@ -43,18 +43,7 @@
 <script>
     import MimeIconsEnum from '../tools/MimeIconsEnum';
 
-    import hljs from 'highlight.js';
-    import hljsVuePlugin from '@highlightjs/vue-plugin';
-
-    import 'highlight.js/styles/github-dark.css';
-
-    hljs.debugMode();
-
     export default {
-         components: {
-            highlightjs: hljsVuePlugin.component
-        },
-
         props: {
             field: {
                 type: Object,
@@ -74,7 +63,7 @@
 </script>
 
 <style>
-    code.hljs {
+    code {
         white-space: pre-wrap;
         word-break: break-all;
     }

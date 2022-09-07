@@ -67,76 +67,76 @@
             </div>
         </div>
 
-        <div class="filemanager-preview__content">
+        <div class="filemanager-preview__content" v-if="info">
             <div class="px-4 font-bold text-sm py-2">
                 {{ info.name }}
             </div>
 
-            <table class="table text-left w-full">
+            <table class="table table-fixed text-left w-full">
                 <tr v-if="info.mime">
-                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                        {{ __('Mime Type') }}:
+                    <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900" style="width:115px">
+                        {{ __('Mime') }}:
                     </td>
-                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                    <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900 break-word whitespace-normal line-4" style="width: 100%">
                         {{ info.mime }}
                     </td>
                 </tr>
 
                 <tr v-if="info.lastModifiedReadable">
-                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                        {{ __('Last Modification') }}:
+                    <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                        {{ __('Midified At') }}:
                     </td>
-                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                    <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
                         {{ info.lastModifiedReadable }}
                     </td>
                 </tr>
 
                 <tr v-if="info.sizeReadable">
-                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                    <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
                         {{ __('Size') }}:
                     </td>
-                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                    <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
                         {{ info.sizeReadable }}
                     </td>
                 </tr>
 
-                <tr v-if="info.meta.width && info.meta.height">
-                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                        {{ __('Dimensions') }}:
-                    </td>
-                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                        {{ info.meta.width }}x{{ info.meta.height }}
-                    </td>
-                </tr>
+                <template v-if="info.meta">
+                    <tr v-if="info.meta.width && info.meta.height">
+                        <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                            {{ __('Dimensions') }}:
+                        </td>
+                        <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                            {{ info.meta.width }}x{{ info.meta.height }}
+                        </td>
+                    </tr>
 
-                <tr v-if="info.meta.aspectRatio">
-                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                        {{ __('Aspect Ratio') }}:
-                    </td>
-                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                        {{ info.meta.aspectRatio }}
-                    </td>
-                </tr>
+                    <tr v-if="info.meta.aspectRatio">
+                        <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                            {{ __('Aspect Ratio') }}:
+                        </td>
+                        <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                            {{ info.meta.aspectRatio }}
+                        </td>
+                    </tr>
+                </template>
 
                 <tr v-if="info.url">
-                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
+                    <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
                         {{ __('Url') }}:
                     </td>
-                    <td class="py-2 border-t border-gray-100 dark:border-gray-700 px-2 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                        <div class="flex items-center">
-                            <div
-                                class="flex-grow truncate"
-                            >
-                                {{ info.url }}
-                            </div>
-
+                    <td class="p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900 break-word whitespace-normal line-4">
+                        <div class="inline-flex items-start leading-4">
                             <Icon
                                 width="16"
                                 height="16"
                                 type="clipboard"
                                 @click="copyTextToClipboard"
-                                class="ml-2 cursor-pointer hover:opacity-50 flex-shrink-0"
+                                class="mr-2 cursor-pointer hover:opacity-50 flex-shrink-0"
                             />
+
+                            <span>
+                                {{ info.url }}
+                            </span>
                         </div>
                     </td>
                 </tr>
@@ -273,7 +273,7 @@
         visibility: hidden;
         pointer-events: none;
         transform: translate3d(32px, 0, 0);
-        transition: transform .3s, opacity .3s;
+        transition: transform .3s, opacity .3s, visibility .3s;
     }
 
     .filemanager-preview--active {
@@ -291,9 +291,26 @@
         overflow-y: auto;
         overflow-x: hidden;
         flex-shrink: 1;
+        flex-grow: 1;
     }
 
     .z-50 {
         z-index: 50;
+    }
+
+    .table-fixed {
+        table-layout: fixed;
+    }
+
+    .break-word {
+        word-break: break-word;
+    }
+
+    .whitespace-normal {
+        white-space: normal;
+    }
+
+    .leading-4 {
+        line-height: 16px;
     }
 </style>
