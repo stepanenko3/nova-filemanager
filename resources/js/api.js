@@ -47,9 +47,24 @@ export default {
             .then((response) => response.data);
     },
 
-    fileUpload() {
+    fileUpload(disk, path, file, onUploadProgress = (e) => { }) {
+        let formData = new FormData();
+
+        formData.append('disk', disk);
+        formData.append('path', path);
+        formData.append('file', file);
+
         return Nova.request()
-            .post('/nova-vendor/nova-filemanager/files/upload')
+            .post(
+                '/nova-vendor/nova-filemanager/files/upload',
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    onUploadProgress: (e) => onUploadProgress(e),
+                }
+            )
             .then((response) => response.data);
     },
 

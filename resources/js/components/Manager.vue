@@ -18,6 +18,7 @@
         @refresh="refresh"
         @createFolder="$emit('createFolder')"
         @multiDelete="$emit('multiDelete')"
+        @uploadFiles="uploadFiles"
 
         @update:search="$emit('update:search', $event)"
         @update:disk="$emit('update:disk', $event)"
@@ -68,7 +69,23 @@
     <component
         :is="card ? 'Card' : null"
         class="relative overflow-hidden"
+
+        @dragover.prevent="dragging = true"
+        @dragleave.prevent="dragging = false"
+        @drop.prevent="dropFiles"
     >
+        <div
+            class="absolute inset-0 flex items-center justify-center z-50 bg-white dark:bg-gray-800 pointer-events-none rounded-lg border-dashed border-2 border-gray-200 dark:border-gray-700"
+            :class="{
+                'hidden': !dragging,
+            }"
+        >
+            <Icon type="upload" class="mr-4" width="48" height="48" />
+            <span>
+                Drop your files here
+            </span>
+        </div>
+
         <div
             v-if="loading"
             class="absolute inset-0 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center flex-grow z-50"
@@ -261,10 +278,10 @@
     import api from '../api';
     import File from '../modules/File';
     import Folder from '../modules/Folder';
-    import { DragAndDrop } from '../tools/DragAndDrop';
     import ToolbarButton from './ToolbarButton'
     import ManagerToolbar from './ManagerToolbar'
     import ManagerPagination from './ManagerPagination'
+    import NProgress from 'nprogress'
 
     export default {
         components: {
@@ -290,11 +307,6 @@
                 type: String,
                 default: () => '',
                 required: true,
-            },
-            disks: {
-                type: Array,
-                required: false,
-                default: () => [],
             },
             breadcrumbs: {
                 type: Array,
@@ -350,6 +362,8 @@
 
         data: () => ({
             view: 'grid',
+            dragging: false,
+            disks: [],
         }),
 
         methods: {
@@ -357,11 +371,7 @@
                 this.$emit('goToFolder', path);
             },
 
-            checkIsLastItem(index) {
-                return _.size(this.path) == parseInt(index) + 1 ? true : false;
-            },
-
-            removeDirectory() {
+            removeDirectory() { // TODO: folderDelete
                 return api.removeDirectory(this.current).then(result => {
                     if (result == true) {
                         Nova.success(this.__('Folder removed successfully'));
@@ -393,166 +403,49 @@
                 this.$emit('selectFile', file);
             },
 
-            setDragAndDropEvents() {
-                if (this.buttons.upload_drag == false) {
-                    return false;
+            async dropFiles(e) {
+                this.dragging = false;
+
+                await this.uploadFiles(e.dataTransfer.files);
+            },
+
+            async uploadFiles(files) {
+                this.uploadedFilesCount = 0;
+
+                if (files.length <= 0) {
+                    return;
                 }
 
-                let filemanagerContainer = document.querySelector('#filemanager-manager-container');
+                NProgress.set(0);
 
-                filemanagerContainer.addEventListener('dragenter', e => {
-                    e.preventDefault();
-                    if (this.currentDraggedFile === null) {
-                        this.uploadingFiles = true;
-                        this.cssDragAndDrop = 'inside';
+                const percentsPerFile = 100 / files.length;
 
-                        let dropperContainer = document.querySelector('.drop-files');
-                        this.droppedListener(dropperContainer);
-                    }
-                });
-
-                filemanagerContainer.addEventListener('dragleave', e => {
-                    e.preventDefault();
-                    this.uploadingFiles = false;
-                    this.cssDragAndDrop = 'outside';
-                });
-
-                filemanagerContainer.addEventListener('dragover', e => {
-                    e.preventDefault();
-                    if (this.currentDraggedFile === null) {
-                        this.uploadingFiles = true;
-                        this.cssDragAndDrop = 'inside';
-                        let dropperContainer = document.querySelector('.drop-files');
-                        this.droppedListener(dropperContainer);
-                    }
-                });
-            },
-
-            droppedListener(element) {
-                if (element) {
-                    element.removeEventListener('drop', this.droppedListener);
-                    element.addEventListener('drop', this.dropNewFiles, false);
-                }
-            },
-
-            async dropNewFiles(e) {
-                e.preventDefault();
-                this.cssDragAndDrop = 'drop';
-                this.uploadingFiles = false;
-
-                let files = await this.getFilesAsync(e.dataTransfer);
-
-                this.uploadFiles(files);
-            },
-
-            async getFilesAsync(dataTransfer) {
-                const files = [];
-                const folders = [];
-
-                this.firstUploadFolder = null;
-                for (let i = 0; i < dataTransfer.items.length; i++) {
-                    let item = dataTransfer.items[i];
-                    let entry = item.webkitGetAsEntry();
-
-                    if (entry.isDirectory) {
-                        if (this.firstUploadFolder == null) {
-                            this.firstUploadFolder = entry.name;
-                        }
-
-                        if (item.kind === 'file') {
-                            if (typeof item.webkitGetAsEntry === 'function') {
-                                let entryContent = await this.readEntryContentAsync(entry);
-                                folders.push(...entryContent);
-                            }
-                            let file = item.getAsFile();
-                            if (file) {
-                                files.push(file);
-                            }
-                        }
-                    } else {
-                        let file = item.getAsFile();
-                        if (file) {
-                            files.push(file);
-                        }
-                    }
+                for (const file of files) {
+                    await this.uploadFile(file, percentsPerFile);
                 }
 
-                return { files: files, folders: folders };
-            },
+                NProgress.done();
 
-            readEntryContentAsync(entry) {
-                return new Promise(resolve => {
-                    let reading = 0;
-                    const contents = [];
-                    readEntry(entry);
-                    function readEntry(entry) {
-                        if (isFile(entry)) {
-                            reading++;
-                            entry.file(file => {
-                                reading--;
-                                file.filepath = entry.fullPath.replace('/' + entry.name, '');
-                                contents.push(file);
-                                if (reading === 0) {
-                                    resolve(contents);
-                                }
-                            });
-                        } else if (isDirectory(entry)) {
-                            readReaderContent(entry.createReader());
-                        }
-                    }
-                    function readReaderContent(reader) {
-                        reading++;
-                        reader.readEntries(function (entries) {
-                            reading--;
-                            for (const entry of entries) {
-                                readEntry(entry);
-                            }
-                            if (reading === 0) {
-                                resolve(contents);
-                            }
-                        });
-                    }
-                    function isDirectory(entry) {
-                        return entry.isDirectory;
-                    }
-                    function isFile(entry) {
-                        return entry.isFile;
-                    }
-                });
-            },
+                const message = `${this.__('Files uploaded')} ${this.uploadedFilesCount} of ${files.length}`;
 
-            uploadFilesByButton(e)
-            {
-                this.uploadFiles({ files: Array.from(e.target.files) });
-            },
-
-            uploadFiles(data) {
-                let files = this.formatFiles(data.files || []);
-                let folders = this.formatFiles(data.folders || []);
-
-                if (files.length > 0) {
-                    this.$emit('uploadFiles', files, 'files');
+                if (this.uploadedFilesCount >= files.length) {
+                    Nova.success(message);
+                } else {
+                    Nova.error(message);
                 }
 
-                if (folders.length > 0) {
-                    this.$emit('uploadFiles', folders, 'folders', this.firstUploadFolder);
-                }
+                this.$emit('refresh', true);
             },
 
-            moveFile(oldPath, newPath) {
-                return api
-                    .moveFile(oldPath, newPath)
-                    .then(result => {
-                        if (result.success == true) {
-                            this.refresh();
-                            Nova.success(this.__('File moved successfully'));
-                        } else {
-                            Nova.error(this.__('Error opening the file. Check your permissions'));
-                        }
-                    })
-                    .catch(error => {
-                        Nova.error(error.response.data.message);
-                    });
+            uploadFile(file, percentsPerFile) {
+                return api.fileUpload(this.disk, this.path, file, (e) => {
+                    const fileProgress = parseInt(Math.round((e.loaded / e.total) * 100));
+
+                    const progress = (this.uploadedFilesCount * percentsPerFile) + (percentsPerFile / 100 * fileProgress);
+
+                    NProgress.set(progress / 100);
+                })
+                .then(() => this.uploadedFilesCount++);
             },
 
             getFileById(type, id) {
@@ -585,9 +478,22 @@
             select(file) {
                 this.$emit('select', file);
             },
+
+            getDisks() {
+                return api
+                    .getDisks()
+                    .then((result) => {
+                        this.disks = result;
+                    })
+                    .catch(() => {
+                        Nova.error(this.__('Error reading the folder. Please check your logs'));
+                    });
+            },
         },
 
-        created() {
+        async created() {
+            await this.getDisks();
+
             if (localStorage.getItem('nova-filemanager-view')) {
                 const view = localStorage.getItem('nova-filemanager-view');
 
@@ -612,6 +518,10 @@
 
 .grid-cols-2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.border-dashed {
+    border-style: dashed;
 }
 
 @media(min-width: 768px) {

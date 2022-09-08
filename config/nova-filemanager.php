@@ -87,7 +87,7 @@ return [
         'public',
         'upload',
         // 's3',
-        //  'ftp',
+        // 'ftp',
         // ... more disks
     ],
 

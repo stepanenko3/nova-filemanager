@@ -56,11 +56,6 @@ import api from "../api";
 
 export default {
     props: {
-        active: {
-            type: Boolean,
-            default: false,
-            required: true,
-        },
         disk: {
             type: String,
             default: "",
@@ -74,12 +69,17 @@ export default {
     },
 
     data: () => ({
+        active: false,
         folderName: null,
         error: null,
         isSaving: false,
     }),
 
     methods: {
+        openModal() {
+            this.active = true;
+        },
+
         createFolder() {
             if (this.folderName == null) {
                 this.error = this.__("The folder name is required");

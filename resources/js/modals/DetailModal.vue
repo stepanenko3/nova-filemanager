@@ -12,7 +12,10 @@
             'filemanager-preview--full': full,
         }"
     >
-        <div class="flex items-center px-2 py-1">
+        <div
+            class="flex items-center px-2 py-1"
+            v-if="info"
+        >
             <ToolbarButton @click.prevent="handleClose">
                 <Icon type="x" width="18" height="18" />
             </ToolbarButton>
@@ -67,7 +70,10 @@
             </div>
         </div>
 
-        <div class="filemanager-preview__content" v-if="info">
+        <div
+            class="filemanager-preview__content"
+            v-if="info"
+        >
             <div class="px-4 font-bold text-sm py-2">
                 {{ info.name }}
             </div>

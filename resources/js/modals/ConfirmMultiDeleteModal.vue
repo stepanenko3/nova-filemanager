@@ -54,6 +54,7 @@
 
 <script>
     import api from '../api';
+    import NProgress from 'nprogress'
 
     export default {
         props: {
@@ -84,7 +85,13 @@
             },
 
             async deleteData() {
-                this.loading = true;
+                this.deletedCount = 0;
+
+                if (this.selectedFiles.length <= 0) {
+                    return;
+                }
+
+                NProgress.set(0);
 
                 for (const file of this.selectedFiles) {
                     if (this.type == 'folder') {
@@ -94,7 +101,16 @@
                     }
                 }
 
-                this.loading = false;
+                NProgress.done();
+
+                const message = `${this.__('Deleted')} ${this.deletedCount} of ${this.selectedFiles.length}`;
+
+                if (this.deletedCount >= this.selectedFiles.length) {
+                    Nova.success(message);
+                } else {
+                    Nova.error(message);
+                }
+
                 this.$emit('refresh', true);
                 this.handleClose();
             },
@@ -102,45 +118,31 @@
             deleteFolder(path) {
                 return api
                     .folderDelete(this.disk, path)
-                    .then((r) =>
-                        this.processResponse(
-                            r.response && r.response.data ? r.response.data : r
-                        )
-                    )
-                    .catch((r) =>
-                        this.processResponse(
-                            r.response && r.response.data ? r.response.data : r
-                        )
-                    );
+                    .then(r => this.processResponse(r))
+                    .catch(r => this.processResponse(r));
             },
 
             deleteFile(path) {
                 return api
                     .fileDelete(this.disk, path)
-                    .then((r) =>
-                        this.processResponse(
-                            r.response && r.response.data ? r.response.data : r
-                        )
-                    )
-                    .catch((r) =>
-                        this.processResponse(
-                            r.response && r.response.data ? r.response.data : r
-                        )
-                    );
+                    .then(r => this.processResponse(r))
+                    .catch(r => this.processResponse(r));
             },
 
-            processResponse(result) {
-                if (!result.errors || result.errors.length <= 0) {
-                    this.error = null;
+            processResponse(r) {
+                const result = r.response && r.response.data ? r.response.data : r;
 
-                    this.handleClose();
+                this.error = null;
 
-                    Nova.success(result.message);
-                } else {
+                if (result.errors && result.errors.length > 0) {
                     this.error = result.message;
 
                     Nova.error(this.__('Error:') + ' ' + result.message);
+                } else {
+                    this.deletedCount++;
                 }
+
+                NProgress.set(this.deletedCount * (100 / this.selectedFiles.length));
             },
         },
     };

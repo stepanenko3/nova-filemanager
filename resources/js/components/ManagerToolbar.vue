@@ -254,6 +254,11 @@
             searchItems: _.debounce(function (value) {
                 this.$emit("update:search", value)
             }, 300),
+
+            uploadFilesByButton(e)
+            {
+                this.$emit('uploadFiles', Array.from(e.target.files));
+            },
         },
     };
 </script>

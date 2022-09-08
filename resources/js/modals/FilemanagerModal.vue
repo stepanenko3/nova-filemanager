@@ -50,8 +50,6 @@
     import URI from 'urijs';
     import api from '../api';
     import Manager from '../components/Manager';
-    import Upload from '../components/Upload';
-    import UploadProgress from '../components/UploadProgress';
 
     import ConfirmDeleteModal from './ConfirmDeleteModal';
     import RenameModal from './RenameModal';
@@ -109,8 +107,6 @@
             RenameModal,
 
             Manager,
-            Upload,
-            UploadProgress,
         },
 
         data: () => ({
