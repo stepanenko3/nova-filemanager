@@ -1238,12 +1238,12 @@ class MimeTypes
     /**
      * @param $extension
      */
-    public static function checkMimeType($extension)
+    public static function checkMimeType(string $extension): array|false
     {
         if (isset(self::$source[$extension])) {
             return self::$source[$extension];
         }
 
-        return [];
+        return false;
     }
 }

@@ -4,7 +4,7 @@
             ref="card"
             :loading="loading"
             :class="{ 'opacity-50': dragOver }"
-            class="w-full h-full relative flex flex-col justify-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden cursor-pointer"
+            class="relative flex items-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden cursor-pointer"
             @click="clickStrategy"
         >
             <div
@@ -14,61 +14,55 @@
                 <Loader />
             </div>
 
-            <div
-                class="flex-grow flex items-center justify-center p-4"
-                style="height: 160px"
-            >
-                <Icon :type="mimeIcons[file.mimeType] || mimeIcons.dir" width="48" height="48" />
+            <div class="h-8 w-8 flex items-center justify-center">
+                <Icon
+                    :type="mimeIcons.dir"
+                    width="18"
+                    height="18"
+                />
             </div>
 
-            <div
-                class="w-full h-8 flex-shrink-0 text-center text-xs border-t border-gray-200 dark:border-gray-700 flex items-center justify-center"
-            >
-                <p class="px-2 truncate">
-                    {{ truncate(file.name, 25) }}
-                </p>
+            <p class="truncate">
+                {{ truncate(dir.name, 25) }}
+            </p>
 
+            <div
+                v-if="dir.id !== 'parent'"
+                class="flex items-center justify-center ml-auto"
+            >
                 <div
-                    v-if="file.id !== 'folder_back'"
-                    class="flex items-center justify-center ml-auto"
-                    :class="{ 'bg-50': shouldShowHover }"
+                    class="h-8 w-8 cursor-pointer hover:opacity-50 border-l border-gray-200 dark:border-gray-700 px-2 inline-flex items-center justify-center"
+                    v-if="multiSelecting"
                 >
+                    <input :checked="selected" type="checkbox" />
+                </div>
+
+                <template v-else>
                     <div
                         class="h-8 w-8 cursor-pointer hover:opacity-50 border-l border-gray-200 dark:border-gray-700 px-2 inline-flex items-center justify-center"
-                        v-if="multiSelecting"
+                        @click.prevent="editFolder($event)"
                     >
-                        <input :checked="selected" type="checkbox" />
+                        <Icon type="pencil-alt" width="18" height="18" />
                     </div>
-
-                    <template v-else>
-                        <div
-                            class="h-8 w-8 cursor-pointer hover:opacity-50 border-l border-gray-200 dark:border-gray-700 px-2 inline-flex items-center justify-center"
-                            v-if="renamePermission"
-                            @click.prevent="editFolder($event)"
-                        >
-                            <Icon type="pencil-alt" width="18" height="18" />
-                        </div>
-                        <div
-                            class="h-8 w-8 cursor-pointer hover:opacity-50 border-l border-gray-200 dark:border-gray-700 px-2 inline-flex items-center justify-center"
-                            v-if="deletePermission"
-                            @click.prevent="deleteFolder($event)"
-                        >
-                            <Icon type="trash" class="text-red-500" width="18" height="18" />
-                        </div>
-                    </template>
-                </div>
+                    <div
+                        class="h-8 w-8 cursor-pointer hover:opacity-50 border-l border-gray-200 dark:border-gray-700 px-2 inline-flex items-center justify-center"
+                        @click.prevent="deleteFolder($event)"
+                    >
+                        <Icon type="trash" class="text-red-500" width="18" height="18" />
+                    </div>
+                </template>
             </div>
         </div>
     </template>
 
     <template v-if="view == 'list'">
-        <tr @click="clickStrategy" :loading="loading" v-bind:key="file.id" class="cursor-pointer">
+        <tr @click="clickStrategy" :loading="loading" v-bind:key="dir.id" class="cursor-pointer">
             <td
                 v-if="multiSelecting"
                 class="text-center py-2 pr-2 border-t border-gray-100 dark:border-gray-700 whitespace-nowrap cursor-pointer dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900"
             >
                 <svg
-                    v-if="file.id != 'folder_back'"
+                    v-if="dir.id != 'parent'"
                     width="20"
                     height="20"
                     xmlns="http://www.w3.org/2000/svg"
@@ -105,29 +99,28 @@
                 </div>
 
                 <div class="flex-grow flex items-center justify-start">
-                    <Icon :type="mimeIcons[file.mimeType] || mimeIcons.dir" width="32" height="32" />
+                    <Icon :type="mimeIcons.dir" width="32" height="32" />
                 </div>
             </td>
 
             <td class="p-2 border-t border-gray-100 dark:border-gray-700 whitespace-nowrap cursor-pointer dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                {{ file.name }}
+                {{ dir.name }}
             </td>
 
             <td class="text-center p-2 border-t border-gray-100 dark:border-gray-700 whitespace-nowrap cursor-pointer dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                {{ file.sizeText || '-' }}
+                -
             </td>
 
             <td class="text-center p-2 border-t border-gray-100 dark:border-gray-700 whitespace-nowrap cursor-pointer dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                {{ file.lastModifiedText || '-' }}
+                -
             </td>
             <td class="text-center py-1 pl-2 border-t border-gray-100 dark:border-gray-700 whitespace-nowrap cursor-pointer dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900">
-                <div class="flex items-center justify-end" v-if="file.id != 'folder_back'">
+                <div class="flex items-center justify-end" v-if="dir.id != 'parent'">
                     <Icon
                         type="pencil-alt"
                         width="20"
                         height="20"
                         class="cursor-pointer hover:opacity-50 mr-2"
-                        v-if="renamePermission"
                         @click.prevent="editFolder($event)"
                     />
 
@@ -136,7 +129,6 @@
                         width="20"
                         height="20"
                         class="cursor-pointer hover:opacity-50 text-red-500"
-                        v-if="deletePermission"
                         @click.prevent="deleteFolder($event)"
                     />
                 </div>
@@ -151,7 +143,7 @@
 
     export default {
         props: {
-            file: {
+            dir: {
                 type: Object,
                 default: function () {
                     return { name: '' };
@@ -173,16 +165,6 @@
                 default: () => [],
                 required: false,
             },
-            deletePermission: {
-                type: Boolean,
-                required: false,
-                default: true,
-            },
-            renamePermission: {
-                type: Boolean,
-                required: false,
-                default: true,
-            },
         },
 
         data: () => ({
@@ -199,7 +181,7 @@
         computed: {
             selected() {
                 return (
-                    findIndex(this.selectedFiles, { type: this.file.type, path: this.file.path }) >= 0
+                    findIndex(this.selectedFiles, { type: 'dir', path: this.dir.path }) >= 0
                 );
             },
         },
@@ -210,21 +192,23 @@
             },
 
             clickStrategy() {
-                return this.multiSelecting ? this.select() : this.goToFolder();
+                return this.multiSelecting && this.dir.id !== 'parent'
+                    ? this.select()
+                    : this.goToFolder();
             },
 
             goToFolder() {
-                this.$emit('goToFolderEvent', this.file.path);
+                this.$emit('goToFolder', this.dir.path);
             },
 
             deleteFolder(e) {
                 this.stopDefaultActions(e);
-                this.$emit('delete', 'folder', this.file.path);
+                this.$emit('delete', 'folder', this.dir.path);
             },
 
             editFolder(e) {
                 this.stopDefaultActions(e);
-                this.$emit('rename', 'folder', this.file.path);
+                this.$emit('rename', 'folder', this.dir.path);
             },
 
             stopDefaultActions(e) {
@@ -234,8 +218,8 @@
 
             select() {
                 this.$emit('select', {
-                    type: this.file.type,
-                    path: this.file.path,
+                    type: 'dir',
+                    path: this.dir.path,
                 });
             },
         },

@@ -1,69 +1,32 @@
 <?php
 
 return [
-
     'path' => 'filemanager',
 
-    /*
-    |--------------------------------------------------------------------------
-    | Filemanager Disk
-    |--------------------------------------------------------------------------
-    | This is the storage disk FileManager will use to put file uploads, you can use
-    | any of the disks defined in your config/filesystems.php file. Default to public.
-     */
-    'disk' => env('FILEMANAGER_DISK', 'public'),
+    'mime_types' => [
+        'image' => [
+            'image/',
+            'svg',
+        ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Filemanager default order
-    |--------------------------------------------------------------------------
-    | This will set the default order of the files and folders.
-    | You can use mime, name or size. Default to mime
-     */
-    'order' => env('FILEMANAGER_ORDER', 'mime'),
+        'audio' => ['audio/'],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Filemanager default order direction
-    |--------------------------------------------------------------------------
-    | This will set the default order direction of the files and folders.
-    | You can use asc or desc. Default to asc
-     */
-    'direction' => env('FILEMANAGER_DIRECTION', 'asc'),
+        'video' => ['video/'],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Filemanager cache
-    |--------------------------------------------------------------------------
-    | This will set the cache of filemenager. Filemanager creates a  md5 using file
-    | info. This is useful when s3 is being used or when needs to read a lot of files.
-    | Cache is set by file, not by folder. Default to false.
-     */
-    'cache' => env('FILEMANAGER_CACHE', false),
+        'pdf' => ['application/pdf'],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Configurable buttons
-    |--------------------------------------------------------------------------
-    | This will hide or show filemanager buttons. You can enable o disable buttons
-    | as your own needs. True means visible. False hidden.
-     */
-    'buttons' => [
+        'compressed' => ['zip', 'rar', 'tar', 'gz', '7z', 'pkg'],
 
-        // Menu
-        'create_folder' => true,
-        'upload_button' => true,
-        'select_multiple' => true,
+        'text' => [
+            'text/',
+            'rtf',
+            'json',
+            'javascript',
+            '/xml',
+            'sql',
+        ],
 
-        // Folders
-        'rename_folder' => true,
-        'delete_folder' => true,
-
-        // Files
-        'rename_file' => true,
-        'delete_file' => true,
-        'download_file' => true,
-
+        'word' => ['wordprocessingml'],
     ],
 
     /*
@@ -75,15 +38,15 @@ return [
      */
 
     'filters' => [
-        'Images' => ['jpg', 'jpeg', 'png', 'gif', 'svg', 'bmp', 'tiff'],
+        'images' => ['jpg', 'jpeg', 'png', 'gif', 'svg', 'bmp', 'tiff'],
 
-        'Documents' => ['json', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pps', 'pptx', 'odt', 'rtf', 'md', 'txt', 'css'],
+        'documents' => ['json', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pps', 'pptx', 'odt', 'rtf', 'md', 'txt', 'css'],
 
-        'Videos' => ['mp4', 'avi', 'mov', 'mkv', 'wmv', 'flv', '3gp', 'h264'],
+        'videos' => ['mp4', 'avi', 'mov', 'mkv', 'wmv', 'flv', '3gp', 'h264'],
 
-        'Audios' => ['mp3', 'ogg', 'wav', 'wma', 'midi'],
+        'audios' => ['mp3', 'ogg', 'wav', 'wma', 'midi'],
 
-        'Compressed' => ['zip', 'rar', 'tar', 'gz', '7z', 'pkg'],
+        'compressed' => ['zip', 'rar', 'tar', 'gz', '7z', 'pkg'],
     ],
 
     /*
@@ -98,22 +61,80 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Naming strategy
+    | Default Disk
     |--------------------------------------------------------------------------
-    | Resolve the upload file name with a class that extends
-    | Stepanenko3\NovaFilemanager\Services\AbstractNamingStrategy
-     */
-    'naming' => Stepanenko3\NovaFilemanager\Services\DefaultNamingStrategy::class,
+    |
+    | Can be used to set the default disk used by the tool.
+    | When no disk is selected, the tool will use the default public disk.
+    |
+    | default: public
+    */
+    'default_disk' => env('NOVA_FILE_MANAGER_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------
-    | Post Processing jobs of files
+    | Available disks
     |--------------------------------------------------------------------------
-    | You can set post upload jobs for each file uploaded. You should use one
-    | of the keys used in filters in lowercase. If you have a key called Documents,
-    | use 'documents' as your default filter.
-     */
-    'jobs' => [],
+    |
+    | Can be used to specify the filesystem disks that can be available in the
+    | tool. Note that the default disk (in this case "PUBLIC") is required to
+    | be in this array.
+    |
+    | The disks should be defined in the filesystems.php config.
+    |
+    */
+    'available_disks' => [
+        'public',
+        'upload',
+        // 's3',
+        // 'ftp',
+        // ... more disks
+    ],
 
-    'iconSize' => 48,
+    /*
+    |--------------------------------------------------------------------------
+    | Show hidden files
+    |--------------------------------------------------------------------------
+    |
+    | Toggle whether the tool should show the files and directories which name
+    | starts with "."
+    |
+    | default: false
+    */
+    'show_hidden_files' => env('NOVA_FILE_MANAGER_SHOW_HIDDEN_FILES', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Entities map
+    |--------------------------------------------------------------------------
+    |
+    | Here you can override or define new entity types that can be used to map
+    | the files in your storage.
+    |
+    | Should extend \Bbs\NovaFilemanager\Entities\Entity::class
+    |
+    */
+    'entities' => [
+        'image' => \Stepanenko3\NovaFilemanager\Entities\Image::class,
+        'video' => \Stepanenko3\NovaFilemanager\Entities\Video::class,
+        'text' => \Stepanenko3\NovaFilemanager\Entities\Text::class,
+        'default' => \Stepanenko3\NovaFilemanager\Entities\File::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | URL Signing
+    |--------------------------------------------------------------------------
+    |
+    | When using a cloud filesystem disk (e.g. S3), you may wish to provide
+    | signed url through the tool. You can enable the setting, and adjust the
+    | signing configuration.
+    |
+    | Uses: Storage::temporaryUrl()
+    */
+    'url_signing' => [
+        'enabled' => env('NOVA_FILE_MANAGER_ENABLED_URL_SIGNING', false),
+        'unit' => 'minutes',
+        'value' => 10,
+    ],
 ];

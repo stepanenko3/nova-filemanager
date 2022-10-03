@@ -1,5 +1,10 @@
 <template>
-    <Modal :show="active" maxWidth="2xl" @closing="handleClose" @close-via-escape="handleClose">
+    <Modal
+        :show="active"
+        maxWidth="2xl"
+        @closing="cancelRename"
+        @close-via-escape="cancelRename"
+    >
         <div class="mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
             <template v-if="type == 'folder'">
                 <ModalHeader v-text="__('Rename folder')" />
@@ -42,7 +47,7 @@
                     </div>
 
                     <p class="my-2 text-danger" v-if="error">
-                        {{ errorMsg }}
+                        {{ error }}
                     </p>
                 </div>
             </template>
@@ -79,144 +84,172 @@
 </template>
 
 <script>
-    import api from '../api';
+import api from '../api';
 
-    export default {
-        props: {
-            //
+export default {
+    props: {
+        disk: {
+            type: String,
+            default: '',
+            required: true,
+        },
+    },
+
+    data: () => ({
+        active: false,
+        name: null,
+        type: null,
+        path: null,
+        error: null,
+        isSaving: false,
+        nameWithoutExtension: null,
+    }),
+
+    methods: {
+        openModal(type, path) {
+            this.type = type;
+            this.path = path;
+            this.name = path.replace(/^.*[\\/]/, '');
+            this.active = true;
         },
 
-        data: () => ({
-            active: false,
-            name: null,
-            type: null,
-            path: null,
-            error: false,
-            errorMsg: '',
-            isSaving: false,
-            nameWithoutExtension: null,
-        }),
+        renamePath() {
+            let nameToSave = null;
 
-        methods: {
-            openModal(type, path) {
-                this.type = type;
-                this.path = path;
-                this.name = path.replace(/^.*[\\/]/, '');
-                this.active = true;
-            },
+            if (this.type == 'folder') {
+                if (this.name == null) {
+                    this.error = this.__('The name is required');
 
-            renamePath() {
-                let nameToSave = null;
-
-                if (this.type == 'folder') {
-                    if (this.name == null) {
-                        this.error = true;
-                        return false;
-                    }
-                    nameToSave = this.name;
-                } else {
-                    if (this.nameWithoutExtension == null) {
-                        this.error = true;
-                        return false;
-                    }
-
-                    nameToSave = this.nameWithoutExtension + this.extension;
-                }
-
-                if (!nameToSave) {
-                    this.error = true;
                     return false;
                 }
 
-                return api.rename(this.path, nameToSave).then((result) => {
-                    this.error = false;
-                    this.name = null;
-                    if (result.success == true) {
-                        Nova.success(this.__('Renamed successfully'));
-                        this.$emit('refresh', true);
-                        this.cancelRename();
-                    } else {
-                        this.error = true;
-                        if (result.error) {
-                            this.errorMsg = result.error;
-                            Nova.error(this.__('Error:') + ' ' + result.error);
-                        } else {
-                            this.errorMsg = this.__('The name is required');
-                            Nova.error(this.__('The name is required'));
-                        }
-                    }
-                });
-            },
+                nameToSave = this.name;
+            } else {
+                if (this.nameWithoutExtension == null) {
+                    this.error = this.__('The name is required');
 
-            cancelRename() {
-                this.error = false;
-                this.name = null;
-                this.type = null;
-                this.path = null;
-                this.active = false;
-                // this.$emit('closeCreateFolderModal', true);
-            },
+                    return false;
+                }
 
-            handleClose() {
+                nameToSave = this.nameWithoutExtension + this.extension;
+            }
+
+            if (!nameToSave) {
+                this.error = this.__('The name is required');
+
+                return false;
+            }
+
+            const newPath = (
+                this.path.substring(0, this.path.lastIndexOf('/')) +
+                '/' +
+                nameToSave
+            ).replace(/^\/+/, '');
+
+            return this.endpoint(newPath)
+                .then((r) =>
+                    this.processResponse(
+                        r.response && r.response.data ? r.response.data : r
+                    )
+                )
+                .catch((r) =>
+                    this.processResponse(
+                        r.response && r.response.data ? r.response.data : r
+                    )
+                );
+        },
+
+        endpoint(newPath) {
+            if (this.type == 'folder') {
+                return api.folderRename(this.disk, this.path, newPath);
+            } else {
+                return api.fileRename(this.disk, this.path, newPath);
+            }
+        },
+
+        processResponse(result) {
+            this.name = null;
+
+            if (!result.errors || result.errors.length <= 0) {
+                this.error = null;
+
                 this.cancelRename();
-            },
+
+                Nova.success(result.message);
+
+                this.$emit('refresh', true);
+            } else {
+                this.error = result.message;
+
+                Nova.error(this.__('Error:') + ' ' + result.message);
+            }
         },
 
-        computed: {
-            extension() {
-                if (this.type != 'folder') {
-                    var re = /(?:\.([^.]+))?$/;
+        cancelRename() {
+            this.error = false;
+            this.name = null;
+            this.type = null;
+            this.path = null;
+            this.active = false;
+        },
+    },
 
-                    let ext = re.exec(this.name);
+    computed: {
+        extension() {
+            if (this.type != 'folder') {
+                var re = /(?:\.([^.]+))?$/;
 
-                    if (ext) {
-                        return ext[0];
-                    }
+                let ext = re.exec(this.name);
+
+                if (ext) {
+                    return ext[0];
                 }
+            }
 
-                return '';
-            },
+            return '';
         },
+    },
 
-        watch: {
-            extension(value) {
-                if (value) {
-                    let tempName = this.name;
-                    this.nameWithoutExtension = tempName.replace(value, '');
-                }
-            },
+    watch: {
+        extension(value) {
+            if (value) {
+                let tempName = this.name;
+
+                this.nameWithoutExtension = tempName.replace(value, '');
+            }
         },
-    };
+    },
+};
 </script>
 
 <style>
-    /* Scoped Styles */
+/* Scoped Styles */
 
-    .form-input-bordered-left {
-        background-color: var(--white);
-        border-width: 1px;
-        border-color: var(--60);
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
-        color: var(--80);
-        border-top-left-radius: 0.5rem;
-        border-bottom-left-radius: 0.5rem;
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-        -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-    }
+.form-input-bordered-left {
+    background-color: var(--white);
+    border-width: 1px;
+    border-color: var(--60);
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    color: var(--80);
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+}
 
-    .form-input-bordered-right {
-        border-width: 1px;
-        border-color: var(--60);
-        padding-left: 0.75rem;
-        padding-right: 0.75rem;
-        color: var(--80);
-        border-left: 0;
-        border-top-right-radius: 0.5rem;
-        border-bottom-right-radius: 0.5rem;
-        -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-    }
+.form-input-bordered-right {
+    border-width: 1px;
+    border-color: var(--60);
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    color: var(--80);
+    border-left: 0;
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    -webkit-box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+}
 </style>

@@ -1,462 +1,189 @@
 <?php
 
+
 namespace Stepanenko3\NovaFilemanager;
 
-use Illuminate\Validation\Rule;
-use Stepanenko3\NovaFilemanager\Services\FileManagerService;
-use Stepanenko3\NovaFilemanager\Traits\CoverHelpers;
-use Laravel\Nova\Contracts\Cover;
+use Stepanenko3\NovaFilemanager\Services\FilemanagerService;
+use Closure;
+use JsonException;
 use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Fields\PresentsImages;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Laravel\Nova\Fields\SupportsDependentFields;
 
-class FilemanagerField extends Field implements Cover
+class FilemanagerField extends Field
 {
-    use CoverHelpers,
-        SupportsDependentFields;
+    use PresentsImages;
 
-    /**
-     * The field's component.
-     *
-     * @var string
-     */
-    public $component = 'filemanager-field';
+    public $component = 'nova-filemanager-field';
 
-    /**
-     * The validation rules for upload files.
-     *
-     * @var array
-     */
-    public $uploadRules = [];
+    public string $diskColumn;
 
-    /**
-     * @var bool
-     */
-    protected $createFolderButton;
+    public bool $copyable = false;
 
-    /**
-     * @var bool
-     */
-    protected $uploadButton;
+    public bool $multiple = false;
 
-    /**
-     * @var bool
-     */
-    protected $dragAndDropUpload;
+    public ?int $limit = null;
 
-    /**
-     * @var bool
-     */
-    protected $renameFolderButton;
+    public Closure $storageCallback;
 
-    /**
-     * @var bool
-     */
-    protected $deleteFolderButton;
-
-    /**
-     * @var bool
-     */
-    protected $renameFileButton;
-
-    /**
-     * @var bool
-     */
-    protected $deleteFileButton;
-
-    /**
-     * @var bool
-     */
-    protected $downloadFileButton;
-
-    /**
-     * The callback used to determine if the field is readonly.
-     *
-     * @var Closure
-     */
-    public $readonlyCallback;
-
-    /**
-     * Create a new field.
-     *
-     * @param  string  $name
-     * @param  string|null  $attribute
-     * @param  mixed|null  $resolveCallback
-     * @return void
-     */
-    public function __construct($name, $attribute = null, $resolveCallback = null)
+    public function __construct($name, $attribute = null, Closure $storageCallback = null)
     {
-        parent::__construct($name, $attribute, $resolveCallback);
+        parent::__construct($name, $attribute);
 
-        $this->setButtons();
-
-        $this->withMeta(['visibility' => 'public']);
-        $this->rounded();
+        $this->prepareStorageCallback($storageCallback);
     }
 
-    /**
-     * Set display in details and list as image or icon.
-     *
-     * @return $this
-     */
-    public function displayAsImage()
+    public function copyable(): static
     {
-        return $this->withMeta(['display' => 'image']);
+        $this->copyable = true;
+
+        return $this;
     }
 
-    public function detailDisplayAsImage()
+    public function storeDisk(string $column): static
     {
-        return $this->withMeta(['displayDetail' => 'image']);
+        $this->diskColumn = $column;
+
+        return $this;
     }
 
-    public function indexDisplayAsImage()
+    public function multiple(bool $multiple = true): static
     {
-        return $this->withMeta(['displayIndex' => 'image']);
+        $this->multiple = $multiple;
+
+        return $this;
     }
 
-    public function displayNormal()
+    public function limit(?int $limit = null): static
     {
-        return $this->withMeta(['display' => 'normal']);
-    }
-
-    public function detailDisplayNormal()
-    {
-        return $this->withMeta(['displayDetail' => 'normal']);
-    }
-
-    public function indexDisplayNormal()
-    {
-        return $this->withMeta(['displayIndex' => 'normal']);
-    }
-
-    /**
-     * Set current folder for the field.
-     *
-     * @param   string  $folderName
-     *
-     * @return  $this
-     */
-    public function folder($folderName)
-    {
-        $folder = is_callable($folderName) ? call_user_func($folderName) : $folderName;
-
-        return $this->withMeta(['folder' => $folder, 'home' => $folder]);
-    }
-
-    /**
-     * Set current folder for the field.
-     *
-     * @param   string | function  $rules
-     *
-     * @return  $this
-     */
-    public function validateUpload($rules)
-    {
-        $this->uploadRules = ($rules instanceof Rule || is_string($rules)) ? func_get_args() : $rules;
+        $this->limit = $limit;
 
         return $this;
     }
 
     /**
-     * Set filter for the field.
-     *
-     * @param   string  $folderName
-     *
-     * @return  $this
+     * @throws \JsonException
      */
-    public function filterBy($filter)
+    protected function fillAttribute(NovaRequest $request, $requestAttribute, $model, $attribute)
     {
-        $defaultFilters = config('filemanager.filters', []);
+        $result = call_user_func(
+            $this->storageCallback,
+            $request,
+            $model,
+            $attribute,
+            $requestAttribute
+        );
 
-        if (count($defaultFilters) > 0) {
-            $filters = array_change_key_case($defaultFilters);
-
-            if (isset($filters[$filter])) {
-                $filteredExtensions = $filters[$filter];
-
-                return $this->withMeta(['filterBy' => $filter]);
-            }
+        if ($result === true) {
+            return;
         }
 
-        return $this;
-    }
-
-    /**
-     * Set display in details and list as image or icon.
-     *
-     * @return $this
-     */
-    public function privateFiles()
-    {
-        return $this->withMeta(['visibility' => 'private']);
-    }
-
-    /**
-     * Hide Create button Folder.
-     *
-     * @return $this
-     */
-    public function hideCreateFolderButton()
-    {
-        $this->createFolderButton = false;
-
-        return $this;
-    }
-
-    /**
-     * Hide Upload button.
-     *
-     * @return $this
-     */
-    public function hideUploadButton()
-    {
-        $this->uploadButton = false;
-
-        return $this;
-    }
-
-    /**
-     * Hide Rename folder button.
-     *
-     * @return $this
-     */
-    public function hideRenameFolderButton()
-    {
-        $this->renameFolderButton = false;
-
-        return $this;
-    }
-
-    /**
-     * Hide Delete folder button.
-     *
-     * @return $this
-     */
-    public function hideDeleteFolderButton()
-    {
-        $this->deleteFolderButton = false;
-
-        return $this;
-    }
-
-    /**
-     * Hide Rename file button.
-     *
-     * @return $this
-     */
-    public function hideRenameFileButton()
-    {
-        $this->renameFileButton = false;
-
-        return $this;
-    }
-
-    /**
-     * Hide Rename file button.
-     *
-     * @return $this
-     */
-    public function hideDeleteFileButton()
-    {
-        $this->deleteFileButton = false;
-
-        return $this;
-    }
-
-    /**
-     * Hide Rename file button.
-     *
-     * @return $this
-     */
-    public function hideDownloadFileButton()
-    {
-        $this->downloadFileButton = false;
-
-        return $this;
-    }
-
-    /**
-     * No drag and drop file upload.
-     *
-     * @return $this
-     */
-    public function noDragAndDropUpload()
-    {
-        $this->dragAndDropUpload = false;
-
-        return $this;
-    }
-
-    /**
-     * Set the callback used to determine if the field is readonly.
-     *
-     * @param  Closure|bool  $callback
-     * @return $this
-     */
-    public function readonly($callback = true)
-    {
-        $this->readonlyCallback = $callback;
-
-        return $this;
-    }
-
-    /**
-     * Determine if the field is readonly.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest  $request
-     * @return bool
-     */
-    public function isReadonly(NovaRequest $request)
-    {
-        return with($this->readonlyCallback, function ($callback) use ($request) {
-            if ($callback === true || (is_callable($callback) && call_user_func($callback, $request))) {
-                $this->setReadonlyAttribute();
-
-                return true;
-            }
-
-            return false;
-        });
-    }
-
-    /**
-     * Set the field to a readonly field.
-     *
-     * @return $this
-     */
-    protected function setReadonlyAttribute()
-    {
-        $this->withMeta(['extraAttributes' => ['readonly' => true]]);
-
-        return $this;
-    }
-
-    /**
-     * Resolve the thumbnail URL for the field.
-     *
-     * @return string|null
-     */
-    public function resolveInfo()
-    {
-        if ($this->value) {
-            $service = new FileManagerService();
-
-            $data = $service->getFileInfoAsArray($this->value);
-
-            if (empty($data)) {
-                return [];
-            }
-
-            return $this->fixNameLabel($data);
+        if ($result instanceof Closure) {
+            return $result;
         }
 
-        return [];
-    }
+        if (!is_array($result)) {
+            return $model->{$attribute} = $result;
+        }
 
-    /**
-     * Resolve the thumbnail URL for the field.
-     *
-     * @return string|null
-     */
-    public function resolveThumbnailUrl()
-    {
-        if ($this->value) {
-            $service = new FileManagerService();
-
-            $data = $service->getFileInfoAsArray($this->value);
-
-            if ((isset($data['type']) && $data['type'] !== 'image') || empty($data)) {
-                return;
-            }
-
-            return $data['url'];
+        foreach ($result as $key => $value) {
+            $model->{$key} = $value;
         }
     }
 
-    /**
-     * Get additional meta information to merge with the element payload.
-     *
-     * @return array
-     */
-    public function meta()
+    public function asJson(string $column)
+    {
+    }
+
+    protected function prepareStorageCallback(Closure $storageCallback = null): void
+    {
+        $this->storageCallback = $storageCallback ?? function (
+            NovaRequest $request,
+            $model,
+            string $attribute,
+            string $requestAttribute
+        ) {
+            $value = $request->input($requestAttribute);
+
+            try {
+                $payload = json_decode($value ?? '', true, 512, JSON_THROW_ON_ERROR);
+            } catch (JsonException) {
+                $payload = [];
+            }
+
+            $files = collect($payload['files'] ?? []);
+
+            if ($this->multiple) {
+                $value = $files->isNotEmpty() ? $files->pluck('path')->toArray() : null;
+            } else {
+                $value = data_get($files->first(), 'path');
+            }
+
+            $values = [
+                $attribute => $value,
+            ];
+
+            return $this->mergeExtraStorageColumns($payload, $values);
+        };
+    }
+
+    protected function mergeExtraStorageColumns(array $payload, array $attributes): array
+    {
+        if (isset($this->diskColumn)) {
+            $attributes[$this->diskColumn] = $payload['disk'] ?? null;
+        }
+
+        return $attributes;
+    }
+
+    protected function resolveAttribute($resource, $attribute = null): ?array
+    {
+        if (!$value = parent::resolveAttribute($resource, $attribute)) {
+            return null;
+        }
+
+        $manager = FilemanagerService::make();
+
+        if (isset($this->diskColumn)) {
+            $disk = parent::resolveAttribute($resource, $this->diskColumn);
+        }
+
+        if (isset($disk)) {
+            $manager->disk($disk);
+        }
+
+        $entities = collect();
+
+        if (is_string($value)) {
+            if (empty($value)) {
+                return null;
+            }
+
+            $entities->push($manager->makeEntity($value));
+        }
+
+        if (is_iterable($value)) {
+            foreach ($value as $file) {
+                $entities->push($manager->makeEntity($file));
+            }
+        }
+
+        return [
+            'disk' => $manager->disk,
+            'files' => $entities->toArray(),
+        ];
+    }
+
+    public function jsonSerialize(): array
     {
         return array_merge(
-            $this->resolveInfo(),
-            $this->buttons(),
-            $this->getUploadRules(),
-            $this->getCoverType(),
-            $this->meta
+            parent::jsonSerialize(),
+            $this->imageAttributes(),
+            [
+                'copyable' => $this->copyable,
+                'multiple' => $this->multiple,
+                'limit' => $this->multiple ? $this->limit : 1,
+            ]
         );
-    }
-
-    /**
-     * Set default button options.
-     */
-    private function setButtons()
-    {
-        $this->createFolderButton = config('filemanager.buttons.create_folder', true);
-        $this->uploadButton = config('filemanager.buttons.upload_button', true);
-        $this->dragAndDropUpload = config('filemanager.buttons.upload_drag', true);
-        $this->renameFolderButton = config('filemanager.buttons.rename_folder', true);
-        $this->deleteFolderButton = config('filemanager.buttons.delete_folder', true);
-        $this->renameFileButton = config('filemanager.buttons.rename_file', true);
-        $this->deleteFileButton = config('filemanager.buttons.delete_file', true);
-        $this->downloadFileButton = config('filemanager.buttons.download_file', true);
-    }
-
-    /**
-     * Return correct buttons.
-     *
-     * @return array
-     */
-    private function buttons()
-    {
-        $buttons = [
-            'create_folder' => $this->createFolderButton,
-            'upload_button' => $this->uploadButton,
-            'upload_drag' => $this->dragAndDropUpload,
-            'rename_folder' => $this->renameFolderButton,
-            'delete_folder' => $this->deleteFolderButton,
-            'rename_file' => $this->renameFileButton,
-            'delete_file' => $this->deleteFileButton,
-            'download_file' => $this->downloadFileButton,
-        ];
-
-        return ['buttons' => $buttons];
-    }
-
-    /**
-     * Return upload rules.
-     *
-     * @return  array
-     */
-    private function getUploadRules()
-    {
-        return ['upload_rules' => $this->uploadRules];
-    }
-
-    /**
-     * Return cover type.
-     *
-     * @return  array
-     */
-    private function getCoverType()
-    {
-        return ['rounded' => $this->isRounded()];
-    }
-
-    /**
-     * FIx name label.
-     *
-     * @param array $data
-     *
-     * @return array
-     */
-    private function fixNameLabel(array $data): array
-    {
-        $data['filename'] = $data['name'];
-        unset($data['name']);
-
-        return $data;
     }
 }

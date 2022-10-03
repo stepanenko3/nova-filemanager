@@ -1,25 +1,15 @@
 <?php
 
+
 namespace Stepanenko3\NovaFilemanager\Events;
 
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Events\Dispatchable;
 
 class FileUploaded
 {
-    use SerializesModels;
+    use Dispatchable;
 
-    public string $disk;
-
-    public string $filePath;
-
-    /**
-     * Create a new event instance.
-     *
-     * @return void
-     */
-    public function __construct(string $disk, string $filePath)
+    public function __construct(public string $disk, public string $path)
     {
-        $this->disk = $disk;
-        $this->filePath = $filePath;
     }
 }

@@ -1,7 +1,11 @@
 <?php
 
+
+use Stepanenko3\NovaFilemanager\Http\Controllers\DiskController;
+use Stepanenko3\NovaFilemanager\Http\Controllers\FileController;
+use Stepanenko3\NovaFilemanager\Http\Controllers\FolderController;
+use Stepanenko3\NovaFilemanager\Http\Controllers\IndexController;
 use Illuminate\Support\Facades\Route;
-use Stepanenko3\NovaFilemanager\Http\Controllers\FilemanagerToolController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,23 +16,26 @@ use Stepanenko3\NovaFilemanager\Http\Controllers\FilemanagerToolController;
 | are loaded by the ServiceProvider of your tool. They are protected
 | by your tool's "Authorize" middleware by default. Now, go build!
 |
- */
+*/
 
-Route::controller(FilemanagerToolController::class)
-    ->group(function () {
-        Route::get('data', 'getData');
-        Route::get('{resource}/{attribute}/data', 'getDataField');
-        Route::post('actions/move', 'move');
-        Route::post('actions/create-folder', 'createFolder');
-        Route::post('actions/delete-folder', 'deleteFolder');
-        Route::post('actions/get-info', 'getInfo');
-        Route::post('actions/remove-file', 'removeFile');
-        Route::get('actions/download-file', 'downloadFile');
-        Route::post('actions/rename', 'rename');
-        Route::post('actions/duplicate', 'duplicate');
+Route::as('nova-filemanager.')->middleware('nova')->group(static function () {
+    Route::get('/', IndexController::class)->name('data');
 
-        Route::post('events/folder', 'folderUploadedEvent');
-
-        Route::post('uploads/add', 'upload');
-        Route::get('uploads/update', 'updateFile');
+    Route::prefix('disks')->as('disks.')->group(static function () {
+        Route::get('available', [DiskController::class, 'available'])->name('available');
     });
+
+    Route::prefix('files')->as('files.')->group(function () {
+        Route::post('upload', [FileController::class, 'upload'])->name('upload');
+        Route::post('rename', [FileController::class, 'rename'])->name('rename');
+        Route::post('delete', [FileController::class, 'delete'])->name('delete');
+        Route::post('duplicate', [FileController::class, 'duplicate'])->name('duplicate');
+        Route::get('download', [FileController::class, 'download'])->name('download');
+    });
+
+    Route::prefix('folders')->as('folders.')->group(function () {
+        Route::post('create', [FolderController::class, 'create'])->name('create');
+        Route::post('rename', [FolderController::class, 'rename'])->name('rename');
+        Route::post('delete', [FolderController::class, 'delete'])->name('delete');
+    });
+});

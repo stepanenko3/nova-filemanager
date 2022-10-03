@@ -50,8 +50,6 @@
     import URI from 'urijs';
     import api from '../api';
     import Manager from '../components/Manager';
-    import Upload from '../components/Upload';
-    import UploadProgress from '../components/UploadProgress';
 
     import ConfirmDeleteModal from './ConfirmDeleteModal';
     import RenameModal from './RenameModal';
@@ -109,8 +107,6 @@
             RenameModal,
 
             Manager,
-            Upload,
-            UploadProgress,
         },
 
         data: () => ({
@@ -120,6 +116,7 @@
             activeDiskBackups: [],
             backupStatusses: [],
             showCreateFolder: false,
+            pagination: {},
             files: [],
             parent: {},
             path: [],
@@ -145,6 +142,7 @@
 
         methods: {
             getData(folder) {
+                this.pagination = {};
                 this.files = [];
                 this.parent = {};
                 this.path = [];
@@ -152,7 +150,8 @@
 
                 api.getDataField(this.resource, this.name, folder, this.filter)
                     .then((result) => {
-                        this.files = result.files;
+                        this.pagination = result.data;
+                        this.files = result.data.data;
                         this.path = result.path;
                         this.filters = result.filters;
 

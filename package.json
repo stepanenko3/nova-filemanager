@@ -17,8 +17,12 @@
         "vue-loader": "^16.8.3"
     },
     "dependencies": {
-        "md5": "^2.2.1",
+        "@highlightjs/vue-plugin": "^2.1.0",
+        "@types/highlight.js": "^10.1.0",
         "filesize": "^3.6.1",
+        "highlight.js": "^11.6.0",
+        "md5": "^2.2.1",
+        "nprogress": "^0.2.0",
         "urijs": "^1.19.1"
     }
 }

@@ -1,12 +1,19 @@
 <?php
 
+
 namespace Stepanenko3\NovaFilemanager;
 
+use Stepanenko3\NovaFilemanager\Contracts\FilemanagerContract;
+use Stepanenko3\NovaFilemanager\Contracts\Filesystem\Upload\Uploader as UploaderContract;
+use Stepanenko3\NovaFilemanager\Filesystem\Upload\Uploader;
+use Stepanenko3\NovaFilemanager\Http\Middleware\Authorize;
+use Stepanenko3\NovaFilemanager\Services\FilemanagerService;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Inertia\Inertia;
 use Laravel\Nova\Events\ServingNova;
 use Laravel\Nova\Nova;
-use Stepanenko3\NovaFilemanager\Http\Middleware\Authorize;
 
 class ToolServiceProvider extends ServiceProvider
 {
@@ -15,62 +22,73 @@ class ToolServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
-        $this->config();
-
         $this->app->booted(function () {
             $this->routes();
         });
 
-        Nova::serving(function (ServingNova $event) {
-            Nova::script('filemanager-field', __DIR__ . '/../dist/js/field.js');
-            // Nova::style('filemanager-field', __DIR__.'/../dist/css/field.css');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'nova-filemanager');
+        $this->mergeConfigFrom(__DIR__.'/../config/nova-filemanager.php', 'nova-filemanager');
+
+        $this->publishes([
+            __DIR__.'/../config/nova-filemanager.php' => config_path('nova-filemanager.php'),
+        ], 'config');
+
+        Nova::serving(static function (ServingNova $event) {
+            Nova::translations(__DIR__.'/../lang/en.json');
         });
+
+        Inertia::version(static function () {
+            return md5_file(__DIR__.'../dist/mix-manifest.json');
+        });
+
+        $this->publish();
     }
 
-    /**
-     * Register the tool's routes.
-     *
-     * @return void
-     */
-    protected function routes()
+    protected function routes(): void
     {
         if ($this->app->routesAreCached()) {
             return;
         }
 
         Nova::router(['nova', Authorize::class], config('nova-filemanager.path', 'filemanager'))
-            ->group(__DIR__ . '/../routes/inertia.php');
+            ->group(__DIR__.'/../routes/inertia.php');
 
-        Route::middleware(['nova', Authorize::class])
-            ->namespace('Stepanenko3\NovaFilemanager\Http\Controllers')
-            ->prefix('nova-vendor/stepanenko3/nova-filemanager')
-            ->group(__DIR__ . '/../routes/api.php');
+        Route::middleware(['nova:api', Authorize::class])
+            ->prefix('nova-vendor/nova-filemanager')
+            ->group(__DIR__.'/../routes/api.php');
     }
 
-    /**
-     * Register any application services.
-     *
-     * @return void
-     */
-    public function register()
+    public function register(): void
     {
-        //
+        $this->app->singleton(UploaderContract::class, Uploader::class);
+        $this->app->singleton(FilemanagerContract::class, function (Application $app, array $args = []) {
+            /** @var \Illuminate\Http\Request $request */
+            $request = $app->make('request');
+
+            $disk = $args['disk'] ?? $request->input('disk');
+            $path = $args['path'] ?? $request->input('path', DIRECTORY_SEPARATOR);
+            $page = (int) ($args['page'] ?? $request->input('page', 1));
+            $perPage = (int) ($args['perPage'] ?? $request->input('perPage', 15));
+            $search = $args['search'] ?? $request->input('search');
+            $filter = $args['filter'] ?? $request->input('filter');
+
+            return FilemanagerService::make($disk, $path, $page, $perPage, $search, $filter);
+        });
     }
 
-    private function config()
+    public function publish(): void
     {
         if ($this->app->runningInConsole()) {
-            // Publish config
-            $this->publishes([
-                __DIR__ . '/../config/' => config_path(),
-            ], 'config');
-        }
+            $this->mergeConfigFrom(__DIR__.'/../config/nova-filemanager.php', 'nova-filemanager');
 
-        $this->mergeConfigFrom(
-            __DIR__ . '/../config/nova-filemanager.php',
-            'nova-filemanager'
-        );
+            $this->publishes(
+                [
+                    __DIR__.'/../config' => config_path(),
+                ],
+                'nova-filemanager-config'
+            );
+        }
     }
 }

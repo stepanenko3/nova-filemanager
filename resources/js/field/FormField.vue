@@ -91,7 +91,6 @@
     import ConfirmDeleteModal from '../modals/ConfirmDeleteModal';
     import RenameModal from '../modals/RenameModal';
 
-    import UploadProgress from '../components/UploadProgress';
     import FileSelect from './custom/FileSelect';
 
     import api from '../api';
