@@ -120,10 +120,10 @@ export default {
         },
 
         cancelCreate() {
+            this.active = false;
+
             this.error = null;
             this.folderName = null;
-
-            this.$emit("close", true);
         },
     },
 };
