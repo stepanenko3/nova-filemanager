@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
-import { isEmpty } from 'lodash'
+import { isEmpty, range } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
-import { OurFile, OurFolder, Modal, OptionValue, QueueEntry, QueueEntryStatus } from '@/@types'
+import { OurFile, OurFolder, Modal, OptionValue, QueueEntry, QueueEntryStatus, ModalPayload } from '@/@types'
 import Resumable from 'resumablejs'
 import { csrf } from '@/helpers/csrf'
 import { MODALS } from '@/constants'
@@ -32,6 +32,7 @@ interface State {
     disk: RemovableRef<any>
     period: string
     //
+    perPageOptions: number[],
     sorts: Array<OptionValue>
     disks: Array<string>
     periods: Array<OptionValue>
@@ -58,7 +59,7 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
 
         // browser state
         page: 1,
-        perPage: 15,
+        perPage: 10,
         path: '/',
         search: '',
         sort: '',
@@ -69,6 +70,8 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
         selection: [],
         modals: [],
         queue: [],
+
+        perPageOptions: range(10, 50, 10),
         sorts: [
             { value: '', label: __('Sort by') },
             { value: 'date', label: __('Date Asc') },
@@ -163,7 +166,7 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
          * Modals
          */
 
-        openModal(name: string, payload: OurFile | OurFolder | null = null) {
+        openModal(name: string, payload: ModalPayload = null) {
             this.modals.push({
                 id: uuidv4(),
                 name,
@@ -284,12 +287,44 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
         },
 
 
-
         /**
          * Fetches
          */
+        async deleteFiles({ paths }: { paths: string[] }) {
+            if (paths.length === 0) {
+                return
+            }
 
+            this.openModal(
+                MODALS.DELETE,
+                {
+                    confirm: async () => {
+                        return Nova.request()
+                            .post("/nova-vendor/nova-filemanager/files/delete", {
+                                disk: this.disk,
+                                paths: paths,
+                            })
+                            .then(() => {
+                                this.clearSelection()
+                                this.mod
+                            })
+                    },
+                },
+            );
+            await attempt({
+                operation: OPERATIONS.DELETE_FILE,
+                modal: MODALS.DELETE_FILES,
+                endpoint: ENDPOINTS.DELETE_FILE,
+                data: this.payload({
+                    paths,
+                }),
+                callback: () => {
+                    this.preview = undefined
 
+                    this.clearSelection()
+                },
+            })
+        },
         upload(files: File[]) {
             if (this.isUploading) {
                 return;

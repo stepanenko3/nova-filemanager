@@ -25,10 +25,12 @@ export type OurFolder = {
     path: string
 }
 
+export type ModalPayload = any;
+
 export type Modal = {
     id: string
     name: string
-    payload: OurFile | OurFolder | null
+    payload: ModalPayload,
 }
 
 export type OptionValue = {

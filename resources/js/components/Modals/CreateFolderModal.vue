@@ -1,7 +1,9 @@
 <template>
     <BaseModal :modal="modal">
         <template #header>
-            {{ __("Create folder") }}
+            <div>
+                {{ __("Create folder") }}
+            </div>
         </template>
 
         <div class="p-6">

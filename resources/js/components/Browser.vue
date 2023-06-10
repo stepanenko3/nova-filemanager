@@ -30,16 +30,18 @@
                 @changeFile="changeFile"
             />
 
-            <div class="p-6 flex-grow overflow-x-hidden overflow-y-auto">
+            <div class="flex-grow overflow-x-hidden overflow-y-auto">
                 <BrowserBreadcrumbs
                     v-if="store.data?.breadcrumbs?.length > 0"
                 />
 
-                <BrowserContent />
+                <div class="px-6 py-4 space-y-4 ">
+                    <BrowserContent />
 
-                <BrowserPagination
-                    v-if="store.data?.pagination?.last_page > 1"
-                />
+                    <BrowserPagination
+                        v-if="store.data?.pagination?.last_page > 1"
+                    />
+                </div>
             </div>
         </div>
 

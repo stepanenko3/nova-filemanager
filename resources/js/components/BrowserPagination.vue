@@ -1,5 +1,5 @@
 <template>
-    <nav class="flex items-center mt-6">
+    <nav class="flex items-center pt-4">
         <div class="flex text-sm">
             <button
                 class="hidden md:flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-xl h-9 min-w-9 px-2 focus:outline-none focus:bg-gray-50 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-500 mr-1"

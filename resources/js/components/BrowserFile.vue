@@ -1,71 +1,91 @@
 <template>
     <div
         ref="card"
-        class="w-full h-full relative flex flex-col justify-center border-2 rounded-lg overflow-hidden cursor-pointer"
+        class="w-full h-full relative flex flex-col justify-center cursor-pointer"
         @click.prevent.stop="clickStrategy"
-        :class="{
-            'border-primary-500': isSelected,
-            'border-gray-200 dark:border-gray-700': !isSelected,
-        }"
     >
         <div
-            v-if="file.type != 'image'"
-            class="flex-grow flex items-center justify-center p-4"
-            style="height: 160px"
+            class="relative aspect-square flex items-center p-2 justify-center w-full h-full overflow-hidden rounded-lg hover:shadow-md hover:opacity-75 dark:bg-gray-900 border-2"
+            :class="{
+                'border-primary-500': isSelected,
+                'border-gray-200 dark:border-gray-700': !isSelected,
+            }"
         >
             <Icon
+                class="text-gray-500"
+                v-if="file.type != 'image'"
                 :type="mimeIcons[file.type] || mimeIcons.text"
                 width="48"
                 height="48"
             />
-        </div>
 
-        <div class="p-2" v-if="file.type == 'image'">
             <img
+                v-if="file.type == 'image'"
                 :src="file.url"
-                class="block w-full flex-grow"
-                style="object-fit: contain; height: 160px"
+                class="block w-full h-full"
+                style="object-fit: contain"
             />
         </div>
 
-        <div
-            class="w-full h-8 flex-shrink-0 text-center text-xs border-t border-gray-200 dark:border-gray-700 flex items-center justify-center"
-        >
-            <p class="px-2 truncate">
+        <div class="w-full flex items-center mt-2">
+            <p
+                class="px-2 truncate text-gray-900 dark:text-gray-200 font-medium"
+            >
                 {{ truncate(file.name, 25) }}
             </p>
 
-            <div class="flex items-center justify-center ml-auto">
-                <div
+            <Dropdown class="ml-auto">
+                <template #trigger>
+                    <div
+                        class="cursor-pointer flex items-center justify-center w-7 h-7 rounded-lg dark:hover:bg-gray-900"
+                    >
+                        <Icon type="menu" width="16" height="16" />
+                    </div>
+                </template>
+
+                <DropdownMenu
                     v-if="detailButton && store.selecting"
-                    class="h-8 w-8 cursor-pointer hover:opacity-50 border-l border-gray-200 dark:border-gray-700 px-2 inline-flex items-center justify-center"
                     @click.prevent.stop="showDetail"
                 >
-                    <Icon type="eye" width="18" height="18" />
-                </div>
-                <div
+                    <Icon type="eye" class="mr-2" width="16" height="16" />
+                    {{ __("Details") }}
+                </DropdownMenu>
+
+                <DropdownMenu
                     v-if="file.type === 'image'"
-                    class="h-8 w-8 cursor-pointer hover:opacity-50 border-l border-gray-200 dark:border-gray-700 px-2 inline-flex items-center justify-center"
                     @click.prevent.stop="showCrop"
-                    v-tooltip="__('Crop')"
                 >
-                    <Icon type="adjustments" width="18" height="18" />
-                </div>
-                <div
-                    class="h-8 w-8 cursor-pointer hover:opacity-50 border-l border-gray-200 dark:border-gray-700 px-2 inline-flex items-center justify-center"
-                    @click.prevent.stop="showRename"
-                    v-tooltip="__('Rename')"
-                >
-                    <Icon type="pencil-alt" width="18" height="18" />
-                </div>
-                <div
-                    class="h-8 w-8 cursor-pointer text-red-500 hover:opacity-50 border-l border-gray-200 dark:border-gray-700 px-2 inline-flex items-center justify-center"
+                    <Icon
+                        type="adjustments"
+                        class="mr-2"
+                        width="16"
+                        height="16"
+                    />
+                    {{ __("Crop") }}
+                </DropdownMenu>
+
+                <DropdownMenu @click.prevent.stop="showRename">
+                    <Icon
+                        type="pencil-alt"
+                        class="mr-2"
+                        width="16"
+                        height="16"
+                    />
+                    {{ __("Rename") }}
+                </DropdownMenu>
+
+                <DropdownMenu
+                    class="text-red-500"
                     @click.prevent.stop="showDelete"
-                    v-tooltip="__('Delete')"
                 >
-                    <Icon type="trash" width="18" height="18" />
-                </div>
-            </div>
+                    <Icon type="trash" class="mr-2" width="16" height="16" />
+                    {{ __("Delete") }}
+                </DropdownMenu>
+            </Dropdown>
+        </div>
+
+        <div class="w-full px-2 text-xs">
+            {{ file.sizeReadable }}
         </div>
     </div>
 </template>
@@ -76,6 +96,8 @@ import { mimeIcons } from "@/helpers/mime-icons";
 import truncate from "@/helpers/truncate";
 import useBrowserStore from "@/stores/browser";
 import { computed } from "vue";
+import Dropdown from "./Elements/Dropdown.vue";
+import DropdownMenu from "./Elements/DropdownMenu.vue";
 
 const store = useBrowserStore();
 
@@ -93,26 +115,32 @@ const props = defineProps({
 const isSelected = computed(() => store.isSelected(props.file));
 
 function showDetail() {
-    store.openModal(MODALS.DETAIL, props.file)
+    store.openModal(MODALS.DETAIL, props.file);
 }
 
 function showCrop() {
-    store.openModal(MODALS.CROP, props.file)
+    store.openModal(MODALS.CROP, props.file);
 }
 
 function showRename() {
-    store.openModal(MODALS.RENAME, props.file)
+    store.openModal(MODALS.RENAME, props.file);
 }
 
 function showDelete() {
-    store.openModal(MODALS.DELETE, props.file)
+    store.openModal(MODALS.DELETE, props.file);
 }
 
 function clickStrategy() {
     if (store.selecting) {
-        store.toggleSelection(props.file)
+        store.toggleSelection(props.file);
     } else if (props.detailButton) {
         showDetail();
     }
 }
 </script>
+
+<style>
+.aspect-square {
+    aspect-ratio: 1 / 1;
+}
+</style>

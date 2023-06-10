@@ -1,7 +1,9 @@
 <template>
     <BaseModal :full="true" :disableClose="true" :modal="modal">
         <template #header>
-            {{ __("Queue") }}
+            <div>
+                {{ __("Queue") }}
+            </div>
         </template>
 
         <div class="p-6 grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -55,7 +57,7 @@
                         class="w-full h-8 flex-shrink-0 text-center text-xs border-t border-gray-200 dark:border-gray-700 flex items-center justify-center"
                     >
                         <p class="px-2 truncate">
-                            {{ truncate(item.entity?.name || '', 25) }}
+                            {{ truncate(item.entity?.name || "", 25) }}
                         </p>
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 <template>
     <nav
-        class="mb-4 w-full"
+        class="bg-gray-50 dark:bg-gray-700 px-6 py-2 w-full"
         v-if="store.data?.breadcrumbs?.length > 0"
     >
         <ol class="flex items-center text-xs">

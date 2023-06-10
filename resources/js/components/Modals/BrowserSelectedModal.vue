@@ -17,24 +17,23 @@
         </div>
 
         <template #header>
-            <div class="flex items-center w-full">
-                <div class="mr-3">
-                    {{ __("Selected Files") }}
-                </div>
-
-                <ToolbarButton
-                    class="ml-auto"
-                    type="x"
-                    @click.prevent="clearSelected"
-                    v-tooltip="__('Clear selected files')"
-                />
-                <ToolbarButton
-                    class="ml-3 text-green-500"
-                    type="check"
-                    @click.prevent="confirmSelect"
-                    v-tooltip="__('Confirm selection')"
-                />
+            <div>
+                {{ __("Selected Files") }}
             </div>
+
+            <div class="flex-grow"></div>
+
+            <ToolbarButton
+                type="x"
+                @click.prevent="clearSelected"
+                v-tooltip="__('Clear selected files')"
+            />
+            <ToolbarButton
+                class="text-green-500"
+                type="check"
+                @click.prevent="confirmSelect"
+                v-tooltip="__('Confirm selection')"
+            />
         </template>
     </BaseModal>
 </template>
@@ -45,7 +44,7 @@ import BaseModal from "./BaseModal.vue";
 import ToolbarButton from "../ToolbarButton.vue";
 import useBrowserStore from "@/stores/browser";
 import { storeToRefs } from "pinia";
-import { isEmpty } from 'lodash'
+import { isEmpty } from "lodash";
 import { watch } from "vue";
 
 const store = useBrowserStore();
@@ -57,9 +56,9 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(['confirmSelect'])
+const emit = defineEmits(["confirmSelect"]);
 
-const { selection } = storeToRefs(store)
+const { selection } = storeToRefs(store);
 
 function close() {
     store.closeModal(props.modal.id);

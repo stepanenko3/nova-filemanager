@@ -2,7 +2,7 @@
     <template v-if="folders.length > 0">
         <Heading
             level="5"
-            class="mb-2 cursor-pointer"
+            class="cursor-pointer text-xs hover:opacity-75"
             @click="store.showFolders = !store.showFolders"
         >
             {{ __("Folders") }}
@@ -17,7 +17,6 @@
         <div
             v-if="store.showFolders"
             class="grid md:grid-cols-4 gap-4"
-            :class="{ 'mb-4': files.length > 0 }"
         >
             <template v-for="folder in folders" :key="folder.id">
                 <BrowserFolder
@@ -32,7 +31,7 @@
     <template v-if="files.length > 0">
         <Heading
             level="5"
-            class="mb-2 cursor-pointer"
+            class="cursor-pointer text-xs hover:opacity-75"
             @click="store.showFiles = !store.showFiles"
         >
             {{ __("Files") }}

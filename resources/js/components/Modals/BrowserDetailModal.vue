@@ -1,42 +1,39 @@
 <template>
     <BaseModal :modal="modal">
         <template #header>
-            <div class="flex items-center w-full">
-                <div>
-                    {{ __("File details") }}
-                </div>
-                <div class="flex items-center ml-auto">
-                    <ToolbarButton
-                        v-if="store.selecting"
-                        class="ml-3 text-green-500"
-                        :active="isSelected"
-                        type="check"
-                        @click.prevent="select"
-                        v-tooltip="__('Select')"
-                    />
-
-                    <ToolbarButton
-                        v-if="file.type === 'image'"
-                        class="ml-3"
-                        type="adjustments"
-                        @click.prevent="() => store.openModal(MODALS.CROP, file)"
-                        v-tooltip="__('Crop')"
-                    />
-
-                    <ToolbarButton
-                        class="ml-3"
-                        type="pencil-alt"
-                        @click.prevent="() => store.openModal(MODALS.RENAME, file)"
-                        v-tooltip="__('Rename')"
-                    />
-                    <ToolbarButton
-                        class="ml-3 text-red-500"
-                        type="trash"
-                        @click.prevent="() => store.openModal(MODALS.DELETE, file)"
-                        v-tooltip="__('Delete')"
-                    />
-                </div>
+            <div>
+                {{ __("Details") }}
             </div>
+
+            <div class="flex-grow"></div>
+
+            <ToolbarButton
+                v-if="store.selecting"
+                class="ml-3 text-green-500"
+                :active="isSelected"
+                type="check"
+                @click.prevent="select"
+                v-tooltip="__('Select')"
+            />
+
+            <ToolbarButton
+                v-if="file.type === 'image'"
+                type="adjustments"
+                @click.prevent="() => store.openModal(MODALS.CROP, file)"
+                v-tooltip="__('Crop')"
+            />
+
+            <ToolbarButton
+                type="pencil-alt"
+                @click.prevent="() => store.openModal(MODALS.RENAME, file)"
+                v-tooltip="__('Rename')"
+            />
+            <ToolbarButton
+                class="text-red-500"
+                type="trash"
+                @click.prevent="() => store.openModal(MODALS.DELETE, file)"
+                v-tooltip="__('Delete')"
+            />
         </template>
 
         <div class="px-4 font-bold text-sm py-2">

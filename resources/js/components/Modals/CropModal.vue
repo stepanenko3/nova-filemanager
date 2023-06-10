@@ -1,26 +1,24 @@
 <template>
     <BaseModal :modal="modal">
         <template #header>
-            <div class="flex items-center w-full">
-                <div>
-                    {{ __("Crop image") }}
-                </div>
-                <div class="flex items-center ml-auto">
-                    <ToolbarButton
-                        class="ml-3"
-                        type="x"
-                        @click.prevent="close"
-                        v-tooltip="__('Cancel crop')"
-                    />
-
-                    <ToolbarButton
-                        class="ml-3 text-green-500"
-                        type="check"
-                        @click.prevent="confirmCrop"
-                        v-tooltip="__('Confirm crop')"
-                    />
-                </div>
+            <div>
+                {{ __("Crop image") }}
             </div>
+
+            <div class="flex-grow"></div>
+
+            <ToolbarButton
+                type="x"
+                @click.prevent="close"
+                v-tooltip="__('Cancel crop')"
+            />
+
+            <ToolbarButton
+                class="text-green-500"
+                type="check"
+                @click.prevent="confirmCrop"
+                v-tooltip="__('Confirm crop')"
+            />
         </template>
 
         <vue-cropper

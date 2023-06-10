@@ -1,10 +1,10 @@
 <template>
     <button
         type="button"
-        class="rounded-lg cursor-pointer border h-9 min-w-9 px-2 flex items-center justify-center focus:outline-none focus:bg-gray-50 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-500"
+        class="rounded-lg cursor-pointer border h-9 min-w-9 px-2 flex items-center justify-center focus:outline-none focus:bg-gray-50 hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900"
         :class="{
             'border-gray-200 dark:border-gray-700': !active,
-            'border-primary-500': active,
+            'border-primary-500 text-primary-500': active,
         }"
     >
         <slot />

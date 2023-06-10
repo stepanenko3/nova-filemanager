@@ -1,11 +1,7 @@
 <template>
     <BaseModal :modal="modal">
         <template #header>
-            {{ __("Delete") }}:
-
-            <div class="font-bold ml-3">
-                {{ subject.name }}
-            </div>
+            <div>{{ __("Delete") }}</div>
         </template>
 
         <div class="p-6">
@@ -39,33 +35,30 @@
         </div>
 
         <template #footer>
-            <div class="flex items-center ml-auto">
-                <CancelButton
-                    component="button"
-                    type="button"
-                    dusk="cancel-action-button"
-                    class="ml-auto mr-3"
-                    @click.prevent="close"
-                />
+            <CancelButton
+                component="button"
+                type="button"
+                dusk="cancel-action-button"
+                @click.prevent="close"
+            />
 
-                <LoadingButton
-                    ref="confirmButton"
-                    type="submit"
-                    component="DangerButton"
-                    dusk="confirm-button"
-                    :disabled="loading"
-                    :loading="loading"
-                    @click.prevent="confirmDelete"
-                >
-                    <template v-if="loading">
-                        {{ __("Deleting") }}
-                    </template>
+            <LoadingButton
+                ref="confirmButton"
+                type="submit"
+                component="DangerButton"
+                dusk="confirm-button"
+                :disabled="loading"
+                :loading="loading"
+                @click.prevent="confirmDelete"
+            >
+                <template v-if="loading">
+                    {{ __("Deleting") }}
+                </template>
 
-                    <template v-else>
-                        {{ __("Delete") }}
-                    </template>
-                </LoadingButton>
-            </div>
+                <template v-else>
+                    {{ __("Delete") }}
+                </template>
+            </LoadingButton>
         </template>
     </BaseModal>
 </template>
@@ -142,7 +135,7 @@ function processResponse(result) {
 
         Nova.success(result.message);
 
-        store.unselect(props.modal.payload)
+        store.unselect(props.modal.payload);
         store.closeModals();
         store.fetch();
     } else {

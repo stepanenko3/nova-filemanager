@@ -1,16 +1,9 @@
 <template>
     <div
-        class="flex items-center px-6 py-4 border-b border-gray-200 dark:border-gray-700"
+        class="flex items-center px-6 py-4 space-x-2 border-b border-gray-200 dark:border-gray-700"
     >
-        <ToolbarButton
-            @click.prevent="store.fetch()"
-            type="refresh"
-            class="mr-3"
-            v-tooltip="__('Refresh')"
-        />
-
         <label
-            class="rounded-lg cursor-pointer h-9 min-w-9 px-2 mr-3 flex items-center justify-center focus:outline-none bg-primary-500 hover:bg-primary-600 shadow text-white dark:text-gray-900 dark:ring-gray-600"
+            class="rounded-lg cursor-pointer h-9 min-w-9 px-2 flex items-center justify-center focus:outline-none bg-primary-500 hover:bg-primary-600 shadow text-white dark:text-gray-900 dark:ring-gray-600"
             v-tooltip="__('Upload a file')"
             for="fileUpload"
         >
@@ -29,12 +22,16 @@
         <ToolbarButton
             @click.prevent="store.openModal(MODALS.CREATE_FOLDER)"
             type="folder-add"
-            class="mr-3"
             v-tooltip="__('Create folder')"
         />
 
+        <ToolbarButton
+            @click.prevent="store.fetch()"
+            type="refresh"
+            v-tooltip="__('Refresh')"
+        />
+
         <SelectControl
-            class="mr-3"
             :options="
                 store.disks.map((value) => ({
                     label: value,
@@ -45,65 +42,101 @@
             @change="($event) => store.setDisk($event)"
         />
 
-        <SelectControl
-            v-if="store.periods"
-            class="mr-3"
-            :options="store.periods"
-            :selected="store.period"
-            @change="($event) => store.setPeriod($event)"
-        />
-
-        <SelectControl
-            v-if="store.sorts"
-            class="mr-3"
-            :options="store.sorts"
-            :selected="store.sort"
-            @change="($event) => store.setSort($event)"
-        />
+        <div class="flex-grow"></div>
 
         <div
-            class="ml-auto flex items-center"
+            class="flex items-center space-x-2"
             v-if="store.selecting && store.selection.length > 0"
         >
             <span> Selected {{ store.selection.length }} files </span>
 
             <ToolbarButton
-                class="ml-3"
                 type="eye"
                 @click.prevent="() => store.openModal(MODALS.SELECTED)"
                 v-tooltip="__('Open selected files modal')"
             />
             <ToolbarButton
-                class="ml-3"
                 type="x"
                 @click.prevent="store.clearSelection"
                 v-tooltip="__('Clear selected files')"
             />
             <ToolbarButton
-                class="ml-3 text-green-500"
+                class="text-green-500"
                 type="check"
                 @click.prevent="confirmSelect"
                 v-tooltip="__('Confirm selection')"
             />
         </div>
 
-        <div v-else class="relative flex items-center h-9 ml-auto">
-            <Icon
-                type="search"
-                width="20"
-                class="absolute ml-2 text-gray-400"
-                :style="{ top: '6px' }"
-            />
+        <Dropdown>
+            <template #trigger>
+                <ToolbarButton
+                    type="filter"
+                    :active="(store.search || store.sort || store.period) ? true : false"
+                    v-tooltip="__('Filters')"
+                />
+            </template>
 
-            <RoundInput
-                class="appearance-none g-white dark:bg-gray-800 shadow h-8 w-full dark:focus:bg-gray-800"
-                :placeholder="__('Search')"
-                spellcheck="false"
-                :aria-label="__('Search')"
-                type="text"
-                @input="(e) => searchItems(e.target.value)"
-            />
-        </div>
+            <div class="p-2 space-y-2 w-60">
+                <p class="text-gray-900 dark:text-gray-200 font-medium">
+                    {{ __("Search") }}
+                </p>
+
+                <div class="relative flex items-center h-9 ml-auto">
+                    <Icon
+                        type="search"
+                        width="20"
+                        class="absolute ml-2 text-gray-400"
+                        :style="{ top: '6px' }"
+                    />
+
+                    <RoundInput
+                        class="appearance-none g-white dark:bg-gray-800 shadow h-8 w-full dark:focus:bg-gray-800"
+                        :placeholder="__('Search')"
+                        spellcheck="false"
+                        :aria-label="__('Search')"
+                        type="text"
+                        @input="(e) => searchItems(e.target.value)"
+                    />
+                </div>
+
+                <p class="text-gray-900 dark:text-gray-200 font-medium">
+                    {{ __("Per page") }}
+                </p>
+                <SelectControl
+                    :options="
+                        store.perPageOptions.map((value) => ({
+                            label: value,
+                            value: value,
+                        }))
+                    "
+                    :selected="store.perPage"
+                    @change="($event) => store.setPerPage($event)"
+                />
+
+                <p class="text-gray-900 dark:text-gray-200 font-medium">
+                    {{ __("Period") }}
+                </p>
+
+                <SelectControl
+                    v-if="store.periods"
+                    :options="store.periods"
+                    :selected="store.period"
+                    @change="($event) => store.setPeriod($event)"
+                />
+
+                <p class="text-gray-900 dark:text-gray-200 font-medium">
+                    {{ __("Sort by") }}
+                </p>
+
+                <SelectControl
+                    v-if="store.sorts"
+                    :options="store.sorts"
+                    :selected="store.sort"
+                    @change="($event) => store.setSort($event)"
+                />
+            </div>
+        </Dropdown>
     </div>
 </template>
 
@@ -113,6 +146,7 @@ import ToolbarButton from "./ToolbarButton.vue";
 import useBrowserStore from "../stores/browser.ts";
 import { MODALS } from "@/constants";
 import { ref } from "vue";
+import Dropdown from "./Elements/Dropdown.vue";
 
 const store = useBrowserStore();
 

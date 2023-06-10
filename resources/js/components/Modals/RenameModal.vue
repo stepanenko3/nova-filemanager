@@ -1,7 +1,9 @@
 <template>
     <BaseModal :modal="modal">
         <template #header>
-            {{ __(isFolder ? "Rename folder" : "Rename file") }}
+            <div>
+                {{ __(isFolder ? "Rename folder" : "Rename file") }}
+            </div>
         </template>
 
         <template v-if="isFolder">
@@ -45,31 +47,28 @@
         </template>
 
         <template #footer>
-            <div class="flex items-center">
-                <CancelButton
-                    component="button"
-                    type="button"
-                    dusk="cancel-action-button"
-                    class="mr-3"
-                    @click.prevent="close"
-                />
+            <CancelButton
+                component="button"
+                type="button"
+                dusk="cancel-action-button"
+                @click.prevent="close"
+            />
 
-                <LoadingButton
-                    ref="confirmButton"
-                    type="submit"
-                    dusk="confirm-button"
-                    :disabled="loading"
-                    :loading="loading"
-                    @click.prevent="confirmRename"
-                >
-                    <template v-if="loading">
-                        {{ __("Renaming") }}
-                    </template>
-                    <template v-else>
-                        {{ __("Rename") }}
-                    </template>
-                </LoadingButton>
-            </div>
+            <LoadingButton
+                ref="confirmButton"
+                type="submit"
+                dusk="confirm-button"
+                :disabled="loading"
+                :loading="loading"
+                @click.prevent="confirmRename"
+            >
+                <template v-if="loading">
+                    {{ __("Renaming") }}
+                </template>
+                <template v-else>
+                    {{ __("Rename") }}
+                </template>
+            </LoadingButton>
         </template>
     </BaseModal>
 </template>
@@ -169,7 +168,7 @@ function processResponse(result) {
 
         Nova.success(result.message);
 
-        store.unselect(props.modal.payload)
+        store.unselect(props.modal.payload);
         store.closeModals();
         store.fetch();
     } else {

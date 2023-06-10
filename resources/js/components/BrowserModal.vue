@@ -2,7 +2,7 @@
     <Transition>
         <div
             v-if="state"
-            class="fixed backgrop inset-0 z-50 p-4 overflow h-full max-h-full flex justify-center"
+            class="fixed backgrop inset-0 z-50 p-2 overflow h-full max-h-full flex justify-center"
         >
             <div class="absolute inset-0" @click.prevent="closeModal"></div>
 
