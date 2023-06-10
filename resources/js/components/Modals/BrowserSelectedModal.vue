@@ -1,0 +1,88 @@
+<template>
+    <BaseModal :full="true" :modal="modal">
+        <div class="p-6">
+            <TransitionGroup
+                name="list"
+                tag="div"
+                class="grid grid-cols-2 md:grid-cols-4 gap-4"
+            >
+                <template v-for="file in selection" :key="file.id">
+                    <BrowserFile
+                        :ref="'file_' + file.id"
+                        :file="file"
+                        :data-key="file.id"
+                    />
+                </template>
+            </TransitionGroup>
+        </div>
+
+        <template #header>
+            <div class="flex items-center w-full">
+                <div class="mr-3">
+                    {{ __("Selected Files") }}
+                </div>
+
+                <ToolbarButton
+                    class="ml-auto"
+                    type="x"
+                    @click.prevent="clearSelected"
+                    v-tooltip="__('Clear selected files')"
+                />
+                <ToolbarButton
+                    class="ml-3 text-green-500"
+                    type="check"
+                    @click.prevent="confirmSelect"
+                    v-tooltip="__('Confirm selection')"
+                />
+            </div>
+        </template>
+    </BaseModal>
+</template>
+
+<script setup>
+import BrowserFile from "../BrowserFile.vue";
+import BaseModal from "./BaseModal.vue";
+import ToolbarButton from "../ToolbarButton.vue";
+import useBrowserStore from "@/stores/browser";
+import { storeToRefs } from "pinia";
+import { isEmpty } from 'lodash'
+import { watch } from "vue";
+
+const store = useBrowserStore();
+
+const props = defineProps({
+    modal: {
+        type: Object,
+        required: true,
+    },
+});
+
+const emit = defineEmits(['confirmSelect'])
+
+const { selection } = storeToRefs(store)
+
+function close() {
+    store.closeModal(props.modal.id);
+}
+
+function clearSelected() {
+    store.clearSelection();
+
+    close();
+}
+
+function confirmSelect() {
+    emit("confirmSelect");
+
+    close();
+}
+
+watch(
+    () => store.selection,
+    (selection, prevSelection) => {
+        if (isEmpty(selection)) {
+            close();
+        }
+    }
+);
+</script>

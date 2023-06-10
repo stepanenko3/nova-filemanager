@@ -1,103 +1,29 @@
 <template>
     <div ref="filemanager-container">
         <Heading class="mb-6">
-            {{ __('Filemanager') }}
+            {{ __("Filemanager") }}
         </Heading>
 
-        <div class="relative" id="filemanager-manager">
-            <Manager
-                ref="manager"
+        <DefaultButton @click.prevent="() => (modalState = true)">
+            Open Modal
+        </DefaultButton>
 
-                :card="card"
-
-                :loading="loading"
-                :path="path"
-                :search="search"
-                :disk="disk"
-                :files="files"
-                :breadcrumbs="breadcrumbs"
-                :directories="directories"
-                :filter="filter"
-                :filters="filters"
-                :multiSelecting="multiSelecting"
-                :selectedFiles="selectedFiles"
-                :pageLimits="pageLimits"
-
-                @refresh="refresh"
-                @goToFolder="goToFolder"
-                @goToPage="goToPage"
-                @select="select"
-                @delete="openDeleteModal"
-                @rename="openRenameModal"
-                @multiDelete="openMultiDeleteModal"
-                @createFolder="openModalCreateFolder"
-                @showInfo="showInfo"
-
-                @update:search="setSearch"
-                @update:disk="setDisk"
-                @update:filter="setFilter"
-                @update:perPage="setPerPage"
-                @update:multiSelecting="multiSelecting = $event"
-            />
-        </div>
-
-        <DetailModal
-            ref="detailPopup"
-            :info="info"
-            :active="info !== null"
-            :disk="disk"
-
-            @close="closePreview"
-            @rename="openRenameModal"
-            @delete="openDeleteModal"
-            @duplicate="openConfirmDuplicateModal"
-        />
-
-        <CreateFolderModal
-            ref="createFolderModal"
-            :path="path"
-            :disk="disk"
-            @refresh="refreshCurrent"
-        />
-
-        <RenameModal
-            ref="renameModal"
-            :disk="disk"
-            @refresh="refreshCurrent"
-        />
-
-        <ConfirmDuplicateModal
-            ref="duplicateModal"
-            :disk="disk"
-            @refresh="refreshCurrent"
-        />
-
-        <ConfirmDeleteModal
-            ref="confirmDelete"
-            :disk="disk"
-            @refresh="refreshCurrent"
-        />
-
-        <ConfirmMultiDeleteModal
-            ref="confirmMultiDelete"
-            :disk="disk"
-            :selectedFiles="selectedFiles"
-            @refresh="refreshCurrent"
+        <BrowserModal
+            v-model:state="modalState"
+            @confirmSelect="confirmSelect"
         />
     </div>
 </template>
 
-<script>
-    import ToolMixin from '../mixins/ToolMixin';
+<script setup>
+import { ref } from "vue";
+import BrowserModal from "../components/BrowserModal.vue";
 
-    export default {
-        mixins: [
-            ToolMixin,
-        ],
+const modalState = ref(true);
 
-        data: () => ({
-            card: true,
-            savePath: true,
-        }),
-    };
+function confirmSelect(e) {
+    console.log(e);
+
+    modalState.value = false;
+}
 </script>

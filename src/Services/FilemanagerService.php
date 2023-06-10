@@ -9,6 +9,7 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Stepanenko3\LaravelPagination\Pagination;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -22,6 +23,15 @@ class FilemanagerService implements FilemanagerContract
 
     public array $filterCallbacks = [];
 
+    public array $availableSorts = [
+        'size',
+        'size-desc',
+        'name',
+        'name-desc',
+        'date',
+        'date-desc',
+    ];
+
     public function __construct(
         public ?string $disk = null,
         public ?string $path = DIRECTORY_SEPARATOR,
@@ -29,6 +39,8 @@ class FilemanagerService implements FilemanagerContract
         public int $perPage = 15,
         public ?string $search = null,
         public ?string $filter = null,
+        public ?string $sort = null,
+        public ?string $filterByDate = null,
     ) {
         $this->disk ??= config('nova-filemanager.default_disk');
 
@@ -64,8 +76,9 @@ class FilemanagerService implements FilemanagerContract
         bool $filterHidden = true,
         bool $applySearch = true,
         bool $applyFilter = true,
-    ): Collection
-    {
+        bool $applyFilterByDate = true,
+        bool $applySort = true,
+    ): Collection {
         $this->filterCallbacks = [];
 
         if ($filterHidden) {
@@ -80,8 +93,40 @@ class FilemanagerService implements FilemanagerContract
             $this->applyFilterCallback();
         }
 
+        if ($applyFilterByDate) {
+            $this->applyFilterByDateCallback();
+        }
+
         return collect($this->fileSystem->files($this->path))
-            ->filter(fn (string $file) => $this->applyFilterCallbacks($file));
+            ->filter(fn (string $file) => $this->applyFilterCallbacks($file))
+            ->when(
+                $applySort && !empty($this->sort) && in_array($this->sort, $this->availableSorts),
+                fn ($collection) => $collection
+                    ->when(
+                        $this->sort === 'date',
+                        fn ($collection) => $collection->sortBy(fn ($file) => $this->fileSystem->lastModified($file)),
+                    )
+                    ->when(
+                        $this->sort === 'date-desc',
+                        fn ($collection) => $collection->sortByDesc(fn ($file) => $this->fileSystem->lastModified($file)),
+                    )
+                    ->when(
+                        $this->sort === 'name',
+                        fn ($collection) => $collection->sortBy(fn ($file) => basename($file)),
+                    )
+                    ->when(
+                        $this->sort === 'name-desc',
+                        fn ($collection) => $collection->sortByDesc(fn ($file) => basename($file)),
+                    )
+                    ->when(
+                        $this->sort === 'size',
+                        fn ($collection) => $collection->sortBy(fn ($file) => $this->fileSystem->size($file)),
+                    )
+                    ->when(
+                        $this->sort === 'size-desc',
+                        fn ($collection) => $collection->sortByDesc(fn ($file) => $this->fileSystem->size($file)),
+                    )
+            );
     }
 
     public function omitHiddenFilesAndDirectories(): void
@@ -103,6 +148,19 @@ class FilemanagerService implements FilemanagerContract
             $ext = pathinfo($path, PATHINFO_EXTENSION);
 
             return in_array($ext, $extensions);
+        };
+    }
+
+    public function applyFilterByDateCallback(): void
+    {
+        if (empty($this->filterByDate)) {
+            return;
+        }
+
+        $time = strtotime('-' . $this->filterByDate);
+
+        $this->filterCallbacks[] = function (string $path) use ($time) {
+            return $this->fileSystem->lastModified($path) >= $time;
         };
     }
 
@@ -324,8 +382,19 @@ class FilemanagerService implements FilemanagerContract
         int $perPage = 15,
         ?string $search = null,
         ?string $filter = null,
+        ?string $sort = null,
+        ?string $filterByDate = null,
     ): self {
-        return new self($disk, $path, $page, $perPage, $search, $filter);
+        return new self(
+            disk: $disk,
+            path: $path,
+            page: $page,
+            perPage: $perPage,
+            search: $search,
+            filter: $filter,
+            sort: $sort,
+            filterByDate: $filterByDate,
+        );
     }
 
     /**

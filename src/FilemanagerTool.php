@@ -16,7 +16,8 @@ class FilemanagerTool extends Tool
      */
     public function boot()
     {
-        Nova::script('nova-filemanager', __DIR__.'/../dist/js/tool.js');
+        // Nova::script('nova-filemanager', __DIR__ . '/../dist/js/tool.js');
+        Nova::style('nova-filemanager', __DIR__ . '/../dist/css/tool.css');
     }
 
     /**

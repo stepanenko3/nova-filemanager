@@ -1,28 +1,40 @@
 {
     "private": true,
     "scripts": {
-        "dev": "npm run development",
-        "development": "mix",
-        "watch": "mix watch",
-        "watch-poll": "mix watch -- --watch-options-poll=1000",
-        "hot": "mix watch --hot",
-        "prod": "npm run production",
-        "production": "mix --production",
-        "nova:install": "npm --prefix='../../vendor/laravel/nova' ci"
+        "dev": "NODE_ENV=development vite build --watch",
+        "build": "vite build",
+        "package": "npm run format && npm run lint && npm run build",
+        "check-format": "prettier --list-different 'resources/**/*.{css,js,vue,ts}'",
+        "format": "prettier --write 'resources/js/**/*.{css,js,vue,ts}'",
+        "lint": "eslint resources/js --fix --ext js,vue,ts"
     },
+    "files": [
+        "dist"
+    ],
+    "main": "./dist/js/tool.umd.cjs",
     "devDependencies": {
+        "@inertiajs/inertia": "^0.11.1",
+        "@rollup/plugin-alias": "^5.0.0",
+        "@vitejs/plugin-vue": "^4.2.3",
         "@vue/compiler-sfc": "^3.2.22",
-        "laravel-mix": "^6.0.41",
-        "postcss": "^8.3.11",
-        "vue-loader": "^16.8.3"
+        "filesize": "^3.6.1",
+        "md5": "^2.2.1",
+        "postcss": "^8.4.24",
+        "postcss-import": "^15.1.0",
+        "sass": "^1.63.2",
+        "tailwindcss": "^3.3.2",
+        "uuid": "^9.0.0",
+        "vite": "^4.3.9",
+        "vite-tsconfig-paths": "^4.2.0",
+        "vue-cropperjs": "^5.0.0"
     },
     "dependencies": {
-        "@highlightjs/vue-plugin": "^2.1.0",
-        "@types/highlight.js": "^10.1.0",
-        "filesize": "^3.6.1",
-        "highlight.js": "^11.6.0",
-        "md5": "^2.2.1",
-        "nprogress": "^0.2.0",
-        "urijs": "^1.19.1"
+        "@types/lodash": "^4.14.195",
+        "@types/uuid": "^9.0.2",
+        "@vueuse/core": "^10.1.2",
+        "lodash": "^4.17.21",
+        "pinia": "^2.0.36",
+        "resumablejs": "^1.1.0",
+        "vue": "^3.3.4"
     }
 }

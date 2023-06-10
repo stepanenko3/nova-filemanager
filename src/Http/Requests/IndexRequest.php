@@ -12,6 +12,8 @@ use Stepanenko3\NovaFilemanager\Rules\PathExistsInDiskRule;
  * @property-read ?int $page
  * @property-read ?int $perPage
  * @property-read ?string $search
+ * @property-read ?string $sort
+ * @property-read ?string $filterByDate
  */
 class IndexRequest extends BaseRequest
 {
@@ -23,6 +25,8 @@ class IndexRequest extends BaseRequest
             'page' => ['sometimes', 'numeric', 'min:1'],
             'perPage' => ['sometimes', 'numeric', 'min:1'],
             'search' => ['nullable', 'string'],
+            'filterByDate' => ['nullable', 'string'],
+            'sort' => ['nullable', 'string', 'in:date,date-desc,name,name-desc,size,size-desc'],
         ];
     }
 }

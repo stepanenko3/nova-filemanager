@@ -12,16 +12,23 @@ class IndexController extends Controller
     {
         $manager = $request->manager();
         $files = $manager->files();
-
         $paginator = $manager->paginate($files);
 
         return response()->json([
             'path' => $manager->path,
             'disk' => $manager->disk,
             'breadcrumbs' => $manager->breadcrumbs(),
-            'directories' => $manager->directories(),
+            'folders' => $manager->directories(),
+            'files' => $paginator->items(),
             'filters' => $manager->filters(),
-            'files' => $paginator->toArray(),
+            'pagination' => [
+                'current_page' => $paginator->currentPage(),
+                'last_page' => $paginator->lastPage(),
+                'from' => $paginator->firstItem(),
+                'to' => $paginator->lastItem(),
+                'total' => $paginator->total(),
+                'links' => $paginator->linkCollection()->toArray(),
+            ],
             'pageLimits' => [
                 5,
                 15,

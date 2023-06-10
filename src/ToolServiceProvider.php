@@ -28,19 +28,22 @@ class ToolServiceProvider extends ServiceProvider
             $this->routes();
         });
 
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'nova-filemanager');
-        $this->mergeConfigFrom(__DIR__.'/../config/nova-filemanager.php', 'nova-filemanager');
+        $this->mergeConfigFrom(__DIR__ . '/../config/nova-filemanager.php', 'nova-filemanager');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'nova-filemanager');
 
         $this->publishes([
-            __DIR__.'/../config/nova-filemanager.php' => config_path('nova-filemanager.php'),
+            __DIR__ . '/../config/nova-filemanager.php' => config_path('nova-filemanager.php'),
         ], 'config');
 
         Nova::serving(static function (ServingNova $event) {
-            Nova::translations(__DIR__.'/../lang/en.json');
+            Nova::translations(__DIR__ . '/../lang/en.json');
+
+            Nova::script('nova-filemanager', __DIR__ . '/../dist/js/tool.js');
+            Nova::style('nova-filemanager', __DIR__ . '/../dist/css/tool.css');
         });
 
         Inertia::version(static function () {
-            return md5_file(__DIR__.'../dist/mix-manifest.json');
+            return md5_file(__DIR__ . '../dist/mix-manifest.json');
         });
 
         $this->publish();
@@ -53,11 +56,11 @@ class ToolServiceProvider extends ServiceProvider
         }
 
         Nova::router(['nova', Authorize::class], config('nova-filemanager.path', 'filemanager'))
-            ->group(__DIR__.'/../routes/inertia.php');
+            ->group(__DIR__ . '/../routes/inertia.php');
 
         Route::middleware(['nova:api', Authorize::class])
             ->prefix('nova-vendor/nova-filemanager')
-            ->group(__DIR__.'/../routes/api.php');
+            ->group(__DIR__ . '/../routes/api.php');
     }
 
     public function register(): void
@@ -73,19 +76,30 @@ class ToolServiceProvider extends ServiceProvider
             $perPage = (int) ($args['perPage'] ?? $request->input('perPage', 15));
             $search = $args['search'] ?? $request->input('search');
             $filter = $args['filter'] ?? $request->input('filter');
+            $sort = $args['sort'] ?? $request->input('sort');
+            $filterByDate = $args['filterByDate'] ?? $request->input('filterByDate');
 
-            return FilemanagerService::make($disk, $path, $page, $perPage, $search, $filter);
+            return FilemanagerService::make(
+                disk: $disk,
+                path: $path,
+                page: $page,
+                perPage: $perPage,
+                search: $search,
+                filter: $filter,
+                sort: $sort,
+                filterByDate: $filterByDate,
+            );
         });
     }
 
     public function publish(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->mergeConfigFrom(__DIR__.'/../config/nova-filemanager.php', 'nova-filemanager');
+            $this->mergeConfigFrom(__DIR__ . '/../config/nova-filemanager.php', 'nova-filemanager');
 
             $this->publishes(
                 [
-                    __DIR__.'/../config' => config_path(),
+                    __DIR__ . '/../config' => config_path(),
                 ],
                 'nova-filemanager-config'
             );
