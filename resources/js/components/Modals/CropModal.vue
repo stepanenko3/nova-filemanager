@@ -67,7 +67,7 @@ function confirmCrop() {
 }
 
 function upload(file) {
-    store.closeModal(props.modal.id);
+    store.closeModals();
     store.upload([file]);
 }
 

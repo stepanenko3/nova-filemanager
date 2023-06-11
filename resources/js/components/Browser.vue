@@ -28,8 +28,12 @@
                 @changeFile="changeFile"
             />
 
-            <div class="flex-grow py-4 px-6 space-y-4 overflow-x-hidden overflow-y-auto">
-                <BrowserBreadcrumbs v-if="store.data?.breadcrumbs?.length > 0" />
+            <div
+                class="flex-grow py-4 px-6 space-y-4 overflow-x-hidden overflow-y-auto"
+            >
+                <BrowserBreadcrumbs
+                    v-if="store.data?.breadcrumbs?.length > 0"
+                />
 
                 <BrowserContent />
 
@@ -41,9 +45,8 @@
 
         <TransitionGroup name="list">
             <template v-for="modal in store.modals" :key="modal.id">
-                <QueueModal v-if="modal.name === MODALS.QUEUE" :modal="modal" />
                 <CreateFolderModal
-                    v-else-if="modal.name === MODALS.CREATE_FOLDER"
+                    v-if="modal.name === MODALS.CREATE_FOLDER"
                     :modal="modal"
                 />
                 <BrowserDetailModal
@@ -66,6 +69,10 @@
                     v-else-if="modal.name === MODALS.SELECTED"
                     :modal="modal"
                     @confirmSelect="confirmSelect"
+                />
+                <QueueModal
+                    v-else-if="modal.name === MODALS.QUEUE"
+                    :modal="modal"
                 />
             </template>
         </TransitionGroup>
