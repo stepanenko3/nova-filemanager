@@ -48,17 +48,22 @@
             class="flex items-center space-x-2"
             v-if="store.selecting && store.selection.length > 0"
         >
-            <span> Selected {{ store.selection.length }} files </span>
-
-            <ToolbarButton
-                type="eye"
+            <span
                 @click.prevent="() => store.openModal(MODALS.SELECTED)"
                 v-tooltip="__('Open selected files modal')"
-            />
+                class="cursor-pointer hover:text-primary-500"
+            >
+                Selected {{ store.selection.length }} files
+            </span>
+
             <ToolbarButton
-                type="x"
-                @click.prevent="store.clearSelection"
-                v-tooltip="__('Clear selected files')"
+                class="text-red-500"
+                type="trash"
+                @click.prevent="() => store.openModal(MODALS.DELETE, {
+                    type: DELETE_STATE.FILES,
+                    [DELETE_STATE.FILES]: store.selection,
+                })"
+                v-tooltip="__('Delete selected files')"
             />
             <ToolbarButton
                 class="text-green-500"
@@ -72,30 +77,24 @@
             <template #trigger>
                 <ToolbarButton
                     type="filter"
-                    :active="(store.search || store.sort || store.period) ? true : false"
+                    :active="
+                        store.search || store.sort || store.period
+                            ? true
+                            : false
+                    "
                     v-tooltip="__('Filters')"
                 />
             </template>
 
             <div class="p-2 space-y-2 w-60">
-                <p class="text-gray-900 dark:text-gray-200 font-medium">
-                    {{ __("Search") }}
-                </p>
-
-                <div class="relative flex items-center h-9 ml-auto">
-                    <Icon
-                        type="search"
-                        width="20"
-                        class="absolute ml-2 text-gray-400"
-                        :style="{ top: '6px' }"
-                    />
-
-                    <RoundInput
-                        class="appearance-none g-white dark:bg-gray-800 shadow h-8 w-full dark:focus:bg-gray-800"
-                        :placeholder="__('Search')"
-                        spellcheck="false"
-                        :aria-label="__('Search')"
+                <div class="relative">
+                    <input
+                        ref="input"
                         type="text"
+                        class="w-full h-full form-control rounded-lg form-input form-input-bordered py-2"
+                        :placeholder="__('Search')"
+                        :aria-label="__('Search')"
+                        spellcheck="false"
                         @input="(e) => searchItems(e.target.value)"
                     />
                 </div>
@@ -144,7 +143,7 @@
 import _ from "lodash";
 import ToolbarButton from "./ToolbarButton.vue";
 import useBrowserStore from "../stores/browser.ts";
-import { MODALS } from "@/constants";
+import { MODALS, DELETE_STATE } from "@/constants";
 import { ref } from "vue";
 import Dropdown from "./Elements/Dropdown.vue";
 

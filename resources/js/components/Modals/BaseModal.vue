@@ -1,7 +1,7 @@
 <template>
     <div
         ref="wrapper"
-        class="backgrop inset-0 p-2 flex items-center justify-center rounded-lg"
+        class="backgrop inset-0 flex items-center justify-center rounded-lg"
         :class="{
             'fixed z-50': !full,
             'absolute z-10': full,
@@ -15,7 +15,7 @@
 
         <div
             ref="target"
-            class="relative bg-white max-w-full dark:bg-gray-800 z-10 rounded-lg shadow-lg base-modal-inner overflow-hidden"
+            class="relative bg-white max-w-full max-h-full dark:bg-gray-800 z-10 rounded-lg shadow-lg base-modal-inner overflow-hidden"
             :class="{
                 'w-full min-h-full': full,
             }"
@@ -84,7 +84,13 @@ const closeModal = () => store.closeModal(props.modal.id);
     backdrop-filter: blur(5px);
 }
 
-.base-modal-inner {
-    width: 600px;
+.max-h-full {
+    max-height: 100%;
+}
+
+@media (min-width: 768px) {
+    .base-modal-inner {
+        min-width: 600px;
+    }
 }
 </style>

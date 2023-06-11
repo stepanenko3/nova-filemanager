@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { MODALS } from "@/constants";
+import { DELETE_STATE, MODALS } from "@/constants";
 import { mimeIcons } from "@/helpers/mime-icons";
 import truncate from "@/helpers/truncate";
 import useBrowserStore from "@/stores/browser";
@@ -60,6 +60,9 @@ function showRename() {
 }
 
 function showDelete() {
-    store.openModal(MODALS.DELETE, props.folder);
+    store.openModal(MODALS.DELETE, {
+        type: DELETE_STATE.FOLDER,
+        [DELETE_STATE.FOLDER]: props.folder,
+    });
 }
 </script>

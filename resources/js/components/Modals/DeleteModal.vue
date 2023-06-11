@@ -5,7 +5,7 @@
         </template>
 
         <div class="p-6">
-            <template v-if="isFolder">
+            <template v-if="modal.payload.type === DELETE_STATE.FOLDER">
                 <p>
                     {{ __("Are you sure you want to remove this folder?") }}
                 </p>
@@ -19,7 +19,7 @@
                 </p>
             </template>
 
-            <template v-else>
+            <template v-else-if="modal.payload.type === DELETE_STATE.FILE">
                 <p>
                     {{ __("Are you sure you want to remove this file?") }}
                 </p>
@@ -28,6 +28,20 @@
                     {{
                         __(
                             "Remember: The file will be delete from your storage"
+                        )
+                    }}
+                </p>
+            </template>
+
+            <template v-else-if="modal.payload.type === DELETE_STATE.FILES">
+                <p>
+                    {{ __("Are you sure you want to remove this files?") }}
+                </p>
+
+                <p class="text-sm mt-2">
+                    {{
+                        __(
+                            "Remember: The files will be delete from your storage"
                         )
                     }}
                 </p>
@@ -64,9 +78,10 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import BaseModal from "./BaseModal.vue";
 import useBrowserStore from "@/stores/browser";
+import { DELETE_STATE } from "@/constants";
 
 const store = useBrowserStore();
 
@@ -80,54 +95,48 @@ const props = defineProps({
 const error = ref();
 const loading = ref(false);
 
-const subject = computed(() => props.modal.payload);
-const isFolder = computed(
-    () => !subject.value.type && !subject.value.lastModifiedAt
-);
-
 function close() {
     store.closeModal(props.modal.id);
 
     error.value = null;
 }
 
-function confirmDelete() {
-    if (isFolder.value) {
-        deleteFolder();
-    } else {
-        deleteFile();
+async function confirmDelete() {
+    loading.value = true;
+
+    return run()
+        .then((r) =>
+            processResponse(r.response && r.response.data ? r.response.data : r)
+        )
+        .catch((r) =>
+            processResponse(r.response && r.response.data ? r.response.data : r)
+        );
+}
+
+async function run() {
+    switch (props.modal.payload.type) {
+        case DELETE_STATE.FOLDER:
+            return store.deleteFolder(
+                props.modal.payload[DELETE_STATE.FOLDER].path
+            );
+
+        case DELETE_STATE.FILE:
+            return store.deleteFile(
+                props.modal.payload[DELETE_STATE.FILE].path
+            );
+
+        case DELETE_STATE.FILES:
+            return store.deleteFiles(
+                props.modal.payload[DELETE_STATE.FILES].map(
+                    (value) => value.path
+                )
+            );
     }
 }
 
-function deleteFolder() {
-    return Nova.request()
-        .post("/nova-vendor/nova-filemanager/folders/delete", {
-            disk: store.disk,
-            path: subject.value.path,
-        })
-        .then((r) =>
-            processResponse(r.response && r.response.data ? r.response.data : r)
-        )
-        .catch((r) =>
-            processResponse(r.response && r.response.data ? r.response.data : r)
-        );
-}
-
-function deleteFile() {
-    return Nova.request()
-        .post("/nova-vendor/nova-filemanager/files/delete", {
-            disk: store.disk,
-            path: subject.value.path,
-        })
-        .then((r) =>
-            processResponse(r.response && r.response.data ? r.response.data : r)
-        )
-        .catch((r) =>
-            processResponse(r.response && r.response.data ? r.response.data : r)
-        );
-}
-
 function processResponse(result) {
+    loading.value = false;
+
     if (!result.errors || result.errors.length <= 0) {
         error.value = null;
 
@@ -135,7 +144,6 @@ function processResponse(result) {
 
         Nova.success(result.message);
 
-        store.unselect(props.modal.payload);
         store.closeModals();
         store.fetch();
     } else {

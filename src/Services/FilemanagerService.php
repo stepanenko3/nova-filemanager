@@ -211,11 +211,11 @@ class FilemanagerService implements FilemanagerContract
                 array_pop($parts);
                 $path = implode('/', $parts);
 
-                $directories->prepend([
-                    'id' => 'parent',
-                    'path' => $path ?: '/',
-                    'name' => '../',
-                ]);
+                // $directories->prepend([
+                //     'id' => 'parent',
+                //     'path' => $path ?: '/',
+                //     'name' => '../',
+                // ]);
             })
             ->values();
     }

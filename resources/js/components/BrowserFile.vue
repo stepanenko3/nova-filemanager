@@ -11,12 +11,22 @@
                 'border-gray-200 dark:border-gray-700': !isSelected,
             }"
         >
+            <div v-if="isSelected" class="absolute top-0 right-0 p-2 text-primary-500">
+                <Icon
+                    type="check-circle"
+                    width="22"
+                    height="22"
+                    :solid="true"
+                />
+            </div>
+
             <Icon
                 class="text-gray-500"
                 v-if="file.type != 'image'"
                 :type="mimeIcons[file.type] || mimeIcons.text"
                 width="48"
                 height="48"
+                :solid="true"
             />
 
             <img
@@ -37,7 +47,7 @@
             <Dropdown class="ml-auto">
                 <template #trigger>
                     <div
-                        class="cursor-pointer flex items-center justify-center w-7 h-7 rounded-lg dark:hover:bg-gray-900"
+                        class="cursor-pointer flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900"
                     >
                         <Icon type="menu" width="16" height="16" />
                     </div>
@@ -91,7 +101,7 @@
 </template>
 
 <script setup>
-import { MODALS } from "@/constants";
+import { DELETE_STATE, MODALS } from "@/constants";
 import { mimeIcons } from "@/helpers/mime-icons";
 import truncate from "@/helpers/truncate";
 import useBrowserStore from "@/stores/browser";
@@ -127,7 +137,10 @@ function showRename() {
 }
 
 function showDelete() {
-    store.openModal(MODALS.DELETE, props.file);
+    store.openModal(MODALS.DELETE, {
+        type: DELETE_STATE.FILE,
+        [DELETE_STATE.FILE]: props.file,
+    });
 }
 
 function clickStrategy() {

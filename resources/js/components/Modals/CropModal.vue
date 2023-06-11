@@ -8,12 +8,6 @@
             <div class="flex-grow"></div>
 
             <ToolbarButton
-                type="x"
-                @click.prevent="close"
-                v-tooltip="__('Cancel crop')"
-            />
-
-            <ToolbarButton
                 class="text-green-500"
                 type="check"
                 @click.prevent="confirmCrop"
@@ -54,10 +48,6 @@ const containerStyle = computed(() => ({
     minHeight: "60vh",
 }));
 
-function close() {
-    store.closeModal(props.modal.id);
-}
-
 function confirmCrop() {
     cropper.value?.getCroppedCanvas().toBlob((blob) => {
         if (!blob) {
@@ -77,7 +67,7 @@ function confirmCrop() {
 }
 
 function upload(file) {
-    close();
+    store.closeModal(props.modal.id);
     store.upload([file]);
 }
 

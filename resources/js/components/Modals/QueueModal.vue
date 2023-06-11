@@ -10,7 +10,7 @@
             <template v-for="item in queue" :key="item.id">
                 <div
                     ref="card"
-                    class="w-full h-full relative flex flex-col justify-center border-2 rounded-lg overflow-hidden cursor-pointer border-gray-200 dark:border-gray-700"
+                    class="w-full h-full relative flex flex-col justify-center rounded-lg overflow-hidden cursor-pointer dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700"
                 >
                     <div
                         class="flex-grow flex justify-center items-center flex-col p-4"

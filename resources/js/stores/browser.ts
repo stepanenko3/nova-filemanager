@@ -290,41 +290,54 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
         /**
          * Fetches
          */
-        async deleteFiles({ paths }: { paths: string[] }) {
+
+
+        async deleteFolder(path: string) {
+            return Nova.request()
+                .post("/nova-vendor/nova-filemanager/folders/delete", {
+                    disk: this.disk,
+                    path: path,
+                })
+                .then((response: any) => {
+                    this.selection = this.selection.filter(value => value.path !== path)
+
+                    return response;
+                })
+                .catch(() => Nova.error("Error. Please check your logs"));
+        },
+
+        async deleteFile(path: string) {
+            return Nova.request()
+                .post("/nova-vendor/nova-filemanager/files/delete", {
+                    disk: this.disk,
+                    path: path,
+                })
+                .then((response: any) => {
+                    this.selection = this.selection.filter(value => value.path !== path)
+
+                    return response;
+                })
+                .catch(() => Nova.error("Error. Please check your logs"));
+        },
+
+        async deleteFiles(paths: string[] = []) {
             if (paths.length === 0) {
                 return
             }
 
-            this.openModal(
-                MODALS.DELETE,
-                {
-                    confirm: async () => {
-                        return Nova.request()
-                            .post("/nova-vendor/nova-filemanager/files/delete", {
-                                disk: this.disk,
-                                paths: paths,
-                            })
-                            .then(() => {
-                                this.clearSelection()
-                                this.mod
-                            })
-                    },
-                },
-            );
-            await attempt({
-                operation: OPERATIONS.DELETE_FILE,
-                modal: MODALS.DELETE_FILES,
-                endpoint: ENDPOINTS.DELETE_FILE,
-                data: this.payload({
-                    paths,
-                }),
-                callback: () => {
-                    this.preview = undefined
+            return Nova.request()
+                .post("/nova-vendor/nova-filemanager/files/delete", {
+                    disk: this.disk,
+                    paths: paths,
+                })
+                .then((response: any) => {
+                    this.selection = this.selection.filter(value => !paths.includes(value.path))
 
-                    this.clearSelection()
-                },
-            })
+                    return response;
+                })
+                .catch(() => Nova.error("Error. Please check your logs"));
         },
+
         upload(files: File[]) {
             if (this.isUploading) {
                 return;

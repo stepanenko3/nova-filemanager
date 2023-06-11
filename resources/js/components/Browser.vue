@@ -4,6 +4,9 @@
         :class="{
             disabled: store.isProcessing,
         }"
+        @dragover.prevent.stop="dragging = true"
+        @dragleave.prevent.stop="dragging = false"
+        @drop.prevent.stop="dropFiles"
     >
         <Transition>
             <div
@@ -19,29 +22,20 @@
             <BrowserDropzone v-if="dragging" />
         </Transition>
 
-        <div
-            @dragover.prevent.stop="dragging = true"
-            @dragleave.prevent.stop="dragging = false"
-            @drop.prevent.stop="dropFiles"
-            class="flex flex flex-col h-full"
-        >
+        <div class="flex flex flex-col h-full">
             <BrowserToolbar
                 @confirmSelect="confirmSelect"
                 @changeFile="changeFile"
             />
 
-            <div class="flex-grow overflow-x-hidden overflow-y-auto">
-                <BrowserBreadcrumbs
-                    v-if="store.data?.breadcrumbs?.length > 0"
+            <div class="flex-grow py-4 px-6 space-y-4 overflow-x-hidden overflow-y-auto">
+                <BrowserBreadcrumbs v-if="store.data?.breadcrumbs?.length > 0" />
+
+                <BrowserContent />
+
+                <BrowserPagination
+                    v-if="store.data?.pagination?.last_page > 1"
                 />
-
-                <div class="px-6 py-4 space-y-4 ">
-                    <BrowserContent />
-
-                    <BrowserPagination
-                        v-if="store.data?.pagination?.last_page > 1"
-                    />
-                </div>
             </div>
         </div>
 

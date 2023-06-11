@@ -8,6 +8,14 @@ const MODALS = {
     RENAME: 'rename',
 }
 
+const DELETE_STATE = {
+    FILES: 'files',
+    FILE: 'file',
+    FOLDER: 'folder',
+}
+
+
 export {
     MODALS,
+    DELETE_STATE,
 }
