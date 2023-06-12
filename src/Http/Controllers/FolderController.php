@@ -1,76 +1,105 @@
 <?php
 
+namespace Stepanenko3\NovaFileManager\Http\Controllers;
 
-namespace Stepanenko3\NovaFilemanager\Http\Controllers;
-
-use Stepanenko3\NovaFilemanager\Events\FolderCreated;
-use Stepanenko3\NovaFilemanager\Events\FolderDeleted;
-use Stepanenko3\NovaFilemanager\Events\FolderRenamed;
-use Stepanenko3\NovaFilemanager\Http\Requests\CreateFolderRequest;
-use Stepanenko3\NovaFilemanager\Http\Requests\DeleteFolderRequest;
-use Stepanenko3\NovaFilemanager\Http\Requests\RenameFolderRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Validation\ValidationException;
+use Stepanenko3\NovaFileManager\Events\FolderCreated;
+use Stepanenko3\NovaFileManager\Events\FolderCreating;
+use Stepanenko3\NovaFileManager\Events\FolderDeleted;
+use Stepanenko3\NovaFileManager\Events\FolderDeleting;
+use Stepanenko3\NovaFileManager\Events\FolderRenamed;
+use Stepanenko3\NovaFileManager\Events\FolderRenaming;
+use Stepanenko3\NovaFileManager\Http\Requests\CreateFolderRequest;
+use Stepanenko3\NovaFileManager\Http\Requests\DeleteFolderRequest;
+use Stepanenko3\NovaFileManager\Http\Requests\RenameFolderRequest;
 
 class FolderController extends Controller
 {
     public function create(CreateFolderRequest $request): JsonResponse
     {
+        $path = trim($request->path);
+
+        event(new FolderCreating(
+            filesystem: $request->manager()->filesystem(),
+            disk: $request->manager()->getDisk(),
+            path: $path,
+        ));
+
         $result = $request->manager()->mkdir(
-            $path = trim($request->get('path'))
+            path: $path,
         );
 
         if (!$result) {
-            throw ValidationException::withMessages([
-                'folder' => [__('Folder already exists !')],
-            ]);
+            throw ValidationException::withMessages(['folder' => [__('nova-file-manager::errors.folder.create')]]);
         }
 
-        event(new FolderCreated($request->manager()->disk, $path));
+        event(new FolderCreated(
+            filesystem: $request->manager()->filesystem(),
+            disk: $request->manager()->getDisk(),
+            path: $path,
+        ));
 
         return response()->json([
-            'message' => __('Folder created successfully.'),
+            'message' => __('nova-file-manager::messages.folder.create'),
         ]);
     }
 
     public function rename(RenameFolderRequest $request): JsonResponse
     {
-        $oldPath = $request->get('oldPath');
-        $newPath = $request->get('newPath');
+        event(new FolderRenaming(
+            filesystem: $request->manager()->filesystem(),
+            disk: $request->manager()->getDisk(),
+            from: $request->from,
+            to: $request->to,
+        ));
 
-        $result = $request->manager()->rename($oldPath, $newPath);
+        $result = $request->manager()->rename(
+            from: $request->from,
+            to: $request->to,
+        );
 
         if (!$result) {
-            throw ValidationException::withMessages([
-                'folder' => [__('Could not rename folder !')],
-            ]);
+            throw ValidationException::withMessages(['folder' => [__('nova-file-manager::errors.folder.rename')]]);
         }
 
-        event(new FolderRenamed($request->manager()->disk, $oldPath, $newPath));
+        event(new FolderRenamed(
+            filesystem: $request->manager()->filesystem(),
+            disk: $request->manager()->getDisk(),
+            from: $request->from,
+            to: $request->to,
+        ));
 
         return response()->json([
-            'message' => __('Folder renamed successfully.'),
+            'message' => __('nova-file-manager::messages.folder.rename'),
         ]);
     }
 
     public function delete(DeleteFolderRequest $request): JsonResponse
     {
-        $path = $request->get('path');
-        $disk = $request->get('disk');
+        event(new FolderDeleting(
+            filesystem: $request->manager()->filesystem(),
+            disk: $request->manager()->getDisk(),
+            path: $request->path,
+        ));
 
-        $result = $request->manager()->rmdir($request->path);
+        $result = $request->manager()->rmdir(
+            path: $request->path,
+        );
 
         if (!$result) {
-            throw ValidationException::withMessages([
-                'folder' => [__('Could not delete folder !')],
-            ]);
+            throw ValidationException::withMessages(['folder' => [__('nova-file-manager::errors.folder.delete')]]);
         }
 
-        event(new FolderDeleted($disk, $path));
+        event(new FolderDeleted(
+            filesystem: $request->manager()->filesystem(),
+            disk: $request->manager()->getDisk(),
+            path: $request->path,
+        ));
 
         return response()->json([
-            'message' => __('Folder deleted successfully.'),
+            'message' => __('nova-file-manager::messages.folder.delete'),
         ]);
     }
 }

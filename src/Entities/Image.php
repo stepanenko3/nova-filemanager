@@ -1,7 +1,6 @@
 <?php
 
-
-namespace Stepanenko3\NovaFilemanager\Entities;
+namespace Stepanenko3\NovaFileManager\Entities;
 
 use Exception;
 
@@ -9,7 +8,9 @@ class Image extends Entity
 {
     public function meta(): array
     {
-        $contents = $this->fileSystem->get($this->path);
+        $contents = $this->manager->filesystem()->get(
+            path: $this->path,
+        );
 
         try {
             $image = imagecreatefromstring($contents);

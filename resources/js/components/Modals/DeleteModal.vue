@@ -121,15 +121,15 @@ async function run() {
             );
 
         case DELETE_STATE.FILE:
-            return store.deleteFile(
-                props.modal.payload[DELETE_STATE.FILE].path
+            return store.deleteFiles(
+                [props.modal.payload[DELETE_STATE.FILE].path],
             );
 
         case DELETE_STATE.FILES:
             return store.deleteFiles(
                 props.modal.payload[DELETE_STATE.FILES].map(
                     (value) => value.path
-                )
+                ),
             );
     }
 }

@@ -8,9 +8,9 @@ import FormField from './field/FormField.vue'
 Nova.booting((app, store) => {
     app.use(createPinia())
 
-    Nova.inertia('NovaFilemanager', Tool)
+    Nova.inertia('NovaFileManager', Tool)
 
-    app.component('index-filemanager-field', IndexField);
-    app.component('detail-filemanager-field', DetailField);
-    app.component('form-filemanager-field', FormField);
+    app.component('index-file-manager-field', IndexField);
+    app.component('detail-file-manager-field', DetailField);
+    app.component('form-file-manager-field', FormField);
 })

@@ -1,8 +1,7 @@
 <?php
 
-
-use Stepanenko3\NovaFilemanager\Http\Controllers\Pages\ToolController;
 use Illuminate\Support\Facades\Route;
+use Stepanenko3\NovaFileManager\Http\Controllers\ToolController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', ToolController::class)->name('nova-filemanager.tool');
+Route::get('/', ToolController::class)->name('nova-file-manager.tool');

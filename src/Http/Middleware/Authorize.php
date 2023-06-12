@@ -1,21 +1,23 @@
 <?php
 
+namespace Stepanenko3\NovaFileManager\Http\Middleware;
 
-namespace Stepanenko3\NovaFilemanager\Http\Middleware;
-
-use Stepanenko3\NovaFilemanager\FilemanagerTool;
+use Closure;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Laravel\Nova\Nova;
+use Laravel\Nova\Tool;
+use Stepanenko3\NovaFileManager\FileManagerTool;
 
 class Authorize
 {
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request):mixed  $next
-     * @return \Illuminate\Http\Response
+     * @param \Closure(\Illuminate\Http\Request):mixed $next
      */
-    public function handle($request, $next)
+    public function handle(Request $request, Closure $next): Response | JsonResponse
     {
         $tool = collect(Nova::registeredTools())->first([$this, 'matchesTool']);
 
@@ -24,12 +26,9 @@ class Authorize
 
     /**
      * Determine whether this tool belongs to the package.
-     *
-     * @param  \Laravel\Nova\Tool  $tool
-     * @return bool
      */
-    public function matchesTool($tool)
+    public function matchesTool(Tool $tool): bool
     {
-        return $tool instanceof FilemanagerTool;
+        return $tool instanceof FileManagerTool;
     }
 }

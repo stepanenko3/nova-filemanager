@@ -1,15 +1,15 @@
 <?php
 
+namespace Stepanenko3\NovaFileManager\Events;
 
-namespace Stepanenko3\NovaFilemanager\Events;
-
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Foundation\Events\Dispatchable;
 
 class FileDuplicated
 {
     use Dispatchable;
 
-    public function __construct(public string $disk, public string $path)
+    public function __construct(public Filesystem $filesystem, public string $disk, public string $path)
     {
     }
 }

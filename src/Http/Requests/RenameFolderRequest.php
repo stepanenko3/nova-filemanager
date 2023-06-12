@@ -1,16 +1,15 @@
 <?php
 
+namespace Stepanenko3\NovaFileManager\Http\Requests;
 
-namespace Stepanenko3\NovaFilemanager\Http\Requests;
-
-use Stepanenko3\NovaFilemanager\Rules\DiskExistsRule;
-use Stepanenko3\NovaFilemanager\Rules\PathDoesNotExistInDiskRule;
-use Stepanenko3\NovaFilemanager\Rules\PathExistsInDiskRule;
+use Stepanenko3\NovaFileManager\Rules\DiskExistsRule;
+use Stepanenko3\NovaFileManager\Rules\PathDoesNotExistInDiskRule;
+use Stepanenko3\NovaFileManager\Rules\PathExistsInDiskRule;
 
 /**
- * @property-read string $disk
- * @property-read string $oldPath
- * @property-read string $newPath
+ * @property ?string $disk
+ * @property string $oldPath
+ * @property string $newPath
  */
 class RenameFolderRequest extends BaseRequest
 {

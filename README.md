@@ -1,10 +1,10 @@
-# Filemanager tool for Laravel Nova
+# File manager tool for Laravel Nova
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/stepanenko3/nova-filemanager.svg?style=flat-square)](https://packagist.org/packages/stepanenko3/nova-filemanager)
 [![Total Downloads](https://img.shields.io/packagist/dt/stepanenko3/nova-filemanager.svg?style=flat-square)](https://packagist.org/packages/stepanenko3/nova-filemanager)
 [![License](https://poser.pugx.org/stepanenko3/nova-filemanager/license)](https://packagist.org/packages/stepanenko3/nova-filemanager)
 
-A Filemanager Tool and Field for Laravel Nova
+A File manager Tool and Field for Laravel Nova
 
 ![screenshot of tool](screenshots/tool.png)
 

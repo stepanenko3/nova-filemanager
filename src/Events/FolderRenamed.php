@@ -1,15 +1,15 @@
 <?php
 
+namespace Stepanenko3\NovaFileManager\Events;
 
-namespace Stepanenko3\NovaFilemanager\Events;
-
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Foundation\Events\Dispatchable;
 
 class FolderRenamed
 {
     use Dispatchable;
 
-    public function __construct(public string $disk, public string $oldPath, public string $newPath)
+    public function __construct(public Filesystem $filesystem, public string $disk, public string $from, public string $to)
     {
     }
 }

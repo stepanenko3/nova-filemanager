@@ -1,7 +1,6 @@
 <?php
 
-
-namespace Stepanenko3\NovaFilemanager\Entities;
+namespace Stepanenko3\NovaFileManager\Entities;
 
 class File extends Entity
 {

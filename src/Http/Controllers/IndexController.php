@@ -1,26 +1,25 @@
 <?php
 
+namespace Stepanenko3\NovaFileManager\Http\Controllers;
 
-namespace Stepanenko3\NovaFilemanager\Http\Controllers;
-
-use Stepanenko3\NovaFilemanager\Http\Requests\IndexRequest;
 use Illuminate\Routing\Controller;
+use Stepanenko3\NovaFileManager\Http\Requests\IndexRequest;
 
 class IndexController extends Controller
 {
     public function __invoke(IndexRequest $request)
     {
         $manager = $request->manager();
-        $files = $manager->files();
-        $paginator = $manager->paginate($files);
+
+        $paginator = $manager
+            ->paginate($manager->files());
 
         return response()->json([
-            'path' => $manager->path,
-            'disk' => $manager->disk,
+            'path' => $manager->getPath(),
+            'disk' => $manager->getDisk(),
             'breadcrumbs' => $manager->breadcrumbs(),
             'folders' => $manager->directories(),
             'files' => $paginator->items(),
-            'filters' => $manager->filters(),
             'pagination' => [
                 'current_page' => $paginator->currentPage(),
                 'last_page' => $paginator->lastPage(),
@@ -28,14 +27,6 @@ class IndexController extends Controller
                 'to' => $paginator->lastItem(),
                 'total' => $paginator->total(),
                 'links' => $paginator->linkCollection()->toArray(),
-            ],
-            'pageLimits' => [
-                5,
-                15,
-                25,
-                50,
-                100,
-                200,
             ],
         ]);
     }

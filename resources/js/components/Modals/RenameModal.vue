@@ -145,7 +145,7 @@ function confirmRename() {
 
     return Nova.request()
         .post(
-            `/nova-vendor/nova-filemanager/${
+            `/nova-vendor/nova-file-manager/${
                 isFolder.value ? "folders" : "files"
             }/rename`,
             {

@@ -1,25 +1,29 @@
 <?php
 
+namespace Stepanenko3\NovaFileManager\Http\Requests;
 
-namespace Stepanenko3\NovaFilemanager\Http\Requests;
-
-use Stepanenko3\NovaFilemanager\Rules\DiskExistsRule;
-use Stepanenko3\NovaFilemanager\Rules\PathDoesNotExistInDiskRule;
-use Stepanenko3\NovaFilemanager\Rules\PathExistsInDiskRule;
+use Stepanenko3\NovaFileManager\Rules\DiskExistsRule;
+use Stepanenko3\NovaFileManager\Rules\ExistsInFilesystem;
+use Stepanenko3\NovaFileManager\Rules\MissingInFilesystem;
 
 /**
- * @property-read ?string $disk
- * @property-read string $oldPath
- * @property-read string $newPath
+ * @property ?string $disk
+ * @property string $from
+ * @property string $to
  */
 class RenameFileRequest extends BaseRequest
 {
+    public function authorize(): bool
+    {
+        return $this->canRenameFile();
+    }
+
     public function rules(): array
     {
         return [
             'disk' => ['sometimes', 'string', new DiskExistsRule()],
-            'oldPath' => ['required', 'string', new PathExistsInDiskRule($this->get('disk'))],
-            'newPath' => ['required', 'string', new PathDoesNotExistInDiskRule($this->get('disk'))],
+            'from' => ['required', 'string', new ExistsInFilesystem($this)],
+            'to' => ['required', 'string', new MissingInFilesystem($this)],
         ];
     }
 }

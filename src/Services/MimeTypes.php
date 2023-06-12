@@ -1,6 +1,6 @@
 <?php
 
-namespace Stepanenko3\NovaFilemanager\Services;
+namespace Stepanenko3\NovaFileManager\Services;
 
 class MimeTypes
 {
@@ -1235,10 +1235,7 @@ class MimeTypes
         '123' => ['application/vnd.lotus-1-2-3'],
     ];
 
-    /**
-     * @param $extension
-     */
-    public static function checkMimeType(string $extension): array|false
+    public static function checkMimeType(string $extension): array | false
     {
         if (isset(self::$source[$extension])) {
             return self::$source[$extension];

@@ -1,6 +1,6 @@
 {
     "name": "stepanenko3/nova-filemanager",
-    "description": "Filemanager tool for Laravel Nova",
+    "description": "File manager tool for Laravel Nova",
     "keywords": [
         "laravel",
         "nova",
@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Stepanenko3\\NovaFilemanager\\": "src/"
+            "Stepanenko3\\NovaFileManager\\": "src/"
         },
         "files": [
             "src/helpers.php"
@@ -25,7 +25,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Stepanenko3\\NovaFilemanager\\ToolServiceProvider"
+                "Stepanenko3\\NovaFileManager\\ToolServiceProvider"
             ]
         }
     },
@@ -39,5 +39,8 @@
             "type": "composer",
             "url": "https://laravel-nova.site"
         }
-    ]
+    ],
+    "require-dev": {
+        "tightenco/duster": "^2.0"
+    }
 }

@@ -1,7 +1,7 @@
 export default {
     getData(path = '/', disk = null, page = 1, perPage = 10, search = null, filter = null) {
         return Nova.request()
-            .get('/nova-vendor/nova-filemanager', {
+            .get('/nova-vendor/nova-file-manager', {
                 params: {
                     path,
                     disk,
@@ -16,13 +16,13 @@ export default {
 
     getDisks() {
         return Nova.request()
-            .get('/nova-vendor/nova-filemanager/disks/available')
+            .get('/nova-vendor/nova-file-manager/disks/available')
             .then((response) => response.data);
     },
 
     fileDelete(disk, path) {
         return Nova.request()
-            .post('/nova-vendor/nova-filemanager/files/delete', {
+            .post('/nova-vendor/nova-file-manager/files/delete', {
                 disk: disk,
                 path: path,
             })
@@ -31,7 +31,7 @@ export default {
 
     fileDownload(path) {
         return Nova.request()
-            .post('/nova-vendor/nova-filemanager/files/download', {
+            .post('/nova-vendor/nova-file-manager/files/download', {
                 path: path,
             })
             .then((response) => response.data);
@@ -39,7 +39,7 @@ export default {
 
     fileRename(disk, oldPath, newPath) {
         return Nova.request()
-            .post('/nova-vendor/nova-filemanager/files/rename', {
+            .post('/nova-vendor/nova-file-manager/files/rename', {
                 disk: disk,
                 oldPath: oldPath,
                 newPath: newPath,
@@ -56,7 +56,7 @@ export default {
 
         return Nova.request()
             .post(
-                '/nova-vendor/nova-filemanager/files/upload',
+                '/nova-vendor/nova-file-manager/files/upload',
                 formData,
                 {
                     headers: {
@@ -70,7 +70,7 @@ export default {
 
     fileDuplicate(disk, path) {
         return Nova.request()
-            .post('/nova-vendor/nova-filemanager/files/duplicate', {
+            .post('/nova-vendor/nova-file-manager/files/duplicate', {
                 disk: disk,
                 path: path,
             })
@@ -79,7 +79,7 @@ export default {
 
     folderCreate(disk, path) {
         return Nova.request()
-            .post('/nova-vendor/nova-filemanager/folders/create', {
+            .post('/nova-vendor/nova-file-manager/folders/create', {
                 disk: disk,
                 path: path,
             })
@@ -88,7 +88,7 @@ export default {
 
     folderDelete(disk, path) {
         return Nova.request()
-            .post('/nova-vendor/nova-filemanager/folders/delete', {
+            .post('/nova-vendor/nova-file-manager/folders/delete', {
                 disk: disk,
                 path: path,
             })
@@ -97,7 +97,7 @@ export default {
 
     folderRename(disk, oldPath, newPath) {
         return Nova.request()
-            .post('/nova-vendor/nova-filemanager/folders/rename', {
+            .post('/nova-vendor/nova-file-manager/folders/rename', {
                 disk: disk,
                 oldPath: oldPath,
                 newPath: newPath,

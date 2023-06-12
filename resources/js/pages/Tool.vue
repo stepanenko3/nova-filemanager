@@ -1,7 +1,7 @@
 <template>
     <div ref="filemanager-container">
         <Heading class="mb-6">
-            {{ __("Filemanager") }}
+            {{ __("File manager") }}
         </Heading>
 
         <DefaultButton @click.prevent="() => (modalState = true)">

@@ -98,7 +98,7 @@ function createFolder() {
     };
 
     return Nova.request()
-        .post("/nova-vendor/nova-filemanager/folders/create", {
+        .post("/nova-vendor/nova-file-manager/folders/create", {
             disk: store.disk,
             path: `${store.path}/${folder.value}`,
         })

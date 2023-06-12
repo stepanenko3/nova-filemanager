@@ -63,7 +63,7 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
         path: '/',
         search: '',
         sort: '',
-        disk: useLocalStorage('pinia/nova-filemanager/browser/disk', ''),
+        disk: useLocalStorage('pinia/nova-file-manager/browser/disk', ''),
         period: '',
 
         //
@@ -294,21 +294,7 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
 
         async deleteFolder(path: string) {
             return Nova.request()
-                .post("/nova-vendor/nova-filemanager/folders/delete", {
-                    disk: this.disk,
-                    path: path,
-                })
-                .then((response: any) => {
-                    this.selection = this.selection.filter(value => value.path !== path)
-
-                    return response;
-                })
-                .catch(() => Nova.error("Error. Please check your logs"));
-        },
-
-        async deleteFile(path: string) {
-            return Nova.request()
-                .post("/nova-vendor/nova-filemanager/files/delete", {
+                .post("/nova-vendor/nova-file-manager/folders/delete", {
                     disk: this.disk,
                     path: path,
                 })
@@ -326,7 +312,7 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
             }
 
             return Nova.request()
-                .post("/nova-vendor/nova-filemanager/files/delete", {
+                .post("/nova-vendor/nova-file-manager/files/delete", {
                     disk: this.disk,
                     paths: paths,
                 })
@@ -355,7 +341,7 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
                 chunkSize: this.chunkSize,
                 simultaneousUploads: 1,
                 testChunks: false,
-                target: '/nova-vendor/nova-filemanager/files/upload',
+                target: '/nova-vendor/nova-file-manager/files/upload',
                 query: {
                     path: this.path ?? '/',
                     disk: this.disk,
@@ -402,7 +388,7 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
             this.isFetchingDisks = true;
 
             return Nova.request()
-                .get("/nova-vendor/nova-filemanager/disks/available")
+                .get("/nova-vendor/nova-file-manager/disks/available")
                 .then((response: any) => {
                     this.disks = response.data
 
@@ -418,7 +404,7 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
             this.loading = true;
 
             return Nova.request()
-                .get("/nova-vendor/nova-filemanager", {
+                .get("/nova-vendor/nova-file-manager", {
                     params: {
                         page: this.page,
                         perPage: this.perPage,

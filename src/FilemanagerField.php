@@ -1,50 +1,69 @@
 <?php
 
+namespace Stepanenko3\NovaFileManager;
 
-namespace Stepanenko3\NovaFilemanager;
-
-use Stepanenko3\NovaFilemanager\Services\FilemanagerService;
 use Closure;
 use JsonException;
+use Laravel\Nova\Contracts\Cover;
 use Laravel\Nova\Fields\Field;
+use Laravel\Nova\Fields\HasThumbnail;
 use Laravel\Nova\Fields\PresentsImages;
+use Laravel\Nova\Fields\SupportsDependentFields;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Stepanenko3\NovaFileManager\Contracts\Services\FileManagerContract;
+use Stepanenko3\NovaFileManager\Contracts\Support\InteractsWithFilesystem as InteractsWithFilesystemContract;
+use Stepanenko3\NovaFileManager\Support\Asset;
+use Stepanenko3\NovaFileManager\Traits\Support\InteractsWithFilesystem;
+use stdClass;
 
-class FilemanagerField extends Field
+class FileManager extends Field implements Cover, InteractsWithFilesystemContract
 {
+    use HasThumbnail;
+    use InteractsWithFilesystem;
     use PresentsImages;
+    use SupportsDependentFields;
 
-    public $component = 'nova-filemanager-field';
+    public static array $wrappers = [];
 
-    public string $diskColumn;
-
-    public bool $copyable = false;
+    public $component = 'nova-file-manager-field';
 
     public bool $multiple = false;
 
     public ?int $limit = null;
 
+    public bool $asHtml = false;
+
     public Closure $storageCallback;
 
-    public function __construct($name, $attribute = null, Closure $storageCallback = null)
+    public ?string $wrapper = null;
+
+    public function __construct($name, $attribute = null, ?Closure $storageCallback = null)
     {
         parent::__construct($name, $attribute);
 
         $this->prepareStorageCallback($storageCallback);
+
+        $this->thumbnail(function (array $assets, $resource) {
+            foreach ($assets as $asset) {
+                if (data_get($asset, 'type') === 'image' && $url = data_get($asset, 'url')) {
+                    return $url;
+                }
+            }
+        });
     }
 
-    public function copyable(): static
+    public static function registerWrapper(string $name, Closure $callback): void
     {
-        $this->copyable = true;
-
-        return $this;
+        static::$wrappers[$name] = $callback;
     }
 
-    public function storeDisk(string $column): static
+    public static function forWrapper(string $name): ?static
     {
-        $this->diskColumn = $column;
+        if (!$callback = (static::$wrappers[$name] ?? null)) {
+            return null;
+        }
 
-        return $this;
+        return $callback(static::make('wrapped'));
     }
 
     public function multiple(bool $multiple = true): static
@@ -61,11 +80,75 @@ class FilemanagerField extends Field
         return $this;
     }
 
+    public function asHtml(): static
+    {
+        $this->asHtml = true;
+
+        return $this;
+    }
+
+    public function wrapper(string $name): static
+    {
+        $this->wrapper = $name;
+
+        return $this;
+    }
+
+    public function resolveThumbnailUrl()
+    {
+        return is_callable($this->thumbnailUrlCallback) && !empty($this->value)
+            ? call_user_func($this->thumbnailUrlCallback, $this->value, $this->resource)
+            : null;
+    }
+
+    public function applyWrapper(): static
+    {
+        if (empty($this->wrapper)) {
+            return $this;
+        }
+
+        if (!$wrapper = static::forWrapper($this->wrapper)) {
+            return $this;
+        }
+
+        $this->prepareStorageCallback($wrapper->storageCallback);
+
+        $this->multiple = $wrapper->multiple;
+        $this->limit = $wrapper->limit;
+        $this->asHtml = $wrapper->asHtml;
+
+        $this->merge($wrapper);
+
+        return $this;
+    }
+
+    public function jsonSerialize(): array
+    {
+        $this->applyWrapper();
+
+        return array_merge(
+            parent::jsonSerialize(),
+            [
+                'multiple' => $this->multiple,
+                'limit' => $this->multiple ? $this->limit : 1,
+                'asHtml' => $this->asHtml,
+                'wrapper' => $this->wrapper,
+            ],
+            $this->options(),
+        );
+    }
+
     /**
+     * @param mixed $requestAttribute
+     * @param mixed $model
+     * @param mixed $attribute
+     *
      * @throws \JsonException
      */
     protected function fillAttribute(NovaRequest $request, $requestAttribute, $model, $attribute)
     {
+        $this->applyWrapper();
+
         $result = call_user_func(
             $this->storageCallback,
             $request,
@@ -91,11 +174,7 @@ class FilemanagerField extends Field
         }
     }
 
-    public function asJson(string $column)
-    {
-    }
-
-    protected function prepareStorageCallback(Closure $storageCallback = null): void
+    protected function prepareStorageCallback(?Closure $storageCallback = null): void
     {
         $this->storageCallback = $storageCallback ?? function (
             NovaRequest $request,
@@ -111,29 +190,16 @@ class FilemanagerField extends Field
                 $payload = [];
             }
 
-            $files = collect($payload['files'] ?? []);
+            $files = collect($payload);
 
             if ($this->multiple) {
-                $value = $files->isNotEmpty() ? $files->pluck('path')->toArray() : null;
+                $value = collect($files)->map(fn (array $file) => new Asset(...$file));
             } else {
-                $value = data_get($files->first(), 'path');
+                $value = $files->isNotEmpty() ? new Asset(...$files->first()) : null;
             }
 
-            $values = [
-                $attribute => $value,
-            ];
-
-            return $this->mergeExtraStorageColumns($payload, $values);
+            return [$attribute => $value];
         };
-    }
-
-    protected function mergeExtraStorageColumns(array $payload, array $attributes): array
-    {
-        if (isset($this->diskColumn)) {
-            $attributes[$this->diskColumn] = $payload['disk'] ?? null;
-        }
-
-        return $attributes;
     }
 
     protected function resolveAttribute($resource, $attribute = null): ?array
@@ -142,48 +208,36 @@ class FilemanagerField extends Field
             return null;
         }
 
-        $manager = FilemanagerService::make();
-
-        if (isset($this->diskColumn)) {
-            $disk = parent::resolveAttribute($resource, $this->diskColumn);
+        if ($value instanceof Asset) {
+            $value = collect([$value]);
         }
 
-        if (isset($disk)) {
-            $manager->disk($disk);
+        if ($value instanceof stdClass) {
+            $value = (array) $value;
         }
 
-        $entities = collect();
-
-        if (is_string($value)) {
-            if (empty($value)) {
-                return null;
-            }
-
-            $entities->push($manager->makeEntity($value));
-        }
-
-        if (is_iterable($value)) {
-            foreach ($value as $file) {
-                $entities->push($manager->makeEntity($file));
+        if (is_array($value)) {
+            if ($this->multiple) {
+                $value = collect($value)->map(fn (array | object $asset) => new Asset(...(array) $asset));
+            } else {
+                $value = collect([new Asset(...$value)]);
             }
         }
 
-        return [
-            'disk' => $manager->disk,
-            'files' => $entities->toArray(),
-        ];
-    }
+        $this->applyWrapper();
 
-    public function jsonSerialize(): array
-    {
-        return array_merge(
-            parent::jsonSerialize(),
-            $this->imageAttributes(),
-            [
-                'copyable' => $this->copyable,
-                'multiple' => $this->multiple,
-                'limit' => $this->multiple ? $this->limit : 1,
-            ]
-        );
+        return $value
+            ->map(function (Asset $asset) {
+                $disk = $this->resolveFilesystem(app(NovaRequest::class)) ?? $asset->disk;
+
+                $manager = app(FileManagerContract::class, ['disk' => $disk]);
+
+                if ($this->hasUrlResolver()) {
+                    $manager->resolveUrlUsing($this->getUrlResolver());
+                }
+
+                return $manager->makeEntity($asset->path, $asset->disk);
+            })
+            ->toArray();
     }
 }
