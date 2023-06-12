@@ -17,8 +17,8 @@ class FileManagerTool extends Tool implements InteractsWithFilesystem
      */
     public function boot(): void
     {
-        Nova::script('nova-filemanager', __DIR__ . '/../dist/js/tool.js');
-        Nova::style('nova-filemanager', __DIR__ . '/../dist/css/tool.css');
+        Nova::script('nova-file-manager', __DIR__ . '/../dist/js/tool.js');
+        Nova::style('nova-file-manager', __DIR__ . '/../dist/css/tool.css');
     }
 
     public function menu(Request $request): mixed

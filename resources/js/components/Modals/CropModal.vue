@@ -15,7 +15,7 @@
             />
         </template>
 
-        <vue-cropper
+        <VueCropper
             ref="cropper"
             :containerStyle="containerStyle"
             :src="modal.payload.url"
@@ -30,6 +30,7 @@ import BaseModal from "./BaseModal.vue";
 import { default as VueCropper } from "vue-cropperjs";
 import ToolbarButton from "../ToolbarButton.vue";
 import useBrowserStore from "@/stores/browser";
+import 'cropperjs/dist/cropper.css';
 
 const store = useBrowserStore();
 
