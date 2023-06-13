@@ -19,7 +19,7 @@
             <ToolbarButton
                 v-if="file.type === 'image'"
                 type="camera"
-                @click.prevent="() => store.openModal(MODALS.CROP, file)"
+                @click.prevent="showCrop"
                 v-tooltip="__('Crop')"
             />
 
@@ -38,13 +38,13 @@
 
             <ToolbarButton
                 type="pencil"
-                @click.prevent="() => store.openModal(MODALS.RENAME, file)"
+                @click.prevent="showRename"
                 v-tooltip="__('Rename')"
             />
             <ToolbarButton
                 class="text-red-500"
                 type="trash"
-                @click.prevent="() => store.openModal(MODALS.DELETE, file)"
+                @click.prevent="showDelete"
                 v-tooltip="__('Delete')"
             />
         </template>
@@ -53,10 +53,7 @@
             {{ file.name }}
         </div>
 
-        <DetailView
-            class="my-4"
-            :file="file"
-        />
+        <DetailView class="my-4" :file="file" />
 
         <table class="table table-fixed text-left w-full">
             <tr v-if="file.mime">
@@ -185,7 +182,7 @@
 import { computed } from "vue";
 import BaseModal from "./BaseModal.vue";
 import ToolbarButton from "../ToolbarButton.vue";
-import { MODALS } from "../../constants";
+import { DELETE_STATE, MODALS } from "../../constants";
 import useBrowserStore from "../../stores/browser";
 import DetailView from "../Elements/DetailView.vue";
 
@@ -210,7 +207,7 @@ function select() {
 }
 
 function unarchive() {
-    if (file.value.type !== 'archive') {
+    if (file.value.type !== "archive") {
         return;
     }
 
@@ -219,6 +216,21 @@ function unarchive() {
 
 function duplicate() {
     store.duplicate(file.value.path);
+}
+
+function showCrop() {
+    store.openModal(MODALS.CROP, file.value);
+}
+
+function showDelete() {
+    store.openModal(MODALS.DELETE, {
+        type: DELETE_STATE.FILE,
+        [DELETE_STATE.FILE]: file.value,
+    });
+}
+
+function showRename() {
+    store.openModal(MODALS.RENAME, file.value);
 }
 
 function fallbackCopyTextToClipboard(text) {

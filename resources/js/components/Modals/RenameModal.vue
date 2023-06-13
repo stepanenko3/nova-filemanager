@@ -88,9 +88,7 @@ const props = defineProps({
 });
 
 const subject = computed(() => props.modal.payload);
-const isFolder = computed(
-    () => !subject.value.type && !subject.value.lastModifiedAt
-);
+const isFolder = computed(() => subject.value.type === "folder");
 const name = computed(() => subject.value.name.replace(/^.*[\\/]/, ""));
 const extension = computed(() => {
     if (!isFolder.value) {
@@ -143,17 +141,11 @@ function confirmRename() {
         nameToSave
     ).replace(/^\/+/, "");
 
-    return Nova.request()
-        .post(
-            `/nova-vendor/nova-file-manager/${
-                isFolder.value ? "folders" : "files"
-            }/rename`,
-            {
-                disk: store.disk,
-                oldPath: subject.value.path,
-                newPath: newPath,
-            }
-        )
+    return (
+        isFolder.value
+            ? store.renameFolder(subject.value.path, newPath)
+            : store.renameFile(subject.value.path, newPath)
+    )
         .then((r) =>
             processResponse(r.response && r.response.data ? r.response.data : r)
         )
@@ -163,18 +155,7 @@ function confirmRename() {
 }
 
 function processResponse(result) {
-    if (!result.errors || result.errors.length <= 0) {
-        error.value = null;
-
-        Nova.success(result.message);
-
-        store.unselect(props.modal.payload);
-        store.closeModals();
-        store.fetch();
-    } else {
-        error.value = result.message;
-
-        Nova.error("Error:" + " " + result.message);
-    }
+    error.value =
+        !result.errors || result.errors.length <= 0 ? null : result.message;
 }
 </script>

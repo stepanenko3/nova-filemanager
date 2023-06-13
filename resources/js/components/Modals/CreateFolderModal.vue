@@ -82,26 +82,11 @@ function createFolder() {
         folder.value = null;
         loading.value = false;
 
-        if (!result.errors || result.errors.length <= 0) {
-            error.value = null;
-
-            close();
-
-            Nova.success(result.message);
-
-            store.fetch();
-        } else {
-            error.value = result.message;
-
-            Nova.error("Error:" + " " + result.message);
-        }
+        error.value =
+            !result.errors || result.errors.length <= 0 ? null : result.message;
     };
 
-    return Nova.request()
-        .post("/nova-vendor/nova-file-manager/folders/create", {
-            disk: store.disk,
-            path: `${store.path}/${folder.value}`,
-        })
+    return store.createFolder(`${store.path}/${folder.value}`)
         .then((r) =>
             processResponse(r.response && r.response.data ? r.response.data : r)
         )

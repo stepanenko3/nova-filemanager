@@ -289,79 +289,45 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
          * Fetches
          */
 
-
-        async deleteFolder(path: string) {
-            return Nova.request()
-                .post("/nova-vendor/nova-file-manager/folders/delete", {
-                    disk: this.disk,
-                    path: path,
-                })
-                .then((response: any) => {
-                    this.selection = this.selection.filter(value => value.path !== path)
-
-                    return response;
-                })
-                .catch(() => Nova.error("Error. Please check your logs"));
-        },
-
-        async deleteFiles(paths: string[] = []) {
-            if (paths.length === 0) {
-                return
-            }
+        async getDisks() {
+            this.isFetchingDisks = true;
 
             return Nova.request()
-                .post("/nova-vendor/nova-file-manager/files/delete", {
-                    disk: this.disk,
-                    paths: paths,
-                })
+                .get("/nova-vendor/nova-file-manager/disks/available")
                 .then((response: any) => {
-                    this.selection = this.selection.filter(value => !paths.includes(value.path))
+                    this.disks = response.data
 
-                    return response;
+                    if (!this.disk) {
+                        this.disk = this.disks[0]
+                    }
                 })
-                .catch(() => Nova.error("Error. Please check your logs"));
+                .catch((error: any) => Nova.error(error.response.data.message || 'Something went wrong'))
+                .finally(() => this.isFetchingDisks = false);
         },
 
-        async unarchive(path: string) {
+        async fetch() {
             this.loading = true;
 
             return Nova.request()
-                .post("/nova-vendor/nova-file-manager/files/unzip", {
-                    disk: this.disk,
-                    path: path,
+                .get("/nova-vendor/nova-file-manager", {
+                    params: {
+                        page: this.page,
+                        perPage: this.perPage,
+                        path: this.path,
+                        search: this.search,
+                        sort: this.sort,
+                        disk: this.disk,
+                        period: this.period,
+                    },
                 })
-                .then((result: any) => {
+                .then((response: any) => {
+                    this.page = response.data.pagination.current_page;
+                    this.disk = response.data.disk;
+                    this.data = response.data;
+
                     this.loading = false;
-
-                    this.closeModals();
-                    this.fetch();
-
-                    Nova.success(result.data.message || 'ok');
                 })
-                .catch((error: any) => {
-                    this.loading = false;
-
-                    Nova.error(error.response.data.message || 'Something went wrong');
-                });
-        },
-
-        async duplicate(path: string) {
-            this.loading = true;
-
-            return Nova.request()
-                .post("/nova-vendor/nova-file-manager/files/duplicate", {
-                    disk: this.disk,
-                    path: path,
-                })
-                .then((result: any) => {
-                    this.loading = false;
-
-                    this.closeModals();
-                    this.fetch();
-
-                    Nova.success(result.data.message || 'ok');
-                })
-                .catch((error: any) => {
+                .catch((error) => {
                     this.loading = false;
 
                     Nova.error(error.response.data.message || 'Something went wrong');
@@ -434,50 +400,164 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
             })
         },
 
-        async getDisks() {
-            this.isFetchingDisks = true;
-
+        async renameFile(from: string, to: string) {
             return Nova.request()
-                .get("/nova-vendor/nova-file-manager/disks/available")
-                .then((response: any) => {
-                    this.disks = response.data
-
-                    if (!this.disk) {
-                        this.disk = this.disks[0]
-                    }
+                .post("/nova-vendor/nova-file-manager/files/rename", {
+                    disk: this.disk,
+                    from: from,
+                    to: to,
                 })
-                .catch(() => Nova.error("Error. Please check your logs"))
-                .finally(() => this.isFetchingDisks = false);
+                .then((response: any) => {
+                    this.selection = this.selection.filter(value => value.path !== from)
+
+                    this.closeModals();
+                    this.fetch();
+
+                    if (response.data.message) {
+                        Nova.success(response.data.message);
+                    }
+
+                    return response;
+                })
+                .catch((error: any) => Nova.error(error.response.data.message || 'Something went wrong'));
         },
 
-        async fetch() {
+        async deleteFiles(paths: string[] = []) {
+            if (paths.length === 0) {
+                return
+            }
+
+            return Nova.request()
+                .post("/nova-vendor/nova-file-manager/files/delete", {
+                    disk: this.disk,
+                    paths: paths,
+                })
+                .then((response: any) => {
+                    this.selection = this.selection.filter(value => !paths.includes(value.path))
+
+                    this.closeModals();
+                    this.fetch();
+
+                    if (response.data.message) {
+                        Nova.success(response.data.message);
+                    }
+
+                    return response;
+                })
+                .catch((error: any) => Nova.error(error.response.data.message || 'Something went wrong'));
+        },
+
+        async unarchive(path: string) {
             this.loading = true;
 
             return Nova.request()
-                .get("/nova-vendor/nova-file-manager", {
-                    params: {
-                        page: this.page,
-                        perPage: this.perPage,
-                        path: this.path,
-                        search: this.search,
-                        sort: this.sort,
-                        disk: this.disk,
-                        period: this.period,
-                    },
+                .post("/nova-vendor/nova-file-manager/files/unzip", {
+                    disk: this.disk,
+                    path: path,
                 })
                 .then((response: any) => {
-                    this.page = response.data.pagination.current_page;
-                    this.disk = response.data.disk;
-                    this.data = response.data;
-
                     this.loading = false;
+
+                    this.closeModals();
+                    this.fetch();
+
+                    if (response.data.message) {
+                        Nova.success(response.data.message);
+                    }
+
+                    return response;
                 })
-                .catch(() => {
+                .catch((error: any) => {
                     this.loading = false;
 
-                    Nova.error("Error. Please check your logs");
+                    Nova.error(error.response.data.message || 'Something went wrong');
                 });
-        }
+        },
+
+        async duplicate(path: string) {
+            this.loading = true;
+
+            return Nova.request()
+                .post("/nova-vendor/nova-file-manager/files/duplicate", {
+                    disk: this.disk,
+                    path: path,
+                })
+                .then((response: any) => {
+                    this.loading = false;
+
+                    this.closeModals();
+                    this.fetch();
+
+                    if (response.data.message) {
+                        Nova.success(response.data.message);
+                    }
+
+                    return response;
+                })
+                .catch((error: any) => {
+                    this.loading = false;
+
+                    Nova.error(error.response.data.message || 'Something went wrong');
+                });
+        },
+
+        async createFolder(path: string) {
+            return Nova.request()
+                .post("/nova-vendor/nova-file-manager/folders/create", {
+                    disk: this.disk,
+                    path: path,
+                })
+                .then((response: any) => {
+                    this.closeModals();
+                    this.fetch();
+
+                    if (response.data.message) {
+                        Nova.success(response.data.message);
+                    }
+
+                    return response;
+                })
+                .catch((error: any) => Nova.error(error.response.data.message || 'Something went wrong'));
+        },
+
+        async renameFolder(from: string, to: string) {
+            return Nova.request()
+                .post("/nova-vendor/nova-file-manager/folders/rename", {
+                    disk: this.disk,
+                    from: from,
+                    to: to,
+                })
+                .then((response: any) => {
+                    this.closeModals();
+                    this.fetch();
+
+                    if (response.data.message) {
+                        Nova.success(response.data.message);
+                    }
+
+                    return response;
+                })
+                .catch((error: any) => Nova.error(error.response.data.message || 'Something went wrong'));
+        },
+
+        async deleteFolder(path: string) {
+            return Nova.request()
+                .post("/nova-vendor/nova-file-manager/folders/delete", {
+                    disk: this.disk,
+                    path: path,
+                })
+                .then((response: any) => {
+                    this.closeModals();
+                    this.fetch();
+
+                    if (response.data.message) {
+                        Nova.success(response.data.message);
+                    }
+
+                    return response;
+                })
+                .catch((error: any) => Nova.error(error.response.data.message || 'Something went wrong'));
+        },
     },
 
     getters: {

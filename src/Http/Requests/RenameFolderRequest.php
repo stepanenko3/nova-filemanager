@@ -3,13 +3,13 @@
 namespace Stepanenko3\NovaFileManager\Http\Requests;
 
 use Stepanenko3\NovaFileManager\Rules\DiskExistsRule;
-use Stepanenko3\NovaFileManager\Rules\PathDoesNotExistInDiskRule;
-use Stepanenko3\NovaFileManager\Rules\PathExistsInDiskRule;
+use Stepanenko3\NovaFileManager\Rules\ExistsInFilesystem;
+use Stepanenko3\NovaFileManager\Rules\MissingInFilesystem;
 
 /**
  * @property ?string $disk
- * @property string $oldPath
- * @property string $newPath
+ * @property string $from
+ * @property string $to
  */
 class RenameFolderRequest extends BaseRequest
 {
@@ -17,8 +17,8 @@ class RenameFolderRequest extends BaseRequest
     {
         return [
             'disk' => ['sometimes', 'string', new DiskExistsRule()],
-            'oldPath' => ['required', 'string', new PathExistsInDiskRule($this->get('disk'))],
-            'newPath' => ['required', 'string', new PathDoesNotExistInDiskRule($this->get('disk'))],
+            'from' => ['required', 'string', new ExistsInFilesystem($this)],
+            'to' => ['required', 'string', new MissingInFilesystem($this)],
         ];
     }
 }

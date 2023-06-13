@@ -401,7 +401,12 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         $zip->open($this->filesystem->path($path));
 
         // create the target folder
-        $destination = (string) str($zip->filename)->basename()->replace('.zip', '');
+        $destination = Str::beforeLast(
+            subject: $path,
+            search: '.',
+        );
+
+        print_r($destination);
 
         if (!$this->mkdir($destination)) {
             return false;

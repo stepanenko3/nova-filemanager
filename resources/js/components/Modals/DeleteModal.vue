@@ -137,19 +137,7 @@ async function run() {
 function processResponse(result) {
     loading.value = false;
 
-    if (!result.errors || result.errors.length <= 0) {
-        error.value = null;
-
-        close();
-
-        Nova.success(result.message);
-
-        store.closeModals();
-        store.fetch();
-    } else {
-        error.value = result.message;
-
-        Nova.error("Error:" + " " + result.message);
-    }
+    error.value =
+        !result.errors || result.errors.length <= 0 ? null : result.message;
 }
 </script>
