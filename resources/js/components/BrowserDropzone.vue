@@ -11,24 +11,3 @@
         <span class="pointer-events-none"> Drop your files here </span>
     </div>
 </template>
-
-<style>
-.pointer-events-none {
-    pointer-events: none;
-}
-
-@keyframes bounce {
-    0%,
-    to {
-        transform: translateY(-25%);
-        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-    }
-    50% {
-        transform: none;
-        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-    }
-}
-.animate-bounce {
-    animation: bounce 1s infinite;
-}
-</style>

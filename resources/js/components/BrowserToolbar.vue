@@ -160,9 +160,3 @@ function changeFile(e) {
     emit("changeFile", e);
 }
 </script>
-
-<style>
-.text-underline {
-    text-decoration: underline;
-}
-</style>

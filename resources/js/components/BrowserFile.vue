@@ -42,7 +42,7 @@
 
         <div class="w-full flex items-center mt-2">
             <p
-                class="px-2 truncate text-gray-900 dark:text-gray-200 font-medium"
+                class="px-1 truncate text-gray-900 dark:text-gray-200 font-medium"
             >
                 {{ truncate(file.name, 25) }}
             </p>
@@ -174,9 +174,3 @@ function select() {
     }
 }
 </script>
-
-<style>
-.aspect-square {
-    aspect-ratio: 1 / 1;
-}
-</style>
