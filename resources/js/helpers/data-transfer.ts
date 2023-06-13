@@ -61,7 +61,7 @@ export default async function (dataTransferItems: DataTransferItemList) {
 
     const getFilesFromEntry = async (entry: FileSystemEntry | null, path = '') => {
         if (!entry) {
-            throw new Error('Entry not isFile and not isDirectory - unable to get files')
+            return undefined; // throw new Error('Entry not isFile and not isDirectory - unable to get files')
         }
 
         if (entry.isFile) {

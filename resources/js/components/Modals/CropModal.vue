@@ -29,7 +29,7 @@ import { ref, computed } from "vue";
 import BaseModal from "./BaseModal.vue";
 import { default as VueCropper } from "vue-cropperjs";
 import ToolbarButton from "../ToolbarButton.vue";
-import useBrowserStore from "@/stores/browser";
+import useBrowserStore from "../../stores/browser";
 import 'cropperjs/dist/cropper.css';
 
 const store = useBrowserStore();

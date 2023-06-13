@@ -41,23 +41,21 @@ abstract class Entity implements Arrayable, EntityContract
     {
         if (empty($this->data)) {
             if ($this->manager->filesystem()->exists($this->path)) {
-                $this->data = array_merge(
-                    [
-                        'id' => $this->id(),
-                        'disk' => $this->disk,
-                        'name' => $this->name(),
-                        'path' => $this->path,
-                        'size' => $this->size(),
-                        'extension' => $this->extension(),
-                        'mime' => $this->mime(),
-                        'url' => $this->url(),
-                        'lastModifiedAt' => $this->lastModifiedAt(),
-                        'type' => $this->type(),
-                    ],
-                    [
-                        'meta' => $this->meta(),
-                    ],
-                );
+                $this->data = [
+                    'id' => $this->id(),
+                    'disk' => $this->disk,
+                    'name' => $this->name(),
+                    'path' => $this->path,
+                    'size' => $this->size(),
+                    'sizeReadable' => $this->sizeReadable(),
+                    'extension' => $this->extension(),
+                    'mime' => $this->mime(),
+                    'url' => $this->url(),
+                    'lastModifiedAt' => $this->lastModifiedAtTimestamp(),
+                    'lastModifiedAtReadable' => $this->lastModifiedAtReadable(),
+                    'type' => $this->type(),
+                    'meta' => $this->meta(),
+                ];
             } else {
                 $this->data = array_merge([
                     'id' => $this->id(),

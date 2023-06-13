@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { mimeIcons } from "@/helpers/mime-icons";
+import { mimeIcons } from "../../helpers/mime-icons";
 
 const props = defineProps({
     file: {

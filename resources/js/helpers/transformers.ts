@@ -1,4 +1,4 @@
-import { OurFile } from "@/@types";
+import { OurFile } from "../@types";
 
 export default function nativeFileToEntity(file: File) {
     return {

@@ -185,8 +185,8 @@
 import { computed } from "vue";
 import BaseModal from "./BaseModal.vue";
 import ToolbarButton from "../ToolbarButton.vue";
-import { MODALS } from "@/constants";
-import useBrowserStore from "@/stores/browser";
+import { MODALS } from "../../constants";
+import useBrowserStore from "../../stores/browser";
 import DetailView from "../Elements/DetailView.vue";
 
 const store = useBrowserStore();
@@ -203,6 +203,10 @@ const isSelected = computed(() => store.isSelected(file.value));
 
 function select() {
     store.toggleSelection(file.value);
+
+    if (!store.multiple && store.selecting && isSelected.value) {
+        store.confirmSelection();
+    }
 }
 
 function unarchive() {

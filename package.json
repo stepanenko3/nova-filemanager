@@ -2,7 +2,10 @@
     "private": true,
     "scripts": {
         "dev": "NODE_ENV=development vite build --watch",
-        "build": "vite build",
+        "dev:package": "NODE_ENV=development LIB=package vite build --watch",
+        "build": "yarn build:tool && yarn build:package",
+        "build:tool": "LIB_NAME=tool vite build",
+        "build:package": "LIB_NAME=package vite build",
         "package": "npm run format && npm run lint && npm run build",
         "check-format": "prettier --list-different 'resources/**/*.{css,js,vue,ts}'",
         "format": "prettier --write 'resources/js/**/*.{css,js,vue,ts}'",
@@ -11,7 +14,7 @@
     "files": [
         "dist"
     ],
-    "main": "./dist/js/tool.umd.cjs",
+    "main": "./dist/js/package.umd.cjs",
     "devDependencies": {
         "@inertiajs/inertia": "^0.11.1",
         "@rollup/plugin-alias": "^5.0.0",

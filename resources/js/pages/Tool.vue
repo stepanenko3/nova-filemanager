@@ -22,7 +22,7 @@
 <script setup>
 import { ref } from "vue";
 import BrowserModal from "../components/BrowserModal.vue";
-import Browser from "@/components/Browser.vue";
+import Browser from "../components/Browser.vue";
 
 const modalState = ref(false);
 

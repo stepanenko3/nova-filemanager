@@ -32,7 +32,7 @@
                 v-if="store.selecting"
                 class="text-green-500"
                 type="check"
-                @click.prevent="confirmSelect"
+                @click.prevent="confirmSelection"
                 v-tooltip="__('Confirm selection')"
             />
         </template>
@@ -43,7 +43,7 @@
 import BrowserFile from "../BrowserFile.vue";
 import BaseModal from "./BaseModal.vue";
 import ToolbarButton from "../ToolbarButton.vue";
-import useBrowserStore from "@/stores/browser";
+import useBrowserStore from "../../stores/browser";
 import { storeToRefs } from "pinia";
 import { isEmpty } from "lodash";
 import { watch } from "vue";
@@ -57,8 +57,6 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(["confirmSelect"]);
-
 const { selection } = storeToRefs(store);
 
 function close() {
@@ -71,9 +69,8 @@ function clearSelected() {
     close();
 }
 
-function confirmSelect() {
-    emit("confirmSelect");
-
+function confirmSelection() {
+    store.confirmSelection();
     close();
 }
 

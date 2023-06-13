@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import useBrowserStore from "@/stores/browser";
+import useBrowserStore from "../stores/browser";
 
 const store = useBrowserStore();
 

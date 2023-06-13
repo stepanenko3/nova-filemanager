@@ -80,8 +80,8 @@
 <script setup>
 import { ref } from "vue";
 import BaseModal from "./BaseModal.vue";
-import useBrowserStore from "@/stores/browser";
-import { DELETE_STATE } from "@/constants";
+import useBrowserStore from "../../stores/browser";
+import { DELETE_STATE } from "../../constants";
 
 const store = useBrowserStore();
 

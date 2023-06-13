@@ -69,7 +69,7 @@
                 v-if="store.selecting"
                 class="text-green-500"
                 type="check"
-                @click.prevent="confirmSelect"
+                @click.prevent="() => store.confirmSelection()"
                 v-tooltip="__('Confirm selection')"
             />
         </div>
@@ -144,7 +144,7 @@
 import _ from "lodash";
 import ToolbarButton from "./ToolbarButton.vue";
 import useBrowserStore from "../stores/browser.ts";
-import { MODALS, DELETE_STATE } from "@/constants";
+import { MODALS, DELETE_STATE } from "../constants";
 import { ref } from "vue";
 import Dropdown from "./Elements/Dropdown.vue";
 
@@ -152,13 +152,9 @@ const store = useBrowserStore();
 
 const fileUpload = ref();
 
-const emit = defineEmits(["confirmSelect", "changeFile"]);
+const emit = defineEmits(["changeFile"]);
 
 const searchItems = _.debounce((value) => store.setSearch(value), 300);
-
-function confirmSelect() {
-    emit("confirmSelect");
-}
 
 function changeFile(e) {
     emit("changeFile", e);

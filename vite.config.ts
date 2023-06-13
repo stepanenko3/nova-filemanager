@@ -4,16 +4,29 @@ import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
+const config = {
+    tool: {
+        entry: resolve(__dirname, 'resources/js/tool.js'),
+        name: 'tool',
+        fileName: () => 'js/tool.js',
+    },
+    package: {
+        entry: resolve(__dirname, 'resources/js/package.js'),
+        name: 'package',
+        fileName: () => 'js/package.js',
+    }
+}
+
+const currentConfig = process.env.LIB_NAME
+    ? config[process.env.LIB_NAME]
+    : config.tool;
+
 export default defineConfig({
     plugins: [
         vue(),
         tsconfigPaths(),
         alias({
             entries: [
-                {
-                    find: '@',
-                    replacement: resolve(__dirname, 'resources/js'),
-                },
                 {
                     find: 'laravel-nova',
                     replacement: resolve(__dirname, 'vendor/laravel/nova/resources/js/mixins/packages.js'),
@@ -30,18 +43,16 @@ export default defineConfig({
 
     build: {
         outDir: resolve(__dirname, 'dist'),
-        emptyOutDir: true,
+        emptyOutDir: false,
         target: 'ES2022',
         minify: true,
         manifest: true,
         lib: {
-            entry: resolve(__dirname, 'resources/js/tool.js'),
-            name: 'tool',
+            ...currentConfig,
             formats: ['umd'],
-            fileName: () => 'js/tool.js',
         },
         rollupOptions: {
-            input: resolve(__dirname, 'resources/js/tool.js'),
+            input: currentConfig.entry,
             external: ['vue', 'Nova', 'LaravelNova'],
             output: {
                 globals: {

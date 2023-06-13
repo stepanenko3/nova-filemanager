@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia'
 import { isEmpty, range } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
-import { Modal, OptionValue, QueueEntry, QueueEntryStatus, ModalPayload } from '@/@types'
+import { Modal, OptionValue, QueueEntry, QueueEntryStatus, ModalPayload } from '../@types'
 import Resumable from 'resumablejs'
-import { csrf } from '@/helpers/csrf'
-import { MODALS } from '@/constants'
+import { csrf } from '../helpers/csrf'
+import { MODALS } from '../constants'
 import { RemovableRef, useLocalStorage } from '@vueuse/core'
 
 function __(key: string) {
@@ -40,6 +40,7 @@ interface State {
     queue: QueueEntry[]
     selection: Array<any>
     data: any
+    selectionConfirms: number
     // config
     chunkSize: number
 }
@@ -70,6 +71,7 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
         selection: [],
         modals: [],
         queue: [],
+        selectionConfirms: 0,
 
         perPageOptions: range(10, 50, 10),
         sorts: [
@@ -107,6 +109,10 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
             if (isEmpty(this.data)) {
                 await this.fetch()
             }
+        },
+
+        confirmSelection() {
+            this.selectionConfirms++
         },
 
         /**

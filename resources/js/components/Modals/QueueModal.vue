@@ -67,11 +67,11 @@
 </template>
 
 <script setup lang="ts">
-import nativeFileToEntity from "@/helpers/transformers";
+import nativeFileToEntity from "../../helpers/transformers";
 import BaseModal from "./BaseModal.vue";
-import useBrowserStore from "@/stores/browser";
+import useBrowserStore from "../../stores/browser";
 import { computed } from "vue";
-import truncate from "@/helpers/truncate";
+import truncate from "../../helpers/truncate";
 
 const store = useBrowserStore();
 

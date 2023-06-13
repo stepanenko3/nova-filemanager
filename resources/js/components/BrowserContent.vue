@@ -65,7 +65,7 @@ import { computed } from "vue";
 import BrowserFile from "./BrowserFile.vue";
 import BrowserFolder from "./BrowserFolder.vue";
 import Empty from "./Elements/Empty.vue";
-import useBrowserStore from "@/stores/browser";
+import useBrowserStore from "../stores/browser";
 
 const store = useBrowserStore();
 

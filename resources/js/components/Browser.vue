@@ -1,6 +1,6 @@
 <template>
     <div
-        class="relative file-manager"
+        class="relative h-full nova-file-manager"
         :class="{
             'pointer-events-none': store.isProcessing,
         }"
@@ -11,8 +11,7 @@
         <Transition>
             <div
                 v-if="store.loading && store.modals.length === 0"
-                class="absolute rounded-lg inset-0 bg-white dark:bg-gray-800 flex items-center justify-center flex-grow z-50"
-                style="--tw-bg-opacity: 0.5"
+                class="absolute rounded-lg inset-0 bg-white/50 dark:bg-gray-800/50 flex items-center justify-center flex-grow z-50"
             >
                 <Loader />
             </div>
@@ -22,23 +21,14 @@
             <BrowserDropzone v-if="dragging" />
         </Transition>
 
-        <BrowserToolbar
-            @confirmSelect="confirmSelect"
-            @changeFile="changeFile"
-        />
+        <BrowserToolbar @changeFile="changeFile" />
 
-        <div
-            class="flex-grow py-4 px-6 space-y-4"
-        >
-            <BrowserBreadcrumbs
-                v-if="store.data?.breadcrumbs?.length > 0"
-            />
+        <div class="flex-grow py-4 px-6 space-y-4">
+            <BrowserBreadcrumbs v-if="store.data?.breadcrumbs?.length > 0" />
 
             <BrowserContent />
 
-            <BrowserPagination
-                v-if="store.data?.pagination?.last_page > 1"
-            />
+            <BrowserPagination v-if="store.data?.pagination?.last_page > 1" />
         </div>
 
         <TransitionGroup name="list">
@@ -66,7 +56,6 @@
                 <BrowserSelectedModal
                     v-else-if="modal.name === MODALS.SELECTED"
                     :modal="modal"
-                    @confirmSelect="confirmSelect"
                 />
                 <QueueModal
                     v-else-if="modal.name === MODALS.QUEUE"
@@ -90,13 +79,16 @@ import DeleteModal from "./Modals/DeleteModal.vue";
 import CropModal from "./Modals/CropModal.vue";
 import BrowserSelectedModal from "./Modals/BrowserSelectedModal.vue";
 import useBrowserStore from "../stores/browser";
-import { MODALS } from "@/constants";
+import { MODALS } from "../constants";
 import BrowserDropzone from "./BrowserDropzone.vue";
-import dataTransferFiles from "@/helpers/data-transfer";
+import dataTransferFiles from "../helpers/data-transfer";
 import QueueModal from "./Modals/QueueModal.vue";
 import { onKeyStroke } from "@vueuse/core";
+import { storeToRefs } from "pinia";
 
 const store = useBrowserStore();
+
+const { selectionConfirms } = storeToRefs(store);
 
 const props = defineProps({
     selecting: {
@@ -127,11 +119,12 @@ onKeyStroke("Escape", (e) => {
     }
 });
 
-function confirmSelect() {
+watch(selectionConfirms, () => {
     emit("confirmSelect", store.selection);
 
     store.clearSelection();
-}
+    store.closeModals();
+});
 
 // Files Upload
 
@@ -139,10 +132,15 @@ const dragging = ref(false);
 
 const files = ref<File[] | FileList>();
 
-const dropFiles = async (e: DragEvent) =>
-    (files.value = e.dataTransfer
-        ? await dataTransferFiles(e.dataTransfer?.items)
-        : []);
+const dropFiles = async (e: DragEvent) => {
+    try {
+        files.value = e.dataTransfer
+            ? await dataTransferFiles(e.dataTransfer?.items)
+            : [];
+    } catch (e) {
+        dragging.value = false;
+    }
+};
 
 const changeFile = (e: Event) =>
     (files.value = (e.target as HTMLInputElement).files ?? []);

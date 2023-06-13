@@ -56,7 +56,7 @@
 
 <script setup>
 import { computed } from "vue";
-import useBrowserStore from "@/stores/browser";
+import useBrowserStore from "../stores/browser";
 
 const store = useBrowserStore();
 

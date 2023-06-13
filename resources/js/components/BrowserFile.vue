@@ -2,7 +2,7 @@
     <div
         ref="card"
         class="w-full h-full relative flex flex-col justify-center cursor-pointer"
-        @click.prevent.stop="clickStrategy"
+        @click.prevent.stop="select"
     >
         <div
             class="relative aspect-square flex items-center p-2 justify-center w-full h-full overflow-hidden rounded-lg hover:opacity-75 dark:bg-gray-900 border-2"
@@ -112,10 +112,10 @@
 </template>
 
 <script setup>
-import { DELETE_STATE, MODALS } from "@/constants";
-import { mimeIcons } from "@/helpers/mime-icons";
-import truncate from "@/helpers/truncate";
-import useBrowserStore from "@/stores/browser";
+import { DELETE_STATE, MODALS } from "../constants";
+import { mimeIcons } from "../helpers/mime-icons";
+import truncate from "../helpers/truncate";
+import useBrowserStore from "../stores/browser";
 import { computed } from "vue";
 import Dropdown from "./Elements/Dropdown.vue";
 import DropdownMenu from "./Elements/DropdownMenu.vue";
@@ -166,8 +166,12 @@ function showDelete() {
     });
 }
 
-function clickStrategy() {
+function select() {
     store.toggleSelection(props.file);
+
+    if (!store.multiple && store.selecting && isSelected.value) {
+        store.confirmSelection()
+    }
 }
 </script>
 

@@ -35,10 +35,10 @@
 </template>
 
 <script setup>
-import { DELETE_STATE, MODALS } from "@/constants";
-import { mimeIcons } from "@/helpers/mime-icons";
-import truncate from "@/helpers/truncate";
-import useBrowserStore from "@/stores/browser";
+import { DELETE_STATE, MODALS } from "../constants";
+import { mimeIcons } from "../helpers/mime-icons";
+import truncate from "../helpers/truncate";
+import useBrowserStore from "../stores/browser";
 import Dropdown from "./Elements/Dropdown.vue";
 import DropdownMenu from "./Elements/DropdownMenu.vue";
 

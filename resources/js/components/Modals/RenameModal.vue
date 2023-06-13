@@ -76,7 +76,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import BaseModal from "./BaseModal.vue";
-import useBrowserStore from "@/stores/browser";
+import useBrowserStore from "../../stores/browser";
 
 const store = useBrowserStore();
 
