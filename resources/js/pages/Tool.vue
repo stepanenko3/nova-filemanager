@@ -14,7 +14,7 @@
 
         <BrowserModal
             v-model:state="modalState"
-            @confirmSelect="confirmSelect"
+            @confirmSelection="confirmSelection"
         />
     </div>
 </template>
@@ -26,7 +26,7 @@ import Browser from "../components/Browser.vue";
 
 const modalState = ref(false);
 
-function confirmSelect(e) {
+function confirmSelection(e) {
     console.log(e);
 
     modalState.value = false;

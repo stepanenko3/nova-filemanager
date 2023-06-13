@@ -101,7 +101,7 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(["confirmSelect"]);
+const emit = defineEmits(["confirmSelection"]);
 
 // HOOKS
 onMounted(() => {
@@ -120,7 +120,7 @@ onKeyStroke("Escape", (e) => {
 });
 
 watch(selectionConfirms, () => {
-    emit("confirmSelect", store.selection);
+    emit("confirmSelection", store.selection);
 
     store.clearSelection();
     store.closeModals();

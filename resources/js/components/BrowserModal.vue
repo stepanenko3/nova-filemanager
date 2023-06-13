@@ -13,9 +13,7 @@
                     <Browser
                         :selecting="selecting"
                         :multiple="multiple"
-                        @confirmSelect="
-                            ($event) => emit('confirmSelect', $event)
-                        "
+                        @confirmSelection="confirmSelection"
                     />
                 </div>
             </div>
@@ -45,7 +43,7 @@ const props = defineProps({
 
 const store = useBrowserStore();
 
-const emit = defineEmits(["update:state", "confirmSelect"]);
+const emit = defineEmits(["update:state", "confirmSelection"]);
 
 onKeyStroke("Escape", (e) => {
     if (!store.modals.length) {
@@ -55,6 +53,12 @@ onKeyStroke("Escape", (e) => {
         closeModal();
     }
 });
+
+function confirmSelection(e) {
+    closeModal();
+
+    emit('confirmSelection', e)
+}
 
 function closeModal() {
     emit("update:state", false);
