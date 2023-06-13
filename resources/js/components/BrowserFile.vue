@@ -80,7 +80,7 @@
                     {{ __("Unarchive") }}
                 </DropdownMenu>
 
-                <DropdownMenu @click.prevent="duplicate">
+                <DropdownMenu @click.prevent.stop="duplicate">
                     <Icon
                         type="duplicate"
                         class="mr-2"
@@ -170,7 +170,7 @@ function select() {
     store.toggleSelection(props.file);
 
     if (!store.multiple && store.selecting && isSelected.value) {
-        store.confirmSelection()
+        store.confirmSelection();
     }
 }
 </script>
