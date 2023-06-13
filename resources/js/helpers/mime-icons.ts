@@ -6,4 +6,5 @@ export const mimeIcons: { [key: string]: string } = {
     pdf: "document",
     text: "document-text",
     video: "video-camera",
+    archive: 'archive',
 };

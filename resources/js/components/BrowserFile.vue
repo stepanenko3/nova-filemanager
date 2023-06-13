@@ -5,13 +5,16 @@
         @click.prevent.stop="clickStrategy"
     >
         <div
-            class="relative aspect-square flex items-center p-2 justify-center w-full h-full overflow-hidden rounded-lg hover:shadow-md hover:opacity-75 dark:bg-gray-900 border-2"
+            class="relative aspect-square flex items-center p-2 justify-center w-full h-full overflow-hidden rounded-lg hover:opacity-75 dark:bg-gray-900 border-2"
             :class="{
                 'border-primary-500': isSelected,
                 'border-gray-200 dark:border-gray-700': !isSelected,
             }"
         >
-            <div v-if="isSelected" class="absolute top-0 right-0 p-2 text-primary-500">
+            <div
+                v-if="isSelected"
+                class="absolute top-0 right-0 p-2 text-primary-500"
+            >
                 <Icon
                     type="check-circle"
                     width="22"
@@ -47,14 +50,14 @@
             <Dropdown class="ml-auto">
                 <template #trigger>
                     <div
-                        class="cursor-pointer flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-900"
+                        class="cursor-pointer flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900"
                     >
-                        <Icon type="menu" width="16" height="16" />
+                        <Icon type="dots-vertical" width="16" height="16" />
                     </div>
                 </template>
 
                 <DropdownMenu
-                    v-if="detailButton && store.selecting"
+                    v-if="detailButton"
                     @click.prevent.stop="showDetail"
                 >
                     <Icon type="eye" class="mr-2" width="16" height="16" />
@@ -65,22 +68,30 @@
                     v-if="file.type === 'image'"
                     @click.prevent.stop="showCrop"
                 >
-                    <Icon
-                        type="adjustments"
-                        class="mr-2"
-                        width="16"
-                        height="16"
-                    />
+                    <Icon type="camera" class="mr-2" width="16" height="16" />
                     {{ __("Crop") }}
                 </DropdownMenu>
 
-                <DropdownMenu @click.prevent.stop="showRename">
+                <DropdownMenu
+                    v-if="file.type === 'archive'"
+                    @click.prevent.stop="unarchive"
+                >
+                    <Icon type="archive" class="mr-2" width="16" height="16" />
+                    {{ __("Unarchive") }}
+                </DropdownMenu>
+
+                <DropdownMenu @click.prevent="duplicate">
                     <Icon
-                        type="pencil-alt"
+                        type="duplicate"
                         class="mr-2"
                         width="16"
                         height="16"
                     />
+                    {{ __("Duplicate") }}
+                </DropdownMenu>
+
+                <DropdownMenu @click.prevent.stop="showRename">
+                    <Icon type="pencil" class="mr-2" width="16" height="16" />
                     {{ __("Rename") }}
                 </DropdownMenu>
 
@@ -132,6 +143,18 @@ function showCrop() {
     store.openModal(MODALS.CROP, props.file);
 }
 
+function unarchive() {
+    if (props.file.type !== "archive") {
+        return;
+    }
+
+    store.unarchive(props.file.path);
+}
+
+function duplicate() {
+    store.duplicate(props.file.path);
+}
+
 function showRename() {
     store.openModal(MODALS.RENAME, props.file);
 }
@@ -144,11 +167,7 @@ function showDelete() {
 }
 
 function clickStrategy() {
-    if (store.selecting) {
-        store.toggleSelection(props.file);
-    } else if (props.detailButton) {
-        showDetail();
-    }
+    store.toggleSelection(props.file);
 }
 </script>
 

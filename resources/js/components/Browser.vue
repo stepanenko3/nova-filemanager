@@ -1,8 +1,8 @@
 <template>
     <div
-        class="relative h-full"
+        class="relative file-manager"
         :class="{
-            disabled: store.isProcessing,
+            'pointer-events-none': store.isProcessing,
         }"
         @dragover.prevent.stop="dragging = true"
         @dragleave.prevent.stop="dragging = false"
@@ -10,7 +10,7 @@
     >
         <Transition>
             <div
-                v-if="store.loading"
+                v-if="store.loading && store.modals.length === 0"
                 class="absolute rounded-lg inset-0 bg-white dark:bg-gray-800 flex items-center justify-center flex-grow z-50"
                 style="--tw-bg-opacity: 0.5"
             >
@@ -22,25 +22,23 @@
             <BrowserDropzone v-if="dragging" />
         </Transition>
 
-        <div class="flex flex flex-col h-full">
-            <BrowserToolbar
-                @confirmSelect="confirmSelect"
-                @changeFile="changeFile"
+        <BrowserToolbar
+            @confirmSelect="confirmSelect"
+            @changeFile="changeFile"
+        />
+
+        <div
+            class="flex-grow py-4 px-6 space-y-4"
+        >
+            <BrowserBreadcrumbs
+                v-if="store.data?.breadcrumbs?.length > 0"
             />
 
-            <div
-                class="flex-grow py-4 px-6 space-y-4 overflow-x-hidden overflow-y-auto"
-            >
-                <BrowserBreadcrumbs
-                    v-if="store.data?.breadcrumbs?.length > 0"
-                />
+            <BrowserContent />
 
-                <BrowserContent />
-
-                <BrowserPagination
-                    v-if="store.data?.pagination?.last_page > 1"
-                />
-            </div>
+            <BrowserPagination
+                v-if="store.data?.pagination?.last_page > 1"
+            />
         </div>
 
         <TransitionGroup name="list">
@@ -107,7 +105,7 @@ const props = defineProps({
     },
     multiple: {
         type: Boolean,
-        default: () => false,
+        default: () => true,
     },
 });
 

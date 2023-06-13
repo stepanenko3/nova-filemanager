@@ -8,15 +8,24 @@ return [
             'image/',
             'svg',
         ],
-
-        'audio' => ['audio/'],
-
-        'video' => ['video/'],
-
-        'pdf' => ['application/pdf'],
-
-        'compressed' => ['zip', 'rar', 'tar', 'gz', '7z', 'pkg'],
-
+        'audio' => [
+            'audio/',
+        ],
+        'video' => [
+            'video/',
+        ],
+        'pdf' => [
+            'application/pdf',
+        ],
+        'archive' => [
+            'zip',
+            'rar',
+            'tar',
+            'gz',
+            '7z',
+            'pkg',
+            'application/x-compressed',
+        ],
         'text' => [
             'text/',
             'rtf',
@@ -25,8 +34,9 @@ return [
             '/xml',
             'sql',
         ],
-
-        'word' => ['wordprocessingml'],
+        'word' => [
+            'wordprocessingml',
+        ],
     ],
 
     /*
@@ -46,7 +56,7 @@ return [
 
         'audios' => ['mp3', 'ogg', 'wav', 'wma', 'midi'],
 
-        'compressed' => ['zip', 'rar', 'tar', 'gz', '7z', 'pkg'],
+        'archive' => ['zip', 'rar', 'tar', 'gz', '7z', 'pkg'],
     ],
 
     /*

@@ -4,7 +4,7 @@
             <TransitionGroup
                 name="list"
                 tag="div"
-                class="grid grid-cols-2 md:grid-cols-4 gap-4"
+                class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
             >
                 <template v-for="file in selection" :key="file.id">
                     <BrowserFile
@@ -29,6 +29,7 @@
                 v-tooltip="__('Clear selected files')"
             />
             <ToolbarButton
+                v-if="store.selecting"
                 class="text-green-500"
                 type="check"
                 @click.prevent="confirmSelect"

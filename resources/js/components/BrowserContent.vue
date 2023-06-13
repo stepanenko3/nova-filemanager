@@ -16,7 +16,7 @@
 
         <div
             v-if="store.showFolders"
-            class="grid md:grid-cols-4 gap-4"
+            class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"
         >
             <template v-for="folder in folders" :key="folder.id">
                 <BrowserFolder
@@ -45,7 +45,7 @@
 
         <div
             v-if="store.showFiles"
-            class="grid grid-cols-2 md:grid-cols-4 gap-4"
+            class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
         >
             <template v-for="file in files" :key="file.id">
                 <BrowserFile
@@ -56,12 +56,15 @@
             </template>
         </div>
     </template>
+
+    <Empty v-if="!files.length && !folders.length" />
 </template>
 
 <script setup>
 import { computed } from "vue";
 import BrowserFile from "./BrowserFile.vue";
 import BrowserFolder from "./BrowserFolder.vue";
+import Empty from "./Elements/Empty.vue";
 import useBrowserStore from "@/stores/browser";
 
 const store = useBrowserStore();

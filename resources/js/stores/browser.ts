@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { isEmpty, range } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
-import { OurFile, OurFolder, Modal, OptionValue, QueueEntry, QueueEntryStatus, ModalPayload } from '@/@types'
+import { Modal, OptionValue, QueueEntry, QueueEntryStatus, ModalPayload } from '@/@types'
 import Resumable from 'resumablejs'
 import { csrf } from '@/helpers/csrf'
 import { MODALS } from '@/constants'
@@ -51,7 +51,7 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
         isUploading: false,
         isFetchingDisks: false,
         selecting: false,
-        multiple: false,
+        multiple: true,
 
         // showing states
         showFolders: true,
@@ -191,10 +191,6 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
          */
 
         select(subject: any) {
-            if (!this.selecting) {
-                return
-            }
-
             if (isEmpty(this.selection)) {
                 this.selection = [subject]
 
@@ -220,10 +216,6 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
             if (this.isSelected(subject)) {
                 this.unselect(subject)
 
-                return
-            }
-
-            if (!this.selecting) {
                 return
             }
 
@@ -324,6 +316,52 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
                 .catch(() => Nova.error("Error. Please check your logs"));
         },
 
+        async unarchive(path: string) {
+            this.loading = true;
+
+            return Nova.request()
+                .post("/nova-vendor/nova-file-manager/files/unzip", {
+                    disk: this.disk,
+                    path: path,
+                })
+                .then((result: any) => {
+                    this.loading = false;
+
+                    this.closeModals();
+                    this.fetch();
+
+                    Nova.success(result.data.message || 'ok');
+                })
+                .catch((error: any) => {
+                    this.loading = false;
+
+                    Nova.error(error.response.data.message || 'Something went wrong');
+                });
+        },
+
+        async duplicate(path: string) {
+            this.loading = true;
+
+            return Nova.request()
+                .post("/nova-vendor/nova-file-manager/files/duplicate", {
+                    disk: this.disk,
+                    path: path,
+                })
+                .then((result: any) => {
+                    this.loading = false;
+
+                    this.closeModals();
+                    this.fetch();
+
+                    Nova.success(result.data.message || 'ok');
+                })
+                .catch((error: any) => {
+                    this.loading = false;
+
+                    Nova.error(error.response.data.message || 'Something went wrong');
+                });
+        },
+
         upload(files: File[]) {
             if (this.isUploading) {
                 return;
@@ -340,6 +378,7 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
             const uploader = new Resumable({
                 chunkSize: this.chunkSize,
                 simultaneousUploads: 1,
+                maxChunkRetries: 10,
                 testChunks: false,
                 target: '/nova-vendor/nova-file-manager/files/upload',
                 query: {
@@ -372,6 +411,11 @@ const useBrowserStore = defineStore('nova-filemanager/browser', {
                     id: file.fileName,
                     ratio: Math.floor(file.progress(false) * 100),
                 })
+            })
+
+            uploader.on('error', (file, message) => {
+                console.log(file, message);
+
             })
 
             uploader.on('fileError', (file, message) => {

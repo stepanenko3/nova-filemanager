@@ -1,9 +1,9 @@
 <template>
     <div
         ref="wrapper"
-        class="backgrop inset-0 flex items-center justify-center rounded-lg"
+        class="inset-0 flex items-center justify-center"
         :class="{
-            'fixed z-50': !full,
+            'fixed z-50 bg-gray-800/10 backdrop-blur': !full,
             'absolute z-10': full,
         }"
     >
@@ -15,11 +15,21 @@
 
         <div
             ref="target"
-            class="relative bg-white max-w-full max-h-full dark:bg-gray-800 z-10 rounded-lg shadow-lg base-modal-inner overflow-hidden"
+            class="relative bg-white w-full max-h-full dark:bg-gray-800 z-10 rounded-lg shadow-lg base-modal-inner"
             :class="{
-                'w-full min-h-full': full,
+                'w-full max-w-full min-h-full': full,
+                'max-w-2xl': !full,
             }"
         >
+            <Transition>
+                <div
+                    v-if="store.loading"
+                    class="absolute rounded-lg inset-0 bg-white/50 dark:bg-gray-800/50 flex items-center justify-center flex-grow z-50"
+                >
+                    <Loader />
+                </div>
+            </Transition>
+
             <div
                 class="flex items-center px-6 py-4 space-x-2 border-b border-gray-200 dark:border-gray-700"
             >
@@ -67,6 +77,10 @@ const props = defineProps({
         type: Object,
         required: true,
     },
+    size: {
+        type: String,
+        default: '2xl',
+    },
 });
 
 const emit = defineEmits(["close"]);
@@ -79,15 +93,6 @@ const closeModal = () => store.closeModal(props.modal.id);
 </script>
 
 <style lang="scss">
-.backgrop {
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(5px);
-}
-
-.max-h-full {
-    max-height: 100%;
-}
-
 @media (min-width: 768px) {
     .base-modal-inner {
         min-width: 600px;

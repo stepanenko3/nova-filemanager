@@ -34,6 +34,7 @@
         "@types/lodash": "^4.14.195",
         "@types/uuid": "^9.0.2",
         "@vueuse/core": "^10.1.2",
+        "autoprefixer": "^10.4.14",
         "lodash": "^4.17.21",
         "pinia": "^2.0.36",
         "resumablejs": "^1.1.0",

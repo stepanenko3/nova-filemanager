@@ -46,7 +46,7 @@
 
         <div
             class="flex items-center space-x-2"
-            v-if="store.selecting && store.selection.length > 0"
+            v-if="store.selection.length > 0"
         >
             <span
                 @click.prevent="() => store.openModal(MODALS.SELECTED)"
@@ -66,6 +66,7 @@
                 v-tooltip="__('Delete selected files')"
             />
             <ToolbarButton
+                v-if="store.selecting"
                 class="text-green-500"
                 type="check"
                 @click.prevent="confirmSelect"

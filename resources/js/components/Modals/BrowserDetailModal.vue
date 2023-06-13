@@ -18,13 +18,26 @@
 
             <ToolbarButton
                 v-if="file.type === 'image'"
-                type="adjustments"
+                type="camera"
                 @click.prevent="() => store.openModal(MODALS.CROP, file)"
                 v-tooltip="__('Crop')"
             />
 
             <ToolbarButton
-                type="pencil-alt"
+                v-if="file.type === 'archive'"
+                type="archive"
+                @click.prevent="unarchive"
+                v-tooltip="__('Unarchive')"
+            />
+
+            <ToolbarButton
+                type="duplicate"
+                @click.prevent="duplicate"
+                v-tooltip="__('Duplicate')"
+            />
+
+            <ToolbarButton
+                type="pencil"
                 @click.prevent="() => store.openModal(MODALS.RENAME, file)"
                 v-tooltip="__('Rename')"
             />
@@ -36,9 +49,14 @@
             />
         </template>
 
-        <div class="px-4 font-bold text-sm py-2">
+        <div class="px-4 font-bold text-sm mt-2">
             {{ file.name }}
         </div>
+
+        <DetailView
+            class="my-4"
+            :file="file"
+        />
 
         <table class="table table-fixed text-left w-full">
             <tr v-if="file.mime">
@@ -169,6 +187,7 @@ import BaseModal from "./BaseModal.vue";
 import ToolbarButton from "../ToolbarButton.vue";
 import { MODALS } from "@/constants";
 import useBrowserStore from "@/stores/browser";
+import DetailView from "../Elements/DetailView.vue";
 
 const store = useBrowserStore();
 
@@ -184,6 +203,18 @@ const isSelected = computed(() => store.isSelected(file.value));
 
 function select() {
     store.toggleSelection(file.value);
+}
+
+function unarchive() {
+    if (file.value.type !== 'archive') {
+        return;
+    }
+
+    store.unarchive(file.value.path);
+}
+
+function duplicate() {
+    store.duplicate(file.value.path);
 }
 
 function fallbackCopyTextToClipboard(text) {

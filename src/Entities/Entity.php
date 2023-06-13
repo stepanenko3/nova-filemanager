@@ -89,13 +89,14 @@ abstract class Entity implements Arrayable, EntityContract
     /**
      * Compute the size of the entity.
      */
-    public function size(): int | string
+    public function size(): int
     {
-        $value = $this->manager->filesystem()->size($this->path);
+        return $this->manager->filesystem()->size($this->path);
+    }
 
-        if (!config('nova-file-manager.human_readable_size')) {
-            return $value;
-        }
+    public function sizeReadable(): string
+    {
+        $value = $this->size();
 
         $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
 
@@ -185,10 +186,11 @@ abstract class Entity implements Arrayable, EntityContract
      */
     public function lastModifiedAt(): string
     {
-        if (!config('nova-file-manager.human_readable_datetime')) {
-            return $this->lastModifiedAtTimestamp()->toDateTimeString();
-        }
+        return $this->lastModifiedAtTimestamp()->toDateTimeString();
+    }
 
+    public function lastModifiedAtReadable(): string
+    {
         return $this->lastModifiedAtTimestamp()->diffForHumans();
     }
 

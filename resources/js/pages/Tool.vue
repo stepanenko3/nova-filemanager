@@ -4,6 +4,10 @@
             {{ __("File manager") }}
         </Heading>
 
+        <Card>
+            <Browser />
+        </Card>
+
         <DefaultButton @click.prevent="() => (modalState = true)">
             Open Modal
         </DefaultButton>
@@ -18,8 +22,9 @@
 <script setup>
 import { ref } from "vue";
 import BrowserModal from "../components/BrowserModal.vue";
+import Browser from "@/components/Browser.vue";
 
-const modalState = ref(true);
+const modalState = ref(false);
 
 function confirmSelect(e) {
     console.log(e);
