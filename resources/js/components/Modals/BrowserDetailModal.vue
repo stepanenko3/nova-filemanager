@@ -162,6 +162,7 @@
                     <a
                         class="flex justify-start hover:opacity-50"
                         :href="file.url"
+                        target="_blank"
                         download=""
                     >
                         <Icon

@@ -1,6 +1,6 @@
 <template>
     <div
-        class="flex items-center justify-center h-80"
+        class="flex items-center justify-center h-80 owerflow-y-scroll"
         :class="class"
     >
         <template v-if="file.type == 'image'">
