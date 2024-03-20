@@ -5,7 +5,6 @@ namespace Stepanenko3\NovaFileManager\Services;
 use Closure;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -55,8 +54,6 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
 
     /**
      * Static helper.
-     *
-     * @param null|\Illuminate\Contracts\Filesystem\Filesystem|string $disk
      */
     public static function make(
         string | Filesystem | null $disk = null,
@@ -221,9 +218,7 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
 
         $time = strtotime('-' . $this->period);
 
-        $this->filterCallbacks[] = function (string $path) use ($time) {
-            return $this->filesystem->lastModified($path) >= $time;
-        };
+        $this->filterCallbacks[] = fn (string $path) => $this->filesystem->lastModified($path) >= $time;
     }
 
     /**

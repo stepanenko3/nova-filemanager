@@ -10,7 +10,7 @@ use Stepanenko3\NovaFileManager\Rules\FileMissingInFilesystem;
 /**
  * @property null|string $disk
  * @property string $path
- * @property \Illuminate\Http\UploadedFile $file
+ * @property UploadedFile $file
  */
 class UploadFileRequest extends BaseRequest
 {

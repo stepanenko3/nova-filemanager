@@ -38,6 +38,10 @@
             ]
         },
         "blank_line_between_import_groups": true,
+        "braces": {
+            "allow_single_line_anonymous_class_with_empty_body": true,
+            "allow_single_line_closure": true
+        },
         "cast_spaces": {
             "space": "single"
         },
@@ -97,9 +101,10 @@
         "magic_constant_casing": true,
         "magic_method_casing": true,
         "method_argument_space": {
-            "on_multiline": "ensure_single_line",
+            "on_multiline": "ensure_fully_multiline",
             "after_heredoc": true,
-            "keep_multiple_spaces_after_comma": true
+            "keep_multiple_spaces_after_comma": true,
+            "attribute_placement": "standalone"
         },
         "method_chaining_indentation": true,
         "multiline_comment_opening_closing": true,
@@ -235,7 +240,7 @@
         "short_scalar_cast": true,
         "simple_to_complex_string_variable": true,
         "single_blank_line_at_eof": true,
-        "single_blank_line_before_namespace": true,
+        "single_blank_line_before_namespace": false,
         "single_class_element_per_statement": true,
         "single_import_per_statement": true,
         "single_line_after_imports": true,

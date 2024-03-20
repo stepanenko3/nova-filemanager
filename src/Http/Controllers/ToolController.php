@@ -19,7 +19,6 @@ class ToolController extends Controller
 {
     public function __invoke(NovaRequest $request): Response
     {
-
         /** @var ?\Stepanenko3\NovaFileManager\FileManagerTool $tool */
         $tool = collect(Nova::registeredTools())->first(fn (Tool $tool) => $tool instanceof FileManagerTool);
 

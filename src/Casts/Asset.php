@@ -3,19 +3,18 @@
 namespace Stepanenko3\NovaFileManager\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use Stepanenko3\NovaFileManager\Support\Asset as AssetObject;
 
 class Asset implements CastsAttributes
 {
-    /**
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param null|string $value
-     *
-     * @throws \JsonException
-     */
-    public function get($model, string $key, $value, array $attributes): ?AssetObject
-    {
+    public function get(
+        Model $model,
+        string $key,
+        mixed $value,
+        array $attributes,
+    ): ?AssetObject {
         if ($value === null) {
             return null;
         }
@@ -23,14 +22,12 @@ class Asset implements CastsAttributes
         return new AssetObject(...json_decode($value, true, 512, JSON_THROW_ON_ERROR));
     }
 
-    /**
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param null|array|AssetObject $value
-     *
-     * @throws \JsonException
-     */
-    public function set($model, string $key, $value, array $attributes): ?string
-    {
+    public function set(
+        Model $model,
+        string $key,
+        mixed $value,
+        array $attributes,
+    ): ?string {
         if ($value === null) {
             return null;
         }

@@ -13,6 +13,7 @@ class FileMissingInFilesystem implements Rule
 
     /**
      * @param \Illuminate\Http\UploadedFile $value
+     * @param mixed $attribute
      */
     public function passes($attribute, $value): bool
     {

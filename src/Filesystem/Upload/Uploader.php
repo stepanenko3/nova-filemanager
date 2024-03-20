@@ -15,7 +15,7 @@ use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 class Uploader implements UploaderContract
 {
     /**
-     * @throws \Pion\Laravel\ChunkUpload\Exceptions\UploadMissingFileException
+     * @throws UploadMissingFileException
      * @throws \Pion\Laravel\ChunkUpload\Exceptions\UploadFailedException
      */
     public function handle(UploadFileRequest $request, string $index = 'file'): array

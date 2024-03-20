@@ -6,44 +6,73 @@ use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-/**
- * @property ?\Closure $filesystem
- */
 interface InteractsWithFilesystem extends ResolvesUrl
 {
-    public function filesystem(Closure $callback): static;
+    public function filesystem(
+        Closure $callback,
+    ): static;
 
     public function hasCustomFilesystem(): bool;
 
-    public function resolveFilesystem(NovaRequest $request): Filesystem | string | null;
+    public function resolveFilesystem(
+        NovaRequest $request,
+    ): Filesystem | string | null;
 
-    public function showCreateFolder(Closure $callback): static;
+    public function showCreateFolder(
+        Closure $callback,
+    ): static;
 
-    public function shouldShowCreateFolder(NovaRequest $request): bool;
+    public function shouldShowCreateFolder(
+        NovaRequest $request,
+    ): bool;
 
-    public function showRenameFolder(Closure $callback): static;
+    public function showRenameFolder(
+        Closure $callback,
+    ): static;
 
-    public function shouldShowRenameFolder(NovaRequest $request): bool;
+    public function shouldShowRenameFolder(
+        NovaRequest $request,
+    ): bool;
 
-    public function showDeleteFolder(Closure $callback): static;
+    public function showDeleteFolder(
+        Closure $callback,
+    ): static;
 
-    public function shouldShowDeleteFolder(NovaRequest $request): bool;
+    public function shouldShowDeleteFolder(
+        NovaRequest $request,
+    ): bool;
 
-    public function showUploadFile(Closure $callback): static;
+    public function showUploadFile(
+        Closure $callback,
+    ): static;
 
-    public function shouldShowUploadFile(NovaRequest $request): bool;
+    public function shouldShowUploadFile(
+        NovaRequest $request,
+    ): bool;
 
-    public function showRenameFile(Closure $callback): static;
+    public function showRenameFile(
+        Closure $callback,
+    ): static;
 
-    public function shouldShowRenameFile(NovaRequest $request): bool;
+    public function shouldShowRenameFile(
+        NovaRequest $request,
+    ): bool;
 
-    public function showDeleteFile(Closure $callback): static;
+    public function showDeleteFile(
+        Closure $callback,
+    ): static;
 
-    public function showUnzipFile(Closure $callback): static;
+    public function showUnzipFile(
+        Closure $callback,
+    ): static;
 
-    public function shouldShowUnzipFile(NovaRequest $request): bool;
+    public function shouldShowUnzipFile(
+        NovaRequest $request,
+    ): bool;
 
-    public function shouldShowDeleteFile(NovaRequest $request): bool;
+    public function shouldShowDeleteFile(
+        NovaRequest $request,
+    ): bool;
 
     public function showCropImage(Closure $callback): static;
 

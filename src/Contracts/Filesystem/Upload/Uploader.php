@@ -6,5 +6,8 @@ use Stepanenko3\NovaFileManager\Http\Requests\UploadFileRequest;
 
 interface Uploader
 {
-    public function handle(UploadFileRequest $request, string $index = 'file'): array;
+    public function handle(
+        UploadFileRequest $request,
+        string $index = 'file',
+    ): array;
 }

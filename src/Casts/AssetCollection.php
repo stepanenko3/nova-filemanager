@@ -3,22 +3,19 @@
 namespace Stepanenko3\NovaFileManager\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use Stepanenko3\NovaFileManager\Support\Asset;
 
 class AssetCollection implements CastsAttributes
 {
-    /**
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param string $value
-     *
-     * @throws \JsonException
-     *
-     * @return \Illuminate\Support\Collection<\Stepanenko3\NovaFileManager\Support\Asset>
-     */
-    public function get($model, string $key, $value, array $attributes): Collection
-    {
+    public function get(
+        Model $model,
+        string $key,
+        mixed $value,
+        array $attributes,
+    ): Collection {
         if ($value === null) {
             return collect();
         }
@@ -27,12 +24,12 @@ class AssetCollection implements CastsAttributes
             ->map(fn (array $file) => new Asset(...$file));
     }
 
-    /**
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param \Illuminate\Support\Collection<\Stepanenko3\NovaFileManager\Support\Asset> $value
-     */
-    public function set($model, string $key, $value, array $attributes): string
-    {
+    public function set(
+        Model $model,
+        string $key,
+        $value,
+        array $attributes,
+    ): string {
         if ($value instanceof Collection) {
             return $value->toJson();
         }

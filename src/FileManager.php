@@ -143,7 +143,7 @@ class FileManager extends Field implements Cover, InteractsWithFilesystemContrac
      * @param mixed $model
      * @param mixed $attribute
      *
-     * @throws \JsonException
+     * @throws JsonException
      */
     protected function fillAttribute(NovaRequest $request, $requestAttribute, $model, $attribute)
     {
