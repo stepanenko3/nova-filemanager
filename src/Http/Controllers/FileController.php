@@ -22,15 +22,18 @@ use Stepanenko3\NovaFileManager\Http\Requests\UploadFileRequest;
 
 class FileController extends Controller
 {
-    public function upload(UploadFileRequest $request, Uploader $uploader): JsonResponse
-    {
+    public function upload(
+        UploadFileRequest $request,
+        Uploader $uploader,
+    ): JsonResponse {
         return response()->json(
             $uploader->handle($request)
         );
     }
 
-    public function rename(RenameFileRequest $request): JsonResponse
-    {
+    public function rename(
+        RenameFileRequest $request,
+    ): JsonResponse {
         $manager = $request->manager();
 
         event(new FileRenaming(
@@ -61,8 +64,9 @@ class FileController extends Controller
         ]);
     }
 
-    public function delete(DeleteFileRequest $request): JsonResponse
-    {
+    public function delete(
+        DeleteFileRequest $request,
+    ): JsonResponse {
         $manager = $request->manager();
 
         foreach ($request->paths as $path) {
@@ -92,8 +96,9 @@ class FileController extends Controller
         ]);
     }
 
-    public function duplicate(DuplicateFileRequest $request): JsonResponse
-    {
+    public function duplicate(
+        DuplicateFileRequest $request,
+    ): JsonResponse {
         $manager = $request->manager();
 
         event(new FileDuplicating(
@@ -121,8 +126,9 @@ class FileController extends Controller
         ]);
     }
 
-    public function unzip(UnzipFileRequest $request): JsonResponse
-    {
+    public function unzip(
+        UnzipFileRequest $request,
+    ): JsonResponse {
         $manager = $request->manager();
 
         event(new FileUnzipping(

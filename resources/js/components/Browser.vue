@@ -90,18 +90,20 @@ const store = useBrowserStore();
 
 const { selectionConfirms } = storeToRefs(store);
 
-const props = defineProps({
-    selecting: {
-        type: Boolean,
-        default: () => false,
-    },
-    multiple: {
-        type: Boolean,
-        default: () => true,
-    },
-});
+const props = withDefaults(
+    defineProps<{
+        selecting: boolean;
+        multiple: boolean;
+    }>(),
+    {
+        selecting: false,
+        multiple: true,
+    }
+);
 
-const emit = defineEmits(["confirmSelection"]);
+const emit = defineEmits<{
+    (e: "confirmSelection", selection: any): void;
+}>();
 
 // HOOKS
 onMounted(() => {

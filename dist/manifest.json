@@ -1,8 +1,8 @@
 {
-  "js/package.js": {
-    "file": "js/package.js",
+  "js/tool.js": {
+    "file": "js/tool.js",
     "isEntry": true,
-    "src": "js/package.js"
+    "src": "js/tool.js"
   },
   "style.css": {
     "file": "css/tool.css",

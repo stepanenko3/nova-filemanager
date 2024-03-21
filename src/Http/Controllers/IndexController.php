@@ -7,8 +7,9 @@ use Stepanenko3\NovaFileManager\Http\Requests\IndexRequest;
 
 class IndexController extends Controller
 {
-    public function __invoke(IndexRequest $request)
-    {
+    public function __invoke(
+        IndexRequest $request,
+    ) {
         $manager = $request->manager();
 
         $paginator = $manager

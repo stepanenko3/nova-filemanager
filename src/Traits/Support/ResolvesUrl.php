@@ -18,8 +18,9 @@ trait ResolvesUrl
         return isset($this->urlResolver) && is_callable($this->urlResolver);
     }
 
-    public function resolveUrlUsing(Closure $resolver): static
-    {
+    public function resolveUrlUsing(
+        Closure $resolver,
+    ): static {
         $this->urlResolver = $resolver;
 
         return $this;

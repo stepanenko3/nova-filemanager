@@ -8,21 +8,27 @@ class FileLimit implements Rule
 {
     public string $attribute;
 
-    public function __construct(public int $min = 1, public ?int $max = null)
-    {
+    public function __construct(
+        public int $min = 1,
+        public ?int $max = null,
+    ) {
+        //
     }
 
-    /**
-     * @param mixed $attribute
-     * @param mixed $value
-     *
-     * @throws \JsonException
-     */
-    public function passes($attribute, $value): bool
-    {
+    public function passes(
+        $attribute,
+        $value,
+    ): bool {
         $this->attribute = $attribute;
 
-        $value = collect(json_decode($value, true, 512, JSON_THROW_ON_ERROR));
+        $value = collect(
+            json_decode(
+                json: $value,
+                associative: true,
+                depth: 512,
+                flags: JSON_THROW_ON_ERROR
+            ),
+        );
 
         $total = $value->count();
 
@@ -31,10 +37,13 @@ class FileLimit implements Rule
 
     public function message(): string
     {
-        return __('validation.between.array', [
-            'attribute' => $this->attribute,
-            'min' => $this->min,
-            'max' => $this->max,
-        ]);
+        return __(
+            'validation.between.array',
+            [
+                'attribute' => $this->attribute,
+                'min' => $this->min,
+                'max' => $this->max,
+            ]
+        );
     }
 }

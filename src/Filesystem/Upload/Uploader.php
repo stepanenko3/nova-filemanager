@@ -14,17 +14,19 @@ use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 
 class Uploader implements UploaderContract
 {
-    /**
-     * @throws UploadMissingFileException
-     * @throws \Pion\Laravel\ChunkUpload\Exceptions\UploadFailedException
-     */
-    public function handle(UploadFileRequest $request, string $index = 'file'): array
-    {
+    public function handle(
+        UploadFileRequest $request,
+        string $index = 'file',
+    ): array {
         if (!$request->validateUpload()) {
             throw ValidationException::withMessages(['file' => [__('nova-file-manager::errors.file.upload_validation')]]);
         }
 
-        $receiver = new FileReceiver($index, $request, HandlerFactory::classFromRequest($request));
+        $receiver = new FileReceiver(
+            fileIndexOrFile: $index,
+            request: $request,
+            handlerClass: HandlerFactory::classFromRequest($request)
+        );
 
         if ($receiver->isUploaded() === false) {
             throw new UploadMissingFileException();
@@ -33,7 +35,10 @@ class Uploader implements UploaderContract
         $save = $receiver->receive();
 
         if ($save->isFinished()) {
-            return $this->saveFile($request, $save->getFile());
+            return $this->saveFile(
+                request: $request,
+                file: $save->getFile(),
+            );
         }
 
         $handler = $save->handler();
@@ -44,8 +49,10 @@ class Uploader implements UploaderContract
         ];
     }
 
-    public function saveFile(UploadFileRequest $request, UploadedFile $file): array
-    {
+    public function saveFile(
+        UploadFileRequest $request,
+        UploadedFile $file,
+    ): array {
         if (!$request->validateUpload($file, true)) {
             throw ValidationException::withMessages(['file' => [__('nova-file-manager::errors.file.upload_validation')]]);
         }
@@ -54,7 +61,13 @@ class Uploader implements UploaderContract
         $filePath = $file->getClientOriginalName();
         $testPath = ltrim(str_replace('//', '/', "{$folderPath}/{$filePath}"), '/');
 
-        event(new FileUploading($request->manager()->filesystem(), $request->manager()->getDisk(), $testPath));
+        event(
+            new FileUploading(
+                filesystem: $request->manager()->filesystem(),
+                disk: $request->manager()->getDisk(),
+                path: $testPath,
+            ),
+        );
 
         $path = $request->manager()->filesystem()->putFileAs(
             path: $folderPath,
@@ -62,7 +75,13 @@ class Uploader implements UploaderContract
             name: $filePath,
         );
 
-        event(new FileUploaded($request->manager()->filesystem(), $request->manager()->getDisk(), $path));
+        event(
+            new FileUploaded(
+                filesystem: $request->manager()->filesystem(),
+                disk: $request->manager()->getDisk(),
+                path: $path,
+            ),
+        );
 
         return [
             'message' => __('nova-file-manager::messages.file.upload'),

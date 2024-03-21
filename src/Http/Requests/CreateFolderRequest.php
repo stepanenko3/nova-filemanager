@@ -5,10 +5,6 @@ namespace Stepanenko3\NovaFileManager\Http\Requests;
 use Stepanenko3\NovaFileManager\Rules\DiskExistsRule;
 use Stepanenko3\NovaFileManager\Rules\MissingInFilesystem;
 
-/**
- * @property ?string $disk
- * @property string $path
- */
 class CreateFolderRequest extends BaseRequest
 {
     public function authorize(): bool
@@ -19,8 +15,19 @@ class CreateFolderRequest extends BaseRequest
     public function rules(): array
     {
         return [
-            'disk' => ['sometimes', 'string', new DiskExistsRule()],
-            'path' => ['required', 'string', 'min:1', new MissingInFilesystem($this)],
+            'disk' => [
+                'sometimes',
+                'string',
+                new DiskExistsRule(),
+            ],
+            'path' => [
+                'required',
+                'string',
+                'min:1',
+                new MissingInFilesystem(
+                    request: $this,
+                ),
+            ],
         ];
     }
 }

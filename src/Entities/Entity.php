@@ -20,13 +20,14 @@ abstract class Entity implements Arrayable, EntityContract
         public string $path,
         public string $disk,
     ) {
+        //
     }
 
-    /**
-     * Static helper.
-     */
-    public static function make(FileManagerContract $manager, string $path, string $disk): static
-    {
+    public static function make(
+        FileManagerContract $manager,
+        string $path,
+        string $disk,
+    ): static {
         return new static(
             manager: $manager,
             path: $path,
@@ -34,9 +35,6 @@ abstract class Entity implements Arrayable, EntityContract
         );
     }
 
-    /**
-     * Return the entity's data as array.
-     */
     public function toArray(): array
     {
         if (empty($this->data)) {
@@ -68,28 +66,21 @@ abstract class Entity implements Arrayable, EntityContract
         return $this->data;
     }
 
-    /**
-     * Generate a unique identifier for the entity.
-     */
     public function id(): string
     {
         return sha1($this->manager->filesystem()->path($this->path));
     }
 
-    /**
-     * Get the name of the entity.
-     */
     public function name(): string
     {
         return pathinfo($this->path, PATHINFO_BASENAME);
     }
 
-    /**
-     * Compute the size of the entity.
-     */
     public function size(): int
     {
-        return $this->manager->filesystem()->size($this->path);
+        return $this->manager->filesystem()->size(
+            path: $this->path,
+        );
     }
 
     public function sizeReadable(): string
@@ -105,17 +96,11 @@ abstract class Entity implements Arrayable, EntityContract
         return round($value, 2) . ' ' . $units[$i];
     }
 
-    /**
-     * Get the file extension of the entity.
-     */
     public function extension(): string
     {
         return pathinfo($this->path, PATHINFO_EXTENSION);
     }
 
-    /**
-     * Get the mime type of the entity.
-     */
     public function mime(): string
     {
         try {
@@ -138,9 +123,6 @@ abstract class Entity implements Arrayable, EntityContract
         }
     }
 
-    /**
-     * Build an url for the entity based on the disk.
-     */
     public function url(): string
     {
         // if a custom url builder is defined, we use it to return the url
@@ -168,20 +150,14 @@ abstract class Entity implements Arrayable, EntityContract
         return $this->manager->filesystem()->url($this->path);
     }
 
-    /**
-     * Get the expiration time from the user defined config.
-     */
     public function signedExpirationTime(): Carbon
     {
         return now()->add(
-            config('nova-file-manager.url_signing.unit'),
-            config('nova-file-manager.url_signing.value'),
+            unit: config('nova-file-manager.url_signing.unit'),
+            value: config('nova-file-manager.url_signing.value'),
         );
     }
 
-    /**
-     * Get the last modified time of the entity as string.
-     */
     public function lastModifiedAt(): string
     {
         return $this->lastModifiedAtTimestamp()->toDateTimeString();
@@ -192,20 +168,20 @@ abstract class Entity implements Arrayable, EntityContract
         return $this->lastModifiedAtTimestamp()->diffForHumans();
     }
 
-    /**
-     * Get the last modified time of the entity as a Carbon instance.
-     */
     public function lastModifiedAtTimestamp(): Carbon
     {
-        return Carbon::createFromTimestamp($this->manager->filesystem()->lastModified($this->path));
+        return Carbon::createFromTimestamp(
+            $this->manager
+                ->filesystem()
+                ->lastModified($this->path),
+        );
     }
 
-    /**
-     * Define the type of the entity.
-     */
     public function type(): string
     {
-        return get_file_type($this->mime());
+        return get_file_type(
+            mime: $this->mime(),
+        );
     }
 
     abstract public function meta(): array;

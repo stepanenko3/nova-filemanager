@@ -7,11 +7,6 @@ use Illuminate\Support\Str;
 use Stepanenko3\NovaFileManager\Rules\DiskExistsRule;
 use Stepanenko3\NovaFileManager\Rules\FileMissingInFilesystem;
 
-/**
- * @property null|string $disk
- * @property string $path
- * @property UploadedFile $file
- */
 class UploadFileRequest extends BaseRequest
 {
     public function authorize(): bool
@@ -20,7 +15,12 @@ class UploadFileRequest extends BaseRequest
             return false;
         }
 
-        $path = ltrim(dirname($this->input('resumableFilename')), '/.');
+        $path = ltrim(
+            string: dirname(
+                path: $this->input('resumableFilename'),
+            ),
+            characters: '/.'
+        );
 
         if (!empty($path) && !$this->canCreateFolder()) {
             return false;
@@ -29,29 +29,47 @@ class UploadFileRequest extends BaseRequest
         return true;
     }
 
-    public function authorizationActionAttribute(?string $class = null): string
-    {
+    public function authorizationActionAttribute(
+        ?string $class = null,
+    ): string {
         if (!$this->canUploadFile()) {
             return parent::authorizationActionAttribute();
         }
 
-        return parent::authorizationActionAttribute(CreateFolderRequest::class);
+        return parent::authorizationActionAttribute(
+            class: CreateFolderRequest::class,
+        );
     }
 
     public function rules(): array
     {
         return [
-            'disk' => ['sometimes', 'string', new DiskExistsRule()],
-            'path' => ['required', 'string'],
+            'disk' => [
+                'sometimes',
+                'string',
+                new DiskExistsRule(),
+            ],
+            'path' => [
+                'required',
+                'string',
+            ],
             'file' => array_merge(
-                ['required', 'file', new FileMissingInFilesystem($this)],
+                [
+                    'required',
+                    'file',
+                    new FileMissingInFilesystem(
+                        request: $this,
+                    ),
+                ],
                 $this->element()->getUploadRules(),
             ),
         ];
     }
 
-    public function validateUpload(?UploadedFile $file = null, bool $saving = false): bool
-    {
+    public function validateUpload(
+        ?UploadedFile $file = null,
+        bool $saving = false,
+    ): bool {
         if (!$this->element()->hasUploadValidator()) {
             return true;
         }
@@ -68,10 +86,19 @@ class UploadFileRequest extends BaseRequest
 
     public function filePath(): string
     {
-        $path = implode('/', array_filter([
-            Str::finish($this->path, '/'),
-            ltrim($this->input('resumableFilename'), '/'),
-        ]));
+        $path = implode(
+            separator: '/',
+            array: array_filter([
+                Str::finish(
+                    value: $this->path,
+                    cap: '/',
+                ),
+                ltrim(
+                    string: $this->input('resumableFilename'),
+                    characters: '/',
+                ),
+            ])
+        );
 
         return str_replace('//', '/', $path);
     }

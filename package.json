@@ -9,7 +9,8 @@
         "package": "npm run format && npm run lint && npm run build",
         "check-format": "prettier --list-different 'resources/**/*.{css,js,vue,ts}'",
         "format": "prettier --write 'resources/js/**/*.{css,js,vue,ts}'",
-        "lint": "eslint resources/js --fix --ext js,vue,ts"
+        "lint": "eslint resources/js --fix --ext js,vue,ts",
+        "nova:install": "npm --prefix='./vendor/laravel/nova' i"
     },
     "files": [
         "dist"

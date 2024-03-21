@@ -4,18 +4,18 @@
             {{ __("File manager") }}
         </Heading>
 
-        <Card>
+        <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow">
             <Browser />
-        </Card>
+        </div>
 
-        <DefaultButton @click.prevent="() => (modalState = true)">
+        <!-- <DefaultButton @click.prevent="() => (modalState = true)">
             Open Modal
-        </DefaultButton>
+        </DefaultButton> -->
 
-        <BrowserModal
+        <!-- <BrowserModal
             v-model:state="modalState"
             @confirmSelection="confirmSelection"
-        />
+        /> -->
     </div>
 </template>
 
