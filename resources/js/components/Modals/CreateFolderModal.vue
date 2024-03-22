@@ -9,7 +9,7 @@
         <div class="p-6">
             <input
                 type="text"
-                class="w-full h-full form-control form-input form-input-bordered py-3"
+                class="appearance-none w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-800 h-10 px-3 rounded-lg"
                 :placeholder="__('Write a folder name')"
                 v-model="folder"
                 autofocus
@@ -22,18 +22,11 @@
             </p>
 
             <div class="flex items-center mt-6">
-                <CancelButton
-                    component="button"
-                    type="button"
-                    dusk="cancel-action-button"
-                    class="mr-3"
-                    @click.prevent="close"
-                />
-
-                <LoadingButton
-                    ref="confirmButton"
+                <Button theme="gray" class="mr-3" @click.prevent="close">
+                    {{ __("Cancel") }}
+                </Button>
+                <Button
                     type="submit"
-                    dusk="confirm-button"
                     :disabled="loading"
                     :loading="loading"
                     @click.prevent="createFolder"
@@ -45,7 +38,7 @@
                     <template v-else>
                         {{ __("Create") }}
                     </template>
-                </LoadingButton>
+                </Button>
             </div>
         </div>
     </BaseModal>
@@ -53,6 +46,7 @@
 
 <script setup>
 import { ref } from "vue";
+import Button from "../Elements/Button.vue";
 import BaseModal from "./BaseModal.vue";
 import useBrowserStore from "../../stores/browser.ts";
 
@@ -86,7 +80,8 @@ function createFolder() {
             !result.errors || result.errors.length <= 0 ? null : result.message;
     };
 
-    return store.createFolder(`${store.path}/${folder.value}`)
+    return store
+        .createFolder(`${store.path}/${folder.value}`)
         .then((r) =>
             processResponse(r.response && r.response.data ? r.response.data : r)
         )

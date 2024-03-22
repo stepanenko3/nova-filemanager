@@ -5,7 +5,7 @@
         </Heading>
 
         <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow">
-            <Browser />
+            <Browser :selecting="false" />
         </div>
 
         <!-- <DefaultButton @click.prevent="() => (modalState = true)">
@@ -21,14 +21,14 @@
 
 <script setup>
 import { ref } from "vue";
-import BrowserModal from "../components/BrowserModal.vue";
+// import BrowserModal from "../components/BrowserModal.vue";
 import Browser from "../components/Browser.vue";
 
-const modalState = ref(false);
+// const modalState = ref(false);
 
-function confirmSelection(e) {
-    console.log(e);
+// function confirmSelection(e) {
+//     console.log(e);
 
-    modalState.value = false;
-}
+//     modalState.value = false;
+// }
 </script>

@@ -11,7 +11,7 @@
                 <input
                     ref="input"
                     type="text"
-                    class="w-full h-full form-control rounded-lg form-input form-input-bordered py-3"
+                    class="appearance-none w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-800 h-10 px-3 rounded-lg"
                     :placeholder="name"
                     :value="name"
                     autofocus
@@ -26,7 +26,7 @@
                     <input
                         ref="input"
                         type="text"
-                        class="w-full h-full form-control rounded-lg form-input form-input-bordered py-3"
+                        class="appearance-none w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-800 h-10 px-3 rounded-lg"
                         :placeholder="nameWithoutExtension"
                         :value="nameWithoutExtension"
                         autofocus
@@ -47,17 +47,11 @@
         </template>
 
         <template #footer>
-            <CancelButton
-                component="button"
-                type="button"
-                dusk="cancel-action-button"
-                @click.prevent="close"
-            />
-
-            <LoadingButton
-                ref="confirmButton"
+            <Button theme="gray" class="mr-3" @click.prevent="close">
+                {{ __("Cancel") }}
+            </Button>
+            <Button
                 type="submit"
-                dusk="confirm-button"
                 :disabled="loading"
                 :loading="loading"
                 @click.prevent="confirmRename"
@@ -68,13 +62,14 @@
                 <template v-else>
                     {{ __("Rename") }}
                 </template>
-            </LoadingButton>
+            </Button>
         </template>
     </BaseModal>
 </template>
 
 <script setup>
 import { ref, computed } from "vue";
+import Button from "../Elements/Button.vue";
 import BaseModal from "./BaseModal.vue";
 import useBrowserStore from "../../stores/browser";
 
