@@ -19,7 +19,7 @@
     "devDependencies": {
         "@inertiajs/inertia": "^0.11.1",
         "@rollup/plugin-alias": "^5.0.0",
-        "@vitejs/plugin-vue": "^4.2.3",
+        "@vitejs/plugin-vue": "^4.6.2",
         "@vue/compiler-sfc": "^3.2.22",
         "filesize": "^3.6.1",
         "md5": "^2.2.1",
