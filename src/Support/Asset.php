@@ -19,6 +19,25 @@ class Asset implements Arrayable, JsonSerializable
     ) {
     }
 
+    public function __call(
+        string $name,
+        array $arguments
+    ) {
+        return $this->forwardCallTo(
+            object: $this->filesystem(),
+            method: $name,
+            parameters: $arguments
+        );
+    }
+
+    public function __toString(): string
+    {
+        return json_encode(
+            $this->jsonSerialize(),
+            JSON_THROW_ON_ERROR,
+        );
+    }
+
     public function filesystem(): Filesystem
     {
         if (!$this->filesystem) {
@@ -39,24 +58,5 @@ class Asset implements Arrayable, JsonSerializable
     public function jsonSerialize(): array
     {
         return $this->toArray();
-    }
-
-    public function __call(
-        string $name,
-        array $arguments
-    ) {
-        return $this->forwardCallTo(
-            object: $this->filesystem(),
-            method: $name,
-            parameters: $arguments
-        );
-    }
-
-    public function __toString(): string
-    {
-        return json_encode(
-            $this->jsonSerialize(),
-            JSON_THROW_ON_ERROR,
-        );
     }
 }
