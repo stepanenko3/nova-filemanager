@@ -21,7 +21,7 @@
         "@rollup/plugin-alias": "^5.0.0",
         "@vitejs/plugin-vue": "^4.2.3",
         "@vue/compiler-sfc": "^3.2.22",
-        "filesize": "^3.6.1",
+        "filesize": "^10.1.1",
         "md5": "^2.2.1",
         "postcss": "^8.4.24",
         "postcss-import": "^15.1.0",
