@@ -7,10 +7,11 @@ use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Nova;
 use Laravel\Nova\Tool;
 use Stepanenko3\NovaFileManager\Contracts\Support\InteractsWithFilesystem;
+use Stepanenko3\NovaFileManager\Traits\Support\InteractsWithFilesystem as SupportInteractsWithFilesystem;
 
 class FileManagerTool extends Tool implements InteractsWithFilesystem
 {
-    use Traits\Support\InteractsWithFilesystem;
+    use SupportInteractsWithFilesystem;
 
     public function boot(): void
     {

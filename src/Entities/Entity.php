@@ -3,7 +3,7 @@
 namespace Stepanenko3\NovaFileManager\Entities;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\fileSystem\AwsS3V3Adapter;
+use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Carbon;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use League\Flysystem\UnableToRetrieveMetadata;
@@ -15,7 +15,7 @@ abstract class Entity implements Arrayable, EntityContract
 {
     protected array $data = [];
 
-    public function __construct(
+    final public function __construct(
         public FileManagerContract $manager,
         public string $path,
         public string $disk,

@@ -15,6 +15,7 @@ use Stepanenko3\NovaFileManager\Contracts\Services\FileManagerContract;
 use Stepanenko3\NovaFileManager\Contracts\Support\ResolvesUrl as ResolvesUrlContract;
 use Stepanenko3\NovaFileManager\Entities\Entity;
 use Stepanenko3\NovaFileManager\Traits\Support\ResolvesUrl;
+use ZipArchive;
 
 class FileManagerService implements FileManagerContract, ResolvesUrlContract
 {
@@ -353,11 +354,11 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         }
 
         // if ext-zip is not available, we do nothing
-        if (!class_exists(\ZipArchive::class)) {
+        if (!class_exists(ZipArchive::class)) {
             return false;
         }
 
-        $zip = new \ZipArchive();
+        $zip = new ZipArchive();
 
         // open the zip archive
         $zip->open($this->filesystem->path($path));

@@ -134,7 +134,7 @@ class BaseRequest extends NovaRequest
 
         // @var \Whitecube\NovaFlexibleContent\Layouts\Collection $layouts
         abort_unless(
-            boolean: $layouts = invade($field)->layouts,
+            boolean: $layouts = $field?->layouts,
             code: 404,
         );
 
