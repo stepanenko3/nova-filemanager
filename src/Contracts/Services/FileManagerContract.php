@@ -18,49 +18,80 @@ interface FileManagerContract
         ?string $search = null
     ): self;
 
-    public function applyFilterCallbacks(string $value): bool;
+    public function applyFilterCallbacks(
+        string $value,
+    ): bool;
 
     public function applySearchCallback(): void;
 
     public function breadcrumbs(): Collection;
 
-    public function duplicate(string $path): bool;
+    public function duplicate(
+        string $path,
+    ): bool;
 
-    public function delete(string $path): bool;
+    public function delete(
+        string $path,
+    ): bool;
 
     public function directories(): Collection;
 
-    public function setDisk(string | Filesystem $disk): self;
+    public function setDisk(
+        string | Filesystem $disk,
+    ): self;
 
     public function getPath(): string;
 
     public function getDisk(): string;
 
-    public function entityClassForType(string $type): string;
+    public function entityClassForType(
+        string $type,
+    ): string;
 
     public function files(): Collection;
 
     public function filesystem(): Filesystem;
 
-    public function forPage(int $page, int $perPage): self;
+    public function forPage(
+        int $page,
+        int $perPage,
+    ): self;
 
-    public function makeEntity(string $path, string $disk): Entity;
+    public function makeEntity(
+        string $path,
+        string $disk,
+    ): Entity;
 
     public function mapIntoEntity(): Closure;
 
-    public function mkdir(string $path): bool;
+    public function mkdir(
+        string $path,
+    ): bool;
 
     public function omitHiddenFilesAndDirectories(): void;
 
-    public function paginate(Collection $data): Pagination;
+    public function paginate(
+        Collection $data,
+    ): Pagination;
 
-    public function path(string $path): self;
+    public function path(
+        string $path,
+    ): self;
 
-    public function rename(string $from, string $to): bool;
+    public function rename(
+        string $from,
+        string $to,
+    ): bool;
 
-    public function rmdir(string $path): bool;
+    public function rmdir(
+        string $path,
+    ): bool;
 
-    public function showHiddenFiles(bool $show = true): self;
+    public function showHiddenFiles(
+        bool $show = true,
+    ): self;
 
-    public function unzip(string $path): bool;
+    public function unzip(
+        string $path,
+    ): bool;
 }

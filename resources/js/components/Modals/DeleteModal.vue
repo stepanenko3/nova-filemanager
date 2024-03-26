@@ -49,18 +49,11 @@
         </div>
 
         <template #footer>
-            <CancelButton
-                component="button"
-                type="button"
-                dusk="cancel-action-button"
-                @click.prevent="close"
-            />
-
-            <LoadingButton
-                ref="confirmButton"
-                type="submit"
-                component="DangerButton"
-                dusk="confirm-button"
+            <Button theme="gray" class="mr-3" @click.prevent="close">
+                {{ __("Cancel") }}
+            </Button>
+            <Button
+                theme="danger"
                 :disabled="loading"
                 :loading="loading"
                 @click.prevent="confirmDelete"
@@ -72,13 +65,14 @@
                 <template v-else>
                     {{ __("Delete") }}
                 </template>
-            </LoadingButton>
+            </Button>
         </template>
     </BaseModal>
 </template>
 
 <script setup>
 import { ref } from "vue";
+import Button from "../Elements/Button.vue";
 import BaseModal from "./BaseModal.vue";
 import useBrowserStore from "../../stores/browser";
 import { DELETE_STATE } from "../../constants";

@@ -56,8 +56,9 @@ trait InteractsWithFilesystem
 
     public array $cropperOptions = [];
 
-    public function filesystem(Closure $callback): static
-    {
+    public function filesystem(
+        Closure $callback,
+    ): static {
         $this->filesystem = $callback;
 
         return $this;
@@ -68,249 +69,300 @@ trait InteractsWithFilesystem
         return $this->filesystem !== null && is_callable($this->filesystem);
     }
 
-    public function resolveFilesystem(NovaRequest $request): Filesystem | string | null
-    {
+    public function resolveFilesystem(
+        NovaRequest $request,
+    ): Filesystem | string | null {
         return $this->hasCustomFilesystem()
             ? call_user_func($this->filesystem, $request)
             : null;
     }
 
-    public function showCreateFolder(Closure $callback): static
-    {
+    public function showCreateFolder(
+        Closure $callback,
+    ): static {
         $this->showCreateFolder = $callback;
 
         return $this;
     }
 
-    public function shouldShowCreateFolder(NovaRequest $request): bool
-    {
+    public function shouldShowCreateFolder(
+        NovaRequest $request,
+    ): bool {
         return is_callable($this->showCreateFolder)
             ? call_user_func($this->showCreateFolder, $request)
             : true;
     }
 
-    public function showRenameFolder(Closure $callback): static
-    {
+    public function showRenameFolder(
+        Closure $callback,
+    ): static {
         $this->showRenameFolder = $callback;
 
         return $this;
     }
 
-    public function shouldShowRenameFolder(NovaRequest $request): bool
-    {
+    public function shouldShowRenameFolder(
+        NovaRequest $request,
+    ): bool {
         return is_callable($this->showRenameFolder)
             ? call_user_func($this->showRenameFolder, $request)
             : true;
     }
 
-    public function showDeleteFolder(Closure $callback): static
-    {
+    public function showDeleteFolder(
+        Closure $callback,
+    ): static {
         $this->showDeleteFolder = $callback;
 
         return $this;
     }
 
-    public function shouldShowDeleteFolder(NovaRequest $request): bool
-    {
+    public function shouldShowDeleteFolder(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->showDeleteFolder)
             ? call_user_func($this->showDeleteFolder, $request)
             : true;
     }
 
-    public function showUploadFile(Closure $callback): static
-    {
+    public function showUploadFile(
+        Closure $callback
+    ): static {
         $this->showUploadFile = $callback;
 
         return $this;
     }
 
-    public function shouldShowUploadFile(NovaRequest $request): bool
-    {
+    public function shouldShowUploadFile(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->showUploadFile)
             ? call_user_func($this->showUploadFile, $request)
             : true;
     }
 
-    public function showRenameFile(Closure $callback): static
-    {
+    public function showRenameFile(
+        Closure $callback
+    ): static {
         $this->showRenameFile = $callback;
 
         return $this;
     }
 
-    public function shouldShowRenameFile(NovaRequest $request): bool
-    {
+    public function shouldShowRenameFile(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->showRenameFile)
             ? call_user_func($this->showRenameFile, $request)
             : true;
     }
 
-    public function showDuplicateFile(Closure $callback): static
-    {
+    public function showDuplicateFile(
+        Closure $callback
+    ): static {
         $this->showDuplicateFile = $callback;
 
         return $this;
     }
 
-    public function shouldShowDuplicateFile(NovaRequest $request): bool
-    {
+    public function shouldShowDuplicateFile(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->showDuplicateFile)
             ? call_user_func($this->showDuplicateFile, $request)
             : true;
     }
 
-    public function showDeleteFile(Closure $callback): static
-    {
+    public function showDeleteFile(
+        Closure $callback
+    ): static {
         $this->showDeleteFile = $callback;
 
         return $this;
     }
 
-    public function shouldShowDeleteFile(NovaRequest $request): bool
-    {
+    public function shouldShowDeleteFile(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->showDeleteFile)
             ? call_user_func($this->showDeleteFile, $request)
             : true;
     }
 
-    public function showUnzipFile(Closure $callback): static
-    {
+    public function showUnzipFile(
+        Closure $callback
+    ): static {
         $this->showUnzipFile = $callback;
 
         return $this;
     }
 
-    public function shouldShowUnzipFile(NovaRequest $request): bool
-    {
+    public function shouldShowUnzipFile(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->showUnzipFile)
             ? call_user_func($this->showUnzipFile, $request)
             : true;
     }
 
-    public function showCropImage(Closure $callback): static
-    {
+    public function showCropImage(
+        Closure $callback
+    ): static {
         $this->showCropImage = $callback;
 
         return $this;
     }
 
-    public function shouldShowCropImage(NovaRequest $request): bool
-    {
+    public function shouldShowCropImage(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->showCropImage)
             ? call_user_func($this->showCropImage, $request)
             : true;
     }
 
-    public function canCreateFolder(Closure $callback): static
-    {
+    public function canCreateFolder(
+        Closure $callback
+    ): static {
         $this->canCreateFolder = $callback;
 
         return $this;
     }
 
-    public function resolveCanCreateFolder(NovaRequest $request): bool
-    {
+    public function resolveCanCreateFolder(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->canCreateFolder)
             ? call_user_func($this->canCreateFolder, $request)
-            : $this->shouldShowCreateFolder($request);
+            : $this->shouldShowCreateFolder(
+                request: $request
+            );
     }
 
-    public function canRenameFolder(Closure $callback): static
-    {
+    public function canRenameFolder(
+        Closure $callback
+    ): static {
         $this->canRenameFolder = $callback;
 
         return $this;
     }
 
-    public function resolveCanRenameFolder(NovaRequest $request): bool
-    {
+    public function resolveCanRenameFolder(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->canRenameFolder)
             ? call_user_func($this->canRenameFolder, $request)
-            : $this->shouldShowRenameFolder($request);
+            : $this->shouldShowRenameFolder(
+                request: $request
+            );
     }
 
-    public function canDeleteFolder(Closure $callback): static
-    {
+    public function canDeleteFolder(
+        Closure $callback
+    ): static {
         $this->canDeleteFolder = $callback;
 
         return $this;
     }
 
-    public function resolveCanDeleteFolder(NovaRequest $request): bool
-    {
+    public function resolveCanDeleteFolder(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->canDeleteFolder)
             ? call_user_func($this->canDeleteFolder, $request)
-            : $this->shouldShowDeleteFolder($request);
+            : $this->shouldShowDeleteFolder(
+                request: $request
+            );
     }
 
-    public function canUploadFile(Closure $callback): static
-    {
+    public function canUploadFile(
+        Closure $callback
+    ): static {
         $this->canUploadFile = $callback;
 
         return $this;
     }
 
-    public function resolveCanUploadFile(NovaRequest $request): bool
-    {
+    public function resolveCanUploadFile(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->canUploadFile)
             ? call_user_func($this->canUploadFile, $request)
-            : $this->shouldShowUploadFile($request);
+            : $this->shouldShowUploadFile(
+                request: $request
+            );
     }
 
-    public function canRenameFile(Closure $callback): static
-    {
+    public function canRenameFile(
+        Closure $callback
+    ): static {
         $this->canRenameFile = $callback;
 
         return $this;
     }
 
-    public function resolveCanRenameFile(NovaRequest $request): bool
-    {
+    public function resolveCanRenameFile(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->canRenameFile)
             ? call_user_func($this->canRenameFile, $request)
-            : $this->shouldShowRenameFile($request);
+            : $this->shouldShowRenameFile(
+                request: $request
+            );
     }
 
-    public function canDuplicateFile(Closure $callback): static
-    {
+    public function canDuplicateFile(
+        Closure $callback
+    ): static {
         $this->canDuplicateFile = $callback;
 
         return $this;
     }
 
-    public function resolveCanDuplicateFile(NovaRequest $request): bool
-    {
+    public function resolveCanDuplicateFile(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->canDuplicateFile)
             ? call_user_func($this->canDuplicateFile, $request)
-            : $this->shouldShowDuplicateFile($request);
+            : $this->shouldShowDuplicateFile(
+                request: $request
+            );
     }
 
-    public function canDeleteFile(Closure $callback): static
-    {
+    public function canDeleteFile(
+        Closure $callback
+    ): static {
         $this->canDeleteFile = $callback;
 
         return $this;
     }
 
-    public function resolveCanDeleteFile(NovaRequest $request): bool
-    {
+    public function resolveCanDeleteFile(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->canDeleteFile)
             ? call_user_func($this->canDeleteFile, $request)
-            : $this->shouldShowDeleteFile($request);
+            : $this->shouldShowDeleteFile(
+                request: $request
+            );
     }
 
-    public function canUnzipFile(Closure $callback): static
-    {
+    public function canUnzipFile(
+        Closure $callback
+    ): static {
         $this->canUnzipFile = $callback;
 
         return $this;
     }
 
-    public function resolveCanUnzipFile(NovaRequest $request): bool
-    {
+    public function resolveCanUnzipFile(
+        NovaRequest $request
+    ): bool {
         return is_callable($this->canUnzipFile)
             ? call_user_func($this->canUnzipFile, $request)
-            : $this->shouldShowUnzipFile($request);
+            : $this->shouldShowUnzipFile(
+                request: $request
+            );
     }
 
     public function hasUploadValidator(): bool
@@ -323,15 +375,9 @@ trait InteractsWithFilesystem
         return $this->uploadValidator;
     }
 
-    /**
-     * Set the validation rules for the upload.
-     *
-     * @param array<int, callable|\Illuminate\Contracts\Validation\Rule|\Illuminate\Validation\Rule|string>|callable|string ...$rules
-     *
-     * @return $this
-     */
-    public function uploadRules($rules): static
-    {
+    public function uploadRules(
+        $rules,
+    ): static {
         if ($rules instanceof Closure) {
             $this->uploadRules = [$rules];
         } else {
@@ -346,58 +392,91 @@ trait InteractsWithFilesystem
         return $this->uploadRules;
     }
 
-    public function validateUploadUsing(Closure $callback): static
-    {
+    public function validateUploadUsing(
+        Closure $callback
+    ): static {
         $this->uploadValidator = $callback;
 
         return $this;
     }
 
-    public function pinturaOptions(array $options): static
-    {
-        $this->pinturaOptions = array_merge($this->pinturaOptions, $options);
+    public function pinturaOptions(
+        array $options
+    ): static {
+        $this->pinturaOptions = array_merge(
+            $this->pinturaOptions,
+            $options
+        );
 
         return $this;
     }
 
-    public function cropperOptions(array $options): static
-    {
-        $this->cropperOptions = array_merge($this->cropperOptions, $options);
+    public function cropperOptions(
+        array $options
+    ): static {
+        $this->cropperOptions = array_merge(
+            $this->cropperOptions,
+            $options
+        );
 
         return $this;
     }
 
     public function options(): array
     {
-        return with(app(NovaRequest::class), function (NovaRequest $request) {
-            return [
-                'singleDisk' => $this->hasCustomFilesystem(),
-                'permissions' => [
-                    'folder' => [
-                        'create' => $this->shouldShowCreateFolder($request),
-                        'rename' => $this->shouldShowRenameFolder($request),
-                        'delete' => $this->shouldShowDeleteFolder($request),
+        return with(
+            app(NovaRequest::class),
+            function (NovaRequest $request) {
+                return [
+                    'singleDisk' => $this->hasCustomFilesystem(),
+                    'permissions' => [
+                        'folder' => [
+                            'create' => $this->shouldShowCreateFolder(
+                                request: $request
+                            ),
+                            'rename' => $this->shouldShowRenameFolder(
+                                request: $request
+                            ),
+                            'delete' => $this->shouldShowDeleteFolder(
+                                request: $request
+                            ),
+                        ],
+                        'file' => [
+                            'upload' => $this->shouldShowUploadFile(
+                                request: $request
+                            ),
+                            'rename' => $this->shouldShowRenameFile(
+                                request: $request
+                            ),
+                            'edit' => $this->shouldShowCropImage(
+                                request: $request
+                            ),
+                            'duplicate' => $this->shouldShowDuplicateFile(
+                                request: $request
+                            ),
+                            'delete' => $this->shouldShowDeleteFile(
+                                request: $request
+                            ),
+                            'unzip' => $this->shouldShowUnzipFile(
+                                request: $request
+                            ),
+                        ],
                     ],
-                    'file' => [
-                        'upload' => $this->shouldShowUploadFile($request),
-                        'rename' => $this->shouldShowRenameFile($request),
-                        'edit' => $this->shouldShowCropImage($request),
-                        'duplicate' => $this->shouldShowDuplicateFile($request),
-                        'delete' => $this->shouldShowDeleteFile($request),
-                        'unzip' => $this->shouldShowUnzipFile($request),
-                    ],
-                ],
-                'usePintura' => config('nova-file-manager.use_pintura'),
-                'pinturaOptions' => $this->pinturaOptions,
-                'cropperOptions' => $this->cropperOptions,
-            ];
-        });
+                    'usePintura' => config('nova-file-manager.use_pintura'),
+                    'pinturaOptions' => $this->pinturaOptions,
+                    'cropperOptions' => $this->cropperOptions,
+                ];
+            }
+        );
     }
 
-    public function merge(InteractsWithFilesystemContract $other): static
-    {
+    public function merge(
+        InteractsWithFilesystemContract $other
+    ): static {
         if ($other->hasUrlResolver()) {
-            $this->resolveUrlUsing($other->getUrlResolver());
+            $this->resolveUrlUsing(
+                resolver: $other->getUrlResolver()
+            );
         }
 
         $map = [

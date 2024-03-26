@@ -4,10 +4,7 @@ namespace Stepanenko3\NovaFileManager\Services;
 
 class MimeTypes
 {
-    /**
-     * @var array
-     */
-    protected static $source = [
+    protected static array $source = [
         '3dm' => ['x-world/x-3dmf'],
         '3dmf' => ['x-world/x-3dmf'],
         '3dml' => ['text/vnd.in3d.3dml'],

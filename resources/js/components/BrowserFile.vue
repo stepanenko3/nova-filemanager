@@ -167,10 +167,14 @@ function showDelete() {
 }
 
 function select() {
-    store.toggleSelection(props.file);
+    if (store.selecting) {
+        store.toggleSelection(props.file);
 
-    if (!store.multiple && store.selecting && isSelected.value) {
-        store.confirmSelection();
+        if (!store.multiple && isSelected.value) {
+            store.confirmSelection();
+        }
+    } else {
+        showDetail();
     }
 }
 </script>

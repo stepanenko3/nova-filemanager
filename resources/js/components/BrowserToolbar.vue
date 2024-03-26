@@ -26,20 +26,20 @@
         />
 
         <ToolbarButton
-            @click.prevent="store.fetch()"
+            @click.prevent="store.fetchData()"
             type="refresh"
             v-tooltip="__('Refresh')"
         />
 
         <SelectControl
+            :value="store.disk"
+            @change="(e) => store.setDisk(e)"
             :options="
                 store.disks.map((value) => ({
                     label: value,
                     value: value,
                 }))
             "
-            :selected="store.disk"
-            @change="($event) => store.setDisk($event)"
         />
 
         <div class="flex-grow"></div>
@@ -59,10 +59,13 @@
             <ToolbarButton
                 class="text-red-500"
                 type="trash"
-                @click.prevent="() => store.openModal(MODALS.DELETE, {
-                    type: DELETE_STATE.FILES,
-                    [DELETE_STATE.FILES]: store.selection,
-                })"
+                @click.prevent="
+                    () =>
+                        store.openModal(MODALS.DELETE, {
+                            type: DELETE_STATE.FILES,
+                            [DELETE_STATE.FILES]: store.selection,
+                        })
+                "
                 v-tooltip="__('Delete selected files')"
             />
             <ToolbarButton
@@ -92,7 +95,7 @@
                     <input
                         ref="input"
                         type="text"
-                        class="w-full h-full form-control rounded-lg form-input form-input-bordered py-2"
+                        class="appearance-none w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-800 h-10 px-3 rounded-lg"
                         :placeholder="__('Search')"
                         :aria-label="__('Search')"
                         spellcheck="false"
@@ -110,8 +113,8 @@
                             value: value,
                         }))
                     "
-                    :selected="store.perPage"
-                    @change="($event) => store.setPerPage($event)"
+                    :value="store.perPage"
+                    @change="(e) => store.setPerPage(e)"
                 />
 
                 <p class="text-gray-900 dark:text-gray-200 font-medium">
@@ -121,8 +124,8 @@
                 <SelectControl
                     v-if="store.periods"
                     :options="store.periods"
-                    :selected="store.period"
-                    @change="($event) => store.setPeriod($event)"
+                    :value="store.period"
+                    @change="(e) => store.setPeriod(e)"
                 />
 
                 <p class="text-gray-900 dark:text-gray-200 font-medium">
@@ -132,8 +135,8 @@
                 <SelectControl
                     v-if="store.sorts"
                     :options="store.sorts"
-                    :selected="store.sort"
-                    @change="($event) => store.setSort($event)"
+                    :value="store.sort"
+                    @change="(e) => store.setSort(e)"
                 />
             </div>
         </Dropdown>
@@ -142,6 +145,7 @@
 
 <script setup>
 import _ from "lodash";
+import SelectControl from "./Elements/SelectControl.vue";
 import ToolbarButton from "./ToolbarButton.vue";
 import useBrowserStore from "../stores/browser.ts";
 import { MODALS, DELETE_STATE } from "../constants";

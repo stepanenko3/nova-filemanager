@@ -9,7 +9,12 @@ class FileRenaming
 {
     use Dispatchable;
 
-    public function __construct(public Filesystem $filesystem, public string $disk, public string $from, public string $to)
-    {
+    public function __construct(
+        public Filesystem $filesystem,
+        public string $disk,
+        public string $from,
+        public string $to,
+    ) {
+        //
     }
 }

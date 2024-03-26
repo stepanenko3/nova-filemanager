@@ -17,8 +17,9 @@ use Stepanenko3\NovaFileManager\Http\Requests\RenameFolderRequest;
 
 class FolderController extends Controller
 {
-    public function create(CreateFolderRequest $request): JsonResponse
-    {
+    public function create(
+        CreateFolderRequest $request,
+    ): JsonResponse {
         $path = trim($request->path);
 
         event(new FolderCreating(
@@ -46,8 +47,9 @@ class FolderController extends Controller
         ]);
     }
 
-    public function rename(RenameFolderRequest $request): JsonResponse
-    {
+    public function rename(
+        RenameFolderRequest $request,
+    ): JsonResponse {
         event(new FolderRenaming(
             filesystem: $request->manager()->filesystem(),
             disk: $request->manager()->getDisk(),
@@ -76,8 +78,9 @@ class FolderController extends Controller
         ]);
     }
 
-    public function delete(DeleteFolderRequest $request): JsonResponse
-    {
+    public function delete(
+        DeleteFolderRequest $request,
+    ): JsonResponse {
         event(new FolderDeleting(
             filesystem: $request->manager()->filesystem(),
             disk: $request->manager()->getDisk(),

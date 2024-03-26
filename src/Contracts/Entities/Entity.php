@@ -7,7 +7,11 @@ use Stepanenko3\NovaFileManager\Contracts\Services\FileManagerContract;
 
 interface Entity
 {
-    public static function make(FileManagerContract $manager, string $path, string $disk): self;
+    public static function make(
+        FileManagerContract $manager,
+        string $path,
+        string $disk,
+    ): self;
 
     public function extension(): string;
 

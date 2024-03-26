@@ -145,7 +145,7 @@
                             class="mr-2 flex-shrink-0"
                         />
 
-                        <span>
+                        <span class="break-words" style="word-break: break-all;">
                             {{ file.url }}
                         </span>
                     </div>

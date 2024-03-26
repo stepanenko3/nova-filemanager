@@ -10,5 +10,7 @@ interface ResolvesUrl
 
     public function getUrlResolver(): ?Closure;
 
-    public function resolveUrlUsing(Closure $resolver): static;
+    public function resolveUrlUsing(
+        Closure $resolver,
+    ): static;
 }

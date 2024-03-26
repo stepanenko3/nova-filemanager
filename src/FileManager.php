@@ -37,11 +37,19 @@ class FileManager extends Field implements Cover, InteractsWithFilesystemContrac
 
     public ?string $wrapper = null;
 
-    public function __construct($name, $attribute = null, ?Closure $storageCallback = null)
-    {
-        parent::__construct($name, $attribute);
+    public function __construct(
+        $name,
+        $attribute = null,
+        ?Closure $storageCallback = null
+    ) {
+        parent::__construct(
+            $name,
+            $attribute
+        );
 
-        $this->prepareStorageCallback($storageCallback);
+        $this->prepareStorageCallback(
+            $storageCallback
+        );
 
         $this->thumbnail(function (array $assets, $resource) {
             foreach ($assets as $asset) {
@@ -52,29 +60,38 @@ class FileManager extends Field implements Cover, InteractsWithFilesystemContrac
         });
     }
 
-    public static function registerWrapper(string $name, Closure $callback): void
-    {
+    public static function registerWrapper(
+        string $name,
+        Closure $callback
+    ): void {
         static::$wrappers[$name] = $callback;
     }
 
-    public static function forWrapper(string $name): ?static
-    {
+    public static function forWrapper(
+        string $name
+    ): ?static {
         if (!$callback = (static::$wrappers[$name] ?? null)) {
             return null;
         }
 
-        return $callback(static::make('wrapped'));
+        return $callback(
+            static::make(
+                name: 'wrapped'
+            )
+        );
     }
 
-    public function multiple(bool $multiple = true): static
-    {
+    public function multiple(
+        bool $multiple = true
+    ): static {
         $this->multiple = $multiple;
 
         return $this;
     }
 
-    public function limit(?int $limit = null): static
-    {
+    public function limit(
+        ?int $limit = null
+    ): static {
         $this->limit = $limit;
 
         return $this;
@@ -87,8 +104,9 @@ class FileManager extends Field implements Cover, InteractsWithFilesystemContrac
         return $this;
     }
 
-    public function wrapper(string $name): static
-    {
+    public function wrapper(
+        string $name
+    ): static {
         $this->wrapper = $name;
 
         return $this;
@@ -111,7 +129,9 @@ class FileManager extends Field implements Cover, InteractsWithFilesystemContrac
             return $this;
         }
 
-        $this->prepareStorageCallback($wrapper->storageCallback);
+        $this->prepareStorageCallback(
+            $wrapper->storageCallback
+        );
 
         $this->multiple = $wrapper->multiple;
         $this->limit = $wrapper->limit;
@@ -138,15 +158,12 @@ class FileManager extends Field implements Cover, InteractsWithFilesystemContrac
         );
     }
 
-    /**
-     * @param mixed $requestAttribute
-     * @param mixed $model
-     * @param mixed $attribute
-     *
-     * @throws \JsonException
-     */
-    protected function fillAttribute(NovaRequest $request, $requestAttribute, $model, $attribute)
-    {
+    protected function fillAttribute(
+        NovaRequest $request,
+        $requestAttribute,
+        $model,
+        $attribute,
+    ) {
         $this->applyWrapper();
 
         $result = call_user_func(
@@ -174,8 +191,9 @@ class FileManager extends Field implements Cover, InteractsWithFilesystemContrac
         }
     }
 
-    protected function prepareStorageCallback(?Closure $storageCallback = null): void
-    {
+    protected function prepareStorageCallback(
+        ?Closure $storageCallback = null
+    ): void {
         $this->storageCallback = $storageCallback ?? function (
             NovaRequest $request,
             $model,
@@ -193,18 +211,26 @@ class FileManager extends Field implements Cover, InteractsWithFilesystemContrac
             $files = collect($payload);
 
             if ($this->multiple) {
-                $value = collect($files)->map(fn (array $file) => new Asset(...$file));
+                $value = collect($files)
+                    ->map(fn (array $file) => new Asset(...$file));
             } else {
-                $value = $files->isNotEmpty() ? new Asset(...$files->first()) : null;
+                $value = $files->isNotEmpty()
+                    ? new Asset(...$files->first())
+                    : null;
             }
 
             return [$attribute => $value];
         };
     }
 
-    protected function resolveAttribute($resource, $attribute = null): ?array
-    {
-        if (!$value = parent::resolveAttribute($resource, $attribute)) {
+    protected function resolveAttribute(
+        $resource,
+        $attribute = null
+    ): ?array {
+        if (!$value = parent::resolveAttribute(
+            $resource,
+            $attribute
+        )) {
             return null;
         }
 
@@ -218,9 +244,18 @@ class FileManager extends Field implements Cover, InteractsWithFilesystemContrac
 
         if (is_array($value)) {
             if ($this->multiple) {
-                $value = collect($value)->map(fn (array | object $asset) => new Asset(...(array) $asset));
+                $value = collect($value)
+                    ->map(
+                        fn (array | object $asset) => new Asset(
+                            ...(array) $asset
+                        )
+                    );
             } else {
-                $value = collect([new Asset(...$value)]);
+                $value = collect([
+                    new Asset(
+                        ...$value
+                    ),
+                ]);
             }
         }
 
@@ -230,13 +265,23 @@ class FileManager extends Field implements Cover, InteractsWithFilesystemContrac
             ->map(function (Asset $asset) {
                 $disk = $this->resolveFilesystem(app(NovaRequest::class)) ?? $asset->disk;
 
-                $manager = app(FileManagerContract::class, ['disk' => $disk]);
+                $manager = app(
+                    FileManagerContract::class,
+                    [
+                        'disk' => $disk,
+                    ]
+                );
 
                 if ($this->hasUrlResolver()) {
-                    $manager->resolveUrlUsing($this->getUrlResolver());
+                    $manager->resolveUrlUsing(
+                        $this->getUrlResolver()
+                    );
                 }
 
-                return $manager->makeEntity($asset->path, $asset->disk);
+                return $manager->makeEntity(
+                    $asset->path,
+                    $asset->disk
+                );
             })
             ->toArray();
     }

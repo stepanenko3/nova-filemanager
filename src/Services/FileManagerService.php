@@ -5,7 +5,6 @@ namespace Stepanenko3\NovaFileManager\Services;
 use Closure;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Filesystem\Filesystem;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -16,6 +15,7 @@ use Stepanenko3\NovaFileManager\Contracts\Services\FileManagerContract;
 use Stepanenko3\NovaFileManager\Contracts\Support\ResolvesUrl as ResolvesUrlContract;
 use Stepanenko3\NovaFileManager\Entities\Entity;
 use Stepanenko3\NovaFileManager\Traits\Support\ResolvesUrl;
+use ZipArchive;
 
 class FileManagerService implements FileManagerContract, ResolvesUrlContract
 {
@@ -48,16 +48,13 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         public ?string $sort = null,
         public ?string $period = null,
     ) {
-        $this->setDisk($disk ?? config('nova-file-manager.default_disk'));
+        $this->setDisk(
+            $disk ?? config('nova-file-manager.default_disk'),
+        );
 
         $this->shouldShowHiddenFiles = config('nova-file-manager.show_hidden_files');
     }
 
-    /**
-     * Static helper.
-     *
-     * @param null|\Illuminate\Contracts\Filesystem\Filesystem|string $disk
-     */
     public static function make(
         string | Filesystem | null $disk = null,
         ?string $path = null,
@@ -80,13 +77,9 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         );
     }
 
-    /**
-     * Set the current disk used by the service.
-     *
-     * @return $this
-     */
-    public function setDisk(string | Filesystem $disk): self
-    {
+    public function setDisk(
+        string | Filesystem $disk,
+    ): self {
         if ($disk instanceof Filesystem) {
             $this->disk = 'default';
 
@@ -111,11 +104,6 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         return $this->disk;
     }
 
-    /**
-     * Set the current path used by the service.
-     *
-     * @return $this
-     */
     public function path(string $path): self
     {
         $this->path = $path;
@@ -123,29 +111,19 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         return $this;
     }
 
-    /**
-     * Toggle the visibility of hidden files.
-     *
-     * @return $this
-     */
-    public function showHiddenFiles(bool $show = true): self
-    {
+    public function showHiddenFiles(
+        bool $show = true,
+    ): self {
         $this->shouldShowHiddenFiles = $show;
 
         return $this;
     }
 
-    /**
-     * Get the current filesystem instance.
-     */
     public function filesystem(): Filesystem
     {
         return $this->filesystem;
     }
 
-    /**
-     * Retrieve all the files in the current path.
-     */
     public function files(): Collection
     {
         // register by default a call to omit hidden files
@@ -157,45 +135,58 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         $this->applyPeriodCallback();
 
         return collect($this->filesystem->files($this->path))
-            ->filter(fn (string $file) => $this->applyFilterCallbacks($file))
+            ->filter(
+                fn (string $file) => $this->applyFilterCallbacks($file)
+            )
             ->when(
                 !empty($this->sort) && in_array($this->sort, $this->availableSorts),
                 fn ($collection) => $collection
                     ->when(
                         $this->sort === 'date',
-                        fn ($collection) => $collection->sortBy(fn ($file) => $this->filesystem->lastModified($file)),
+                        fn ($collection) => $collection->sortBy(
+                            fn ($file) => $this->filesystem->lastModified($file)
+                        ),
                     )
                     ->when(
                         $this->sort === 'date-desc',
-                        fn ($collection) => $collection->sortByDesc(fn ($file) => $this->filesystem->lastModified($file)),
+                        fn ($collection) => $collection->sortByDesc(
+                            fn ($file) => $this->filesystem->lastModified($file)
+                        ),
                     )
                     ->when(
                         $this->sort === 'name',
-                        fn ($collection) => $collection->sortBy(fn ($file) => basename($file)),
+                        fn ($collection) => $collection->sortBy(
+                            fn ($file) => basename($file)
+                        ),
                     )
                     ->when(
                         $this->sort === 'name-desc',
-                        fn ($collection) => $collection->sortByDesc(fn ($file) => basename($file)),
+                        fn ($collection) => $collection->sortByDesc(
+                            fn ($file) => basename($file)
+                        ),
                     )
                     ->when(
                         $this->sort === 'size',
-                        fn ($collection) => $collection->sortBy(fn ($file) => $this->filesystem->size($file)),
+                        fn ($collection) => $collection->sortBy(
+                            fn ($file) => $this->filesystem->size($file)
+                        ),
                     )
                     ->when(
                         $this->sort === 'size-desc',
-                        fn ($collection) => $collection->sortByDesc(fn ($file) => $this->filesystem->size($file)),
+                        fn ($collection) => $collection->sortByDesc(
+                            fn ($file) => $this->filesystem->size($file)
+                        ),
                     )
             );
     }
 
-    /**
-     * Callback used to filter out hidden files if enabled.
-     */
     public function omitHiddenFilesAndDirectories(): void
     {
         $this->filterCallbacks[] = $this->shouldShowHiddenFiles
             ? static fn () => true
-            : static fn (string $path) => !str($path)->afterLast('/')->startsWith('.');
+            : static fn (string $path) => !str($path)
+                ->afterLast('/')
+                ->startsWith('.');
     }
 
     public function applyFilterCallback(): void
@@ -221,14 +212,9 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
 
         $time = strtotime('-' . $this->period);
 
-        $this->filterCallbacks[] = function (string $path) use ($time) {
-            return $this->filesystem->lastModified($path) >= $time;
-        };
+        $this->filterCallbacks[] = fn (string $path) => $this->filesystem->lastModified($path) >= $time;
     }
 
-    /**
-     * Callback used to filter out files and directories based on a search query string.
-     */
     public function applySearchCallback(): void
     {
         if (blank($this->search)) {
@@ -248,11 +234,9 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         };
     }
 
-    /**
-     * Callback used to apply all the registered filters.
-     */
-    public function applyFilterCallbacks(string $value): bool
-    {
+    public function applyFilterCallbacks(
+        string $value,
+    ): bool {
         foreach ($this->filterCallbacks as $callback) {
             // if we fail the callback, we exit
             if (!$callback($value)) {
@@ -263,11 +247,6 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         return true;
     }
 
-    /**
-     * Retrieve all the directories in the current path.
-     *
-     * @return \Illuminate\Support\Collection<array{id:string,path:string,name:string}
-     */
     public function directories(): Collection
     {
         $this->omitHiddenFilesAndDirectories();
@@ -285,9 +264,6 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
             ->values();
     }
 
-    /**
-     * Build the current path's breadcrumbs.
-     */
     public function breadcrumbs(): Collection
     {
         $paths = collect();
@@ -307,11 +283,9 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         ]);
     }
 
-    /**
-     * Create a new directory in the current path.
-     */
-    public function mkdir(string $path): bool
-    {
+    public function mkdir(
+        string $path,
+    ): bool {
         if (!$this->filesystem->exists($path)) {
             return $this->filesystem->makeDirectory($path);
         }
@@ -319,27 +293,22 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         return false;
     }
 
-    /**
-     * Remove a directory from the disk.
-     */
-    public function rmdir(string $path): bool
-    {
+    public function rmdir(
+        string $path,
+    ): bool {
         return $this->filesystem->deleteDirectory($path);
     }
 
-    /**
-     * Rename a directory or file in the disk.
-     */
-    public function rename(string $from, string $to): bool
-    {
+    public function rename(
+        string $from,
+        string $to,
+    ): bool {
         return $this->filesystem->move($from, $to);
     }
 
-    /**
-     * Duplicate file in the disk.
-     */
-    public function duplicate(string $path): bool
-    {
+    public function duplicate(
+        string $path,
+    ): bool {
         if ($this->filesystem->exists($path)) {
             $ext = pathinfo($path, PATHINFO_EXTENSION);
             $basename = pathinfo($path, PATHINFO_BASENAME);
@@ -370,32 +339,26 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         return false;
     }
 
-    /**
-     * Remove a file from the disk.
-     */
-    public function delete(string $path): bool
-    {
+    public function delete(
+        string $path,
+    ): bool {
         return $this->filesystem->delete($path);
     }
 
-    /**
-     * Unzip an archive to the current path.
-     *
-     * Note: ext-zip is required
-     */
-    public function unzip(string $path): bool
-    {
+    public function unzip(
+        string $path,
+    ): bool {
         // we check the mime type to ensure it is a zip file
         if ($this->filesystem->mimeType($path) !== 'application/zip') {
             return false;
         }
 
         // if ext-zip is not available, we do nothing
-        if (!class_exists(\ZipArchive::class)) {
+        if (!class_exists(ZipArchive::class)) {
             return false;
         }
 
-        $zip = new \ZipArchive();
+        $zip = new ZipArchive();
 
         // open the zip archive
         $zip->open($this->filesystem->path($path));
@@ -418,33 +381,33 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         return $zip->close();
     }
 
-    /**
-     * Paginate the directories and files in the current path from the current disk.
-     *
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    public function paginate(Collection $data): Pagination
-    {
+    public function paginate(
+        Collection $data,
+    ): Pagination {
         return Container::getInstance()
-            ->makeWith(Pagination::class, [
-                'items' => $data
-                    ->forPage($this->page, $this->perPage)
-                    ->values()
-                    ->map($this->mapIntoEntity())
-                    ->toArray(),
-                'total' => $data->count(),
-                'perPage' => $this->perPage,
-                'currentPage' => Paginator::resolveCurrentPage(),
-            ]);
+            ->makeWith(
+                abstract: Pagination::class,
+                parameters: [
+                    'items' => $data
+                        ->forPage(
+                            $this->page,
+                            $this->perPage,
+                        )
+                        ->values()
+                        ->map($this->mapIntoEntity())
+                        ->toArray(),
+
+                    'total' => $data->count(),
+                    'perPage' => $this->perPage,
+                    'currentPage' => Paginator::resolveCurrentPage(),
+                ]
+            );
     }
 
-    /**
-     * Set the pagination parameters.
-     *
-     * @return $this
-     */
-    public function forPage(int $page, int $perPage): self
-    {
+    public function forPage(
+        int $page,
+        int $perPage,
+    ): self {
         $this->page = $page;
 
         $this->perPage = $perPage;
@@ -452,9 +415,6 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         return $this;
     }
 
-    /**
-     * Map the data into a class-based entity.
-     */
     public function mapIntoEntity(): Closure
     {
         return fn (string $path) => $this->makeEntity(
@@ -463,11 +423,10 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         );
     }
 
-    /**
-     * Create a new entity from the given path.
-     */
-    public function makeEntity(string $path, string $disk): Entity
-    {
+    public function makeEntity(
+        string $path,
+        string $disk,
+    ): Entity {
         try {
             $ext = pathinfo($path, PATHINFO_EXTENSION);
             $mimes = MimeTypes::checkMimeType($ext);
@@ -483,7 +442,11 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
             $type = 'default';
         }
 
-        return $this->entityClassForType($type)::make($this, $path, $disk);
+        return $this->entityClassForType($type)::make(
+            $this,
+            $path,
+            $disk,
+        );
     }
 
     public function filters(): array
@@ -509,13 +472,9 @@ class FileManagerService implements FileManagerContract, ResolvesUrlContract
         return [];
     }
 
-    /**
-     * Get the corresponding class for the given file type.
-     *
-     * @return class-string
-     */
-    public function entityClassForType(string $type): string
-    {
+    public function entityClassForType(
+        string $type,
+    ): string {
         return config('nova-file-manager.entities.' . $type) ?? config('nova-file-manager.entities.default');
     }
 }

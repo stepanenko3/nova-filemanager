@@ -9,7 +9,11 @@ class FileUnzipped
 {
     use Dispatchable;
 
-    public function __construct(public Filesystem $filesystem, public string $disk, public string $path)
-    {
+    public function __construct(
+        public Filesystem $filesystem,
+        public string $disk,
+        public string $path,
+    ) {
+        //
     }
 }

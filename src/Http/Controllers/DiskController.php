@@ -9,6 +9,8 @@ class DiskController extends Controller
 {
     public function available(): JsonResponse
     {
-        return response()->json(config('nova-file-manager.available_disks', []));
+        return response()->json(
+            config('nova-file-manager.available_disks', []),
+        );
     }
 }

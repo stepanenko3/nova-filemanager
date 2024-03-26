@@ -17,21 +17,27 @@ use Stepanenko3\NovaFileManager\FileManagerTool;
 
 class ToolController extends Controller
 {
-    public function __invoke(NovaRequest $request): Response
-    {
-
+    public function __invoke(
+        NovaRequest $request,
+    ): Response {
         /** @var ?\Stepanenko3\NovaFileManager\FileManagerTool $tool */
-        $tool = collect(Nova::registeredTools())->first(fn (Tool $tool) => $tool instanceof FileManagerTool);
+        $tool = collect(Nova::registeredTools())
+            ->first(
+                fn (Tool $tool) => $tool instanceof FileManagerTool,
+            );
 
-        return Inertia::render('NovaFileManager', [
-            'config' => array_merge(
-                [
-                    'upload' => config('nova-file-manager.upload'),
-                    'outdated' => $this->updateChecker(),
-                ],
-                $tool?->options(),
-            ),
-        ]);
+        return Inertia::render(
+            component: 'NovaFileManager',
+            props: [
+                'config' => array_merge(
+                    [
+                        'upload' => config('nova-file-manager.upload'),
+                        'outdated' => $this->updateChecker(),
+                    ],
+                    $tool?->options(),
+                ),
+            ],
+        );
     }
 
     public function updateChecker(): Closure
@@ -45,8 +51,11 @@ class ToolController extends Controller
                 key: 'nova-file-manager.update_checker',
                 ttl: (int) CarbonInterval::days(config('nova-file-manager.update_checker.ttl_in_days'))->totalSeconds,
                 callback: function () {
-                    $current = InstalledVersions::getPrettyVersion('stepanenko3/nova-filemanager');
-                    $latest = Http::get('https://api.github.com/repos/stepanenko3/nova-filemanager/releases/latest')->json('tag_name');
+                    $current = InstalledVersions::getPrettyVersion(
+                        packageName: 'stepanenko3/nova-filemanager',
+                    );
+                    $latest = Http::get('https://api.github.com/repos/stepanenko3/nova-filemanager/releases/latest')
+                        ->json('tag_name');
 
                     return version_compare($current, $latest, '<');
                 }

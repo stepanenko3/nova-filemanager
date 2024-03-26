@@ -5,7 +5,7 @@
     >
         <div
             @click="goToPath('/')"
-            class="h-6 flex items-center cursor-pointer text-gray-400 dark:text-gray-600 hover:text-primary-500"
+            class="h-6 flex items-center cursor-pointer text-gray-400 dark:text-gray-200 hover:text-primary-500"
         >
             <Icon type="home" width="16" height="16" />
         </div>
@@ -24,7 +24,7 @@
                 <div v-bind:key="part.id">
                     <span
                         href="#"
-                        class="cursor-pointer text-gray-400 dark:text-gray-600 hover:text-primary-500"
+                        class="cursor-pointer text-gray-400 dark:text-gray-200 hover:text-primary-500"
                         @click="goToPath(part.path)"
                     >
                         {{ part.name }}

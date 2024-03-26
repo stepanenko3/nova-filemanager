@@ -37,10 +37,11 @@
     "repositories": [
         {
             "type": "composer",
-            "url": "https://laravel-nova.site"
+            "url": "https://laravelsatis.com"
         }
     ],
     "require-dev": {
-        "tightenco/duster": "^2.0"
+        "phpstan/phpstan": "^1.10",
+        "tightenco/duster": "^2.7"
     }
 }

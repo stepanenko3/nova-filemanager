@@ -13,14 +13,6 @@ use Stepanenko3\NovaFileManager\Contracts\Support\InteractsWithFilesystem;
 use Stepanenko3\NovaFileManager\FileManager;
 use Stepanenko3\NovaFileManager\FileManagerTool;
 
-/**
- * @property ?string $disk
- * @property ?string $attribute
- * @property ?string $resource
- * @property ?string $resourceId
- * @property ?string $fieldMode
- * @property ?string $wrapper
- */
 class BaseRequest extends NovaRequest
 {
     public function manager(): FileManagerContract
@@ -32,11 +24,18 @@ class BaseRequest extends NovaRequest
             /** @var \Stepanenko3\NovaFileManager\Services\FileManagerService $manager */
             $manager = app(
                 abstract: FileManagerContract::class,
-                parameters: $element?->hasCustomFilesystem() ? ['disk' => $element?->resolveFilesystem($this)] : [],
+                parameters: $element?->hasCustomFilesystem()
+                    ? [
+                        'disk' => $element?->resolveFilesystem(
+                            request: $this,
+                        ),
+                    ] : [],
             );
 
             if ($element?->hasUrlResolver()) {
-                $manager->resolveUrlUsing($element?->getUrlResolver());
+                $manager->resolveUrlUsing(
+                    resolver: $element?->getUrlResolver(),
+                );
             }
 
             return $manager;
@@ -45,7 +44,9 @@ class BaseRequest extends NovaRequest
 
     public function element(): ?InteractsWithFilesystem
     {
-        return filter_var($this->fieldMode, FILTER_VALIDATE_BOOL) ? $this->resolveField() : $this->resolveTool();
+        return filter_var($this->fieldMode, FILTER_VALIDATE_BOOL)
+            ? $this->resolveField()
+            : $this->resolveTool();
     }
 
     public function resolveField(): ?InteractsWithFilesystem
@@ -54,68 +55,118 @@ class BaseRequest extends NovaRequest
             return $field;
         }
 
-        $resource = !(empty($this->resourceId)) ? $this->findResourceOrFail() : $this->newResource();
+        $resource = !(empty($this->resourceId))
+            ? $this->findResourceOrFail()
+            : $this->newResource();
 
         $fields = $this->has('flexible')
-            ? $this->flexibleAvailableFields($resource)
-            : $resource->availableFields($this);
+            ? $this->flexibleAvailableFields(
+                resource: $resource,
+            )
+            : $resource->availableFields(
+                request: $this,
+            );
 
         return $fields
             ->whereInstanceOf(FileManager::class)
-            ->findFieldByAttribute($this->attribute, function (): void {
-                abort(404);
-            });
+            ->findFieldByAttribute(
+                attribute: $this->attribute,
+                default: function (): void {
+                    abort(404);
+                },
+            );
     }
 
-    public function flexibleAvailableFields(Resource $resource): FieldCollection
-    {
-        $path = $this->input('flexible');
+    public function flexibleAvailableFields(
+        Resource $resource,
+    ): FieldCollection {
+        $path = $this->input(
+            key: 'flexible',
+        );
 
         abort_if(blank($path), 404);
 
         $tree = collect(explode('.', $path))
-            ->map(function (string $item) {
-                [$layout, $attribute] = explode(':', $item);
+            ->map(
+                function (string $item) {
+                    [$layout, $attribute] = explode(':', $item);
 
-                return ['attribute' => $attribute, 'layout' => $layout];
-            });
+                    return [
+                        'attribute' => $attribute,
+                        'layout' => $layout,
+                    ];
+                }
+            );
 
-        $fields = $resource->availableFields($this);
+        $fields = $resource->availableFields(
+            request: $this,
+        );
 
         while ($tree->isNotEmpty()) {
             $current = $tree->shift();
 
-            $fields = $this->flexibleFieldCollection($fields, $current['attribute'], $current['layout']);
+            $fields = $this->flexibleFieldCollection(
+                fields: $fields,
+                attribute: $current['attribute'],
+                name: $current['layout'],
+            );
         }
 
         return $fields;
     }
 
-    public function flexibleFieldCollection(FieldCollection $fields, string $attribute, string $name): FieldCollection
-    {
+    public function flexibleFieldCollection(
+        FieldCollection $fields,
+        string $attribute,
+        string $name,
+    ): FieldCollection {
         /** @var \Whitecube\NovaFlexibleContent\Flexible $field */
         $field = $fields
-            ->whereInstanceOf('Whitecube\NovaFlexibleContent\Flexible')
-            ->findFieldByAttribute($attribute, function (): void {
-                abort(404);
-            });
+            ->whereInstanceOf(
+                type: 'Whitecube\NovaFlexibleContent\Flexible',
+            )
+            ->findFieldByAttribute(
+                attribute: $attribute,
+                default: function (): void {
+                    abort(404);
+                },
+            );
 
         // @var \Whitecube\NovaFlexibleContent\Layouts\Collection $layouts
-        abort_unless($layouts = invade($field)->layouts, 404);
+        abort_unless(
+            boolean: $layouts = $field?->layouts,
+            code: 404,
+        );
 
         /** @var \Whitecube\NovaFlexibleContent\Layouts\Layout $layout */
-        $layout = $layouts->first(fn ($layout) => $layout->name() === $name);
+        $layout = $layouts->first(
+            fn ($layout) => $layout->name() === $name,
+        );
 
-        abort_if($layout === null, 404);
+        abort_if(
+            boolean: $layout === null,
+            code: 404,
+        );
 
-        return new FieldCollection($layout->fields());
+        return new FieldCollection(
+            items: $layout->fields(),
+        );
     }
 
     public function resolveTool(): ?InteractsWithFilesystem
     {
-        return tap(once(fn () => collect(Nova::registeredTools())->first(fn (Tool $tool) => $tool instanceof FileManagerTool)), function (?FileManagerTool $tool): void {
-            abort_if(null === $tool, 404);
-        });
+        return tap(
+            value: once(fn () => collect(Nova::registeredTools())
+                ->first(
+                    fn (Tool $tool) => $tool instanceof FileManagerTool,
+                )),
+            callback: function (?FileManagerTool $tool): void {
+                abort_if(
+                    boolean: null === $tool,
+                    code: 404,
+                );
+            }
+        );
     }
 
     public function canCreateFolder(): bool
@@ -163,13 +214,17 @@ class BaseRequest extends NovaRequest
         return strtolower(str(static::class)->classBasename()->ucsplit()->get(1, ''));
     }
 
-    public function authorizationActionAttribute(?string $class = null): string
-    {
-        return (string) str($class ?? static::class)->classBasename()->replace('Request', '')->snake(' ');
+    public function authorizationActionAttribute(
+        ?string $class = null,
+    ): string {
+        return (string) str($class ?? static::class)
+            ->classBasename()
+            ->replace('Request', '')
+            ->snake(' ');
     }
 
     protected function failedAuthorization(): void
     {
-        throw ValidationException::withMessages([$this->authorizationAttribute() => __('nova-file-manager::errors.authorization.unauthorized', ['action' => $this->authorizationActionAttribute()])]);
+        throw ValidationException::withMessages([$this->authorizationAttribute() => __(key: 'nova-file-manager::errors.authorization.unauthorized', replace: ['action' => $this->authorizationActionAttribute()])]);
     }
 }

@@ -1,7 +1,7 @@
 <template>
     <div
         ref="wrapper"
-        class="inset-0 flex items-center justify-center"
+        class="inset-0 flex items-center justify-center p-3"
         :class="{
             'fixed z-50 bg-gray-800/10 backdrop-blur': !full,
             'absolute z-10': full,
@@ -15,7 +15,7 @@
 
         <div
             ref="target"
-            class="relative bg-white w-full max-h-full dark:bg-gray-800 z-10 rounded-lg shadow-lg base-modal-inner"
+            class="relative bg-white w-full max-h-full overflow-y-auto overflow-x-hidden dark:bg-gray-800 z-10 rounded-lg shadow-lg base-modal-inner"
             :class="{
                 'w-full max-w-full min-h-full': full,
                 'max-w-2xl': !full,

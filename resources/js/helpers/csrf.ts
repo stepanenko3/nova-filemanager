@@ -1,3 +1,3 @@
-export function csrf() {
-  return (document.head.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content ?? false
+export function csrf(): string {
+  return (document.head.querySelector('meta[name="csrf-token"]') as HTMLMetaElement)?.content ?? ''
 }

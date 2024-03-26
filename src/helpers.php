@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 
 if (!function_exists('get_file_type')) {
     function get_file_type(string $mime): string
@@ -17,14 +18,7 @@ if (!function_exists('get_file_type')) {
     }
 }
 if (!function_exists('str')) {
-    /**
-     * Get a new stringable object from the given string.
-     *
-     * @param null|string $string
-     *
-     * @return \Illuminate\Support\Stringable|mixed
-     */
-    function str($string = null)
+    function str(?string $string = null): Stringable | string
     {
         if (func_num_args() === 0) {
             return new class () {
