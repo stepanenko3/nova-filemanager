@@ -1,574 +1,598 @@
 import { defineStore } from 'pinia'
 import { isEmpty, range } from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
-import { Modal, OptionValue, QueueEntry, QueueEntryStatus, ModalPayload } from '../@types'
+import { QueueEntry, QueueEntryStatus, ModalPayload } from '../@types'
 import Resumable from 'resumablejs'
 import { csrf } from '../helpers/csrf'
 import { MODALS } from '../constants'
-import { RemovableRef, useLocalStorage } from '@vueuse/core'
+import { useLocalStorage } from '@vueuse/core'
+import { ComputedRef, Ref, computed, ref } from 'vue'
 
 function __(key: string) {
     return key
 }
 
-interface State {
-    loading: boolean
-    isUploading: boolean
-    isFetchingDisks: boolean
-    selecting: boolean
-    multiple: boolean
+type SelectOption = {
+    value: string;
+    label: string;
+};
+
+const useBrowserStore = defineStore('nova-filemanager/browser', () => {
+    // status
+    const loading: Ref<boolean> = ref(false);
+    const uploading: Ref<boolean> = ref(false);
+    const fetchingDisks: Ref<boolean> = ref(false);
+    const selecting: Ref<boolean> = ref(false);
+    const multiple: Ref<boolean> = ref(false);
+
+    // showing states
+    const showFolders: Ref<boolean> = ref(true);
+    const showFiles: Ref<boolean> = ref(true);
+
+    // browser state
+    const page: Ref<number> = ref(1);
+    const perPage: Ref<number> = ref(10);
+    const path: Ref<string> = ref('/');
+    const search: Ref<string> = ref('');
+    const sort: Ref<string> = ref('');
+    const period: Ref<string> = ref('');
+    const disk: Ref<string> = useLocalStorage('pinia/nova-file-manager/browser/disk', '');
+
     //
-    modals: Array<Modal>
-    //
-    showFolders: boolean
-    showFiles: boolean
-    //
-    page: number
-    perPage: number
-    path: string
-    search: string
-    //
-    sort: string
-    disk: RemovableRef<any>
-    period: string
-    //
-    perPageOptions: number[],
-    sorts: Array<OptionValue>
-    disks: Array<string>
-    periods: Array<OptionValue>
-    //
-    queue: QueueEntry[]
-    selection: Array<any>
-    data: any
-    selectionConfirms: number
-    // config
-    chunkSize: number
-}
+    const selection: Ref<any[]> = ref([]);
+    const modals: Ref<ModalPayload[]> = ref([]);
+    const queue: Ref<QueueEntry[]> = ref([]);
+    const selectionConfirms: Ref<number> = ref(0);
 
-const useBrowserStore = defineStore('nova-filemanager/browser', {
-    state: (): State => ({
-        // status
-        loading: false,
-        isUploading: false,
-        isFetchingDisks: false,
-        selecting: false,
-        multiple: true,
+    const perPageOptions: Ref<number[]> = ref(range(10, 50, 10));
+    const sorts: Ref<SelectOption[]> = ref([
+        { value: '', label: __('Sort by') },
+        { value: 'date', label: __('Date Asc') },
+        { value: 'date-desc', label: __('Date Desc') },
+        { value: 'name', label: __('Name Asc') },
+        { value: 'name-desc', label: __('Name Desc') },
+        { value: 'size', label: __('Size Asc') },
+        { value: 'size-desc', label: __('Size Desc') },
+    ]);
+    const disks: Ref<any[]> = ref([]);
+    const periods: Ref<SelectOption[]> = ref([]);
 
-        // showing states
-        showFolders: true,
-        showFiles: true,
+    const data: Ref<any> = ref({});
 
-        // browser state
-        page: 1,
-        perPage: 10,
-        path: '/',
-        search: '',
-        sort: '',
-        disk: useLocalStorage('pinia/nova-file-manager/browser/disk', ''),
-        period: '',
+    // Config
+    const chunkSize: Ref<number> = ref(50 * 1024 * 1024);
 
-        //
-        selection: [],
-        modals: [],
-        queue: [],
-        selectionConfirms: 0,
+    async function init() {
+        if (isEmpty(disks.value)) {
+            await getDisks()
+        }
 
-        perPageOptions: range(10, 50, 10),
-        sorts: [
-            { value: '', label: __('Sort by') },
-            { value: 'date', label: __('Date Asc') },
-            { value: 'date-desc', label: __('Date Desc') },
-            { value: 'name', label: __('Name Asc') },
-            { value: 'name-desc', label: __('Name Desc') },
-            { value: 'size', label: __('Size Asc') },
-            { value: 'size-desc', label: __('Size Desc') },
-        ],
-        disks: [],
-        periods: [
-            { value: '', label: __('Filter by date') },
-            { value: '24 hours', label: __('24 hours') },
-            { value: '7 days', label: __('7 days') },
-            { value: '1 month', label: __('1 month') },
-            { value: '6 months', label: __('6 months') },
-            { value: '1 year', label: __('1 year') },
-        ],
+        if (isEmpty(data.value)) {
+            await fetchData()
+        }
+    }
 
-        //
-        data: {},
+    function confirmSelection() {
+        selectionConfirms.value++
+    }
 
-        // config
-        chunkSize: 50 * 1024 * 1024,
-    }),
+    /**  Data Updaters */
 
-    actions: {
-        async init() {
-            if (isEmpty(this.disks)) {
-                await this.getDisks()
+    function setPage(value: number) {
+        page.value = value;
+
+        fetchData();
+    }
+
+    function setPerPage(value: number) {
+        perPage.value = value;
+        page.value = 1;
+
+        fetchData();
+    }
+
+    function setPath(value: string) {
+        path.value = value;
+        page.value = 1;
+
+        fetchData();
+    }
+
+    function setSearch(value: string) {
+        search.value = value;
+        page.value = 1;
+
+        fetchData();
+    }
+
+    function setSort(value: string) {
+        sort.value = value;
+
+        fetchData();
+    }
+
+    function setDisk(value: string) {
+        path.value = '/'
+        page.value = 1
+        search.value = ''
+        disk.value = value;
+
+        fetchData();
+    }
+
+    function setPeriod(value: string) {
+        period.value = value;
+        page.value = 1;
+
+        fetchData();
+    }
+
+
+    /** Modals */
+
+    function openModal(name: string, payload: ModalPayload = null) {
+        modals.value.push({
+            id: uuidv4(),
+            name,
+            payload,
+        });
+    }
+
+    function closeModal(id: string) {
+        modals.value = modals.value
+            .filter((modal: ModalPayload) => modal.id !== id)
+    }
+
+    function closeModalsByName(name: string) {
+        modals.value = modals.value
+            .filter((modal: ModalPayload) => modal.name !== name)
+    }
+
+    function closeModals() {
+        modals.value = [];
+    }
+
+
+    /** Selection */
+
+    function select(subject: any) {
+        if (isEmpty(selection.value)) {
+            selection.value = [subject]
+
+            return
+        }
+
+        selection.value.push(subject)
+    }
+
+    function unselect(subject: any) {
+        selection.value = selection.value
+            ?.filter(item => item.id !== subject.id);
+    }
+
+    function setSelection(subjects: any[]) {
+        selection.value = subjects;
+    }
+
+    function clearSelection() {
+        setSelection([])
+    }
+
+    function isSelected(subject: any) {
+        return !!selection.value?.find(item => item.id === subject.id)
+    }
+
+    function toggleSelection(subject: any) {
+        if (isSelected(subject)) {
+            unselect(subject)
+
+            return
+        }
+
+        if (!multiple.value) {
+            clearSelection()
+        }
+
+        select(subject)
+    }
+
+    /** Queues */
+
+    const isProcessing: ComputedRef<boolean> = computed(() => loading.value || uploading.value || fetchingDisks.value);
+
+    /** Add a file to the upload queue */
+    function queueFile({ file }: { file: File }) {
+        queue.value.push({
+            id: file.name,
+            ratio: 0,
+            status: null,
+            file,
+            isImage: file.type.includes('image') ?? false,
+        })
+    }
+
+    /** Clear the current upload queue */
+    function clearQueue() {
+        queue.value = []
+    }
+
+    function updateQueue({ id, ratio = 100, status = null }: { id: string; ratio?: number; status?: QueueEntryStatus }) {
+        queue.value = queue.value.map(item => {
+            if (item.id === id) {
+                return {
+                    ...item,
+                    status,
+                    ratio,
+                }
             }
 
-            if (isEmpty(this.data)) {
-                await this.fetch()
-            }
-        },
+            return item
+        })
 
-        confirmSelection() {
-            this.selectionConfirms++
-        },
+        const done = queue.value.reduce((carry: boolean, item: QueueEntry) => carry && item.ratio === 100, true)
 
-        /**
-         * Data Updaters
-         */
+        if (done && queue.value.length) {
+            setTimeout(async () => {
+                closeModalsByName(MODALS.QUEUE);
+                clearQueue()
 
-        setPage(value: number) {
-            this.page = value;
+                uploading.value = false
 
-            this.fetch();
-        },
+                await fetchData();
+            }, 1000)
+        }
+    }
 
-        setPerPage(value: number) {
-            this.perPage = value;
-            this.page = 1;
+    /** Fetches */
 
-            this.fetch();
-        },
+    function upload(files: File[]) {
+        if (uploading.value) {
+            return;
+        }
 
-        setPath(value: string) {
-            this.path = value;
-            this.page = 1;
+        if (!modals.value.find(modal => modal.name === MODALS.QUEUE)) {
+            openModal(
+                MODALS.QUEUE
+            );
+        }
 
-            this.fetch();
-        },
+        uploading.value = true
 
-        setSearch(value: string) {
-            this.search = value;
-            this.page = 1;
+        const uploader = new Resumable({
+            chunkSize: chunkSize.value,
+            simultaneousUploads: 1,
+            maxChunkRetries: 10,
+            testChunks: false,
+            target: '/nova-vendor/nova-file-manager/files/upload',
+            query: {
+                path: path.value ?? '/',
+                disk: disk.value,
+            },
+            headers: {
+                Accept: 'application/json',
+                'X-CSRF-TOKEN': csrf(),
+            },
+        })
 
-            this.fetch();
-        },
+        files.forEach((file: File) => {
+            uploader.addFile(file)
 
-        setSort(value: string) {
-            this.sort = value;
+            queueFile({ file })
+        })
 
-            this.fetch();
-        },
+        uploader.on('fileAdded', () => uploader.upload())
 
-        setDisk(value: string) {
-            this.path = '/'
-            this.page = 1
-            this.search = ''
-            this.disk = value;
-
-            this.fetch();
-        },
-
-        setPeriod(value: string) {
-            this.period = value;
-            this.page = 1;
-
-            this.fetch();
-        },
-
-        /**
-         * Modals
-         */
-
-        openModal(name: string, payload: ModalPayload = null) {
-            this.modals.push({
-                id: uuidv4(),
-                name,
-                payload,
-            });
-        },
-
-        closeModal(id: string) {
-            this.modals = this.modals.filter(modal => modal.id !== id)
-        },
-
-        closeModalsByName(name: string) {
-            this.modals = this.modals.filter(modal => modal.name !== name)
-        },
-
-        closeModals() {
-            this.modals = [];
-        },
-
-        /**
-         * Selection
-         */
-
-        select(subject: any) {
-            if (isEmpty(this.selection)) {
-                this.selection = [subject]
-
-                return
-            }
-
-            this.selection.push(subject)
-        },
-
-        unselect(subject: any) {
-            this.selection = this.selection?.filter(item => item.id !== subject.id)
-        },
-
-        setSelection(subjects: Array<any>) {
-            this.selection = subjects
-        },
-
-        clearSelection() {
-            this.setSelection([])
-        },
-
-        toggleSelection(subject: any) {
-            if (this.isSelected(subject)) {
-                this.unselect(subject)
-
-                return
-            }
-
-            if (!this.multiple) {
-                this.clearSelection()
-            }
-
-            this.select(subject)
-        },
-
-        /**
-         * Queues
-         */
-
-
-        /**
-         * Add a file to the upload queue
-         */
-        queueFile({ file }: { file: File }) {
-            this.queue.push({
-                id: file.name,
-                ratio: 0,
-                status: null,
-                file,
-                isImage: file.type.includes('image') ?? false,
+        uploader.on('fileSuccess', file => {
+            updateQueue({
+                id: file.fileName,
+                status: true,
             })
-        },
+        })
 
-        /**
-         * Clear the current upload queue
-         */
-        clearQueue() {
-            this.queue = []
-        },
+        uploader.on('fileProgress', file => {
+            updateQueue({
+                id: file.fileName,
+                ratio: Math.floor(file.progress(false) * 100),
+            })
+        })
 
-        updateQueue({ id, ratio = 100, status = null }: { id: string; ratio?: number; status?: QueueEntryStatus }) {
-            this.queue = this.queue.map(item => {
-                if (item.id === id) {
-                    return {
-                        ...item,
-                        status,
-                        ratio,
+        uploader.on('error', (file, message) => {
+            console.log(file, message);
+
+        })
+
+        uploader.on('fileError', (file, message) => {
+            updateQueue({
+                id: file.fileName,
+                status: false,
+            })
+
+            Nova.error(JSON.parse(message).message)
+        })
+    }
+
+    async function getDisks() {
+        fetchingDisks.value = true;
+
+        const response = await fetch(
+            "/nova-vendor/nova-file-manager/disks/available"
+        );
+
+        const data = await response.clone().json();
+
+        if (response.ok) {
+            disks.value = data
+
+            if (!disk.value) {
+                disk.value = disks.value[0]
+            }
+        } else {
+            Nova.error(
+                `${response.status}: ${data.message || "Something went wrong"
+                }`
+            );
+        }
+
+        fetchingDisks.value = false;
+    }
+
+    async function fetchData() {
+        loading.value = true;
+
+        const body: any = {
+            page: page.value,
+            perPage: perPage.value,
+            path: path.value,
+            search: search.value,
+            sort: sort.value,
+            disk: disk.value,
+            period: period.value,
+        };
+
+        return await fetch(
+            `/nova-vendor/nova-file-manager?${new URLSearchParams(body).toString()}`,
+            {
+                method: 'GET',
+                headers: {
+                    "X-CSRF-TOKEN": csrf(),
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/json",
+                },
+            },
+        )
+            .then(async (response) => {
+                const parsedData = await response.clone().json();
+
+                if (response.ok) {
+                    page.value = parsedData.pagination.current_page;
+                    disk.value = parsedData.disk;
+                    data.value = parsedData;
+                } else {
+                    Nova.error(
+                        `${response.status}: ${parsedData.message || "Something went wrong"}`
+                    );
+                }
+            })
+            .finally((response: any) => {
+                loading.value = false;
+
+                return response;
+            });
+    }
+
+    async function renameFile(from: string, to: string) {
+        return await sendRequest(
+            "/nova-vendor/nova-file-manager/files/rename",
+            'POST',
+            {
+                disk: disk.value,
+                from: from,
+                to: to,
+            },
+        )
+            .then((response) => {
+                if (response.ok) {
+                    selection.value = selection.value.filter(value => value.path !== from)
+                }
+            });
+    }
+
+    async function deleteFiles(paths: string[] = []) {
+        if (paths.length === 0) {
+            return
+        }
+
+        return await sendRequest(
+            "/nova-vendor/nova-file-manager/files/delete",
+            'POST',
+            {
+                disk: disk.value,
+                paths: paths,
+            },
+        )
+            .then((response) => {
+                if (response.ok) {
+                    selection.value = selection.value
+                        .filter(value => !paths.includes(value.path))
+                }
+            });
+    }
+
+    async function unarchive(path: string) {
+        return await sendRequest(
+            "/nova-vendor/nova-file-manager/files/unzip",
+            'POST',
+            {
+                disk: disk.value,
+                path: path,
+            },
+        );
+    }
+
+
+    async function duplicate(path: string) {
+        return await sendRequest(
+            "/nova-vendor/nova-file-manager/files/duplicate",
+            'POST',
+            {
+                disk: disk.value,
+                path: path,
+            },
+        );
+    }
+
+    async function createFolder(path: string) {
+        return await sendRequest(
+            "/nova-vendor/nova-file-manager/folders/create",
+            'POST',
+            {
+                disk: disk.value,
+                path: path,
+            },
+        );
+    }
+
+    async function renameFolder(from: string, to: string) {
+        return await sendRequest(
+            "/nova-vendor/nova-file-manager/folders/rename",
+            'POST',
+            {
+                disk: disk.value,
+                from: from,
+                to: to,
+            },
+        );
+    }
+
+    async function deleteFolder(path: string) {
+        return await sendRequest(
+            "/nova-vendor/nova-file-manager/folders/delete",
+            'POST',
+            {
+                disk: disk.value,
+                path: path,
+            },
+        );
+    }
+
+    async function sendRequest(url: string, method: string = 'POST', body: any) {
+        loading.value = true;
+
+        const requestUrl = method === 'GET'
+            ? `${url}?${new URLSearchParams(body).toString()}`
+            : url;
+
+        return await fetch(
+            requestUrl,
+            {
+                method: method,
+                headers: {
+                    "X-CSRF-TOKEN": csrf(),
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/json",
+                },
+                body: method === 'GET'
+                    ? null
+                    : JSON.stringify(body),
+            },
+        )
+            .then(async (response) => {
+                const data = await response.clone().json();
+
+                if (response.ok) {
+                    closeModals();
+                    fetchData();
+
+                    if (data.message) {
+                        Nova.success(data.message);
                     }
+                } else {
+                    Nova.error(
+                        `${response.status}: ${data.message || "Something went wrong"}`
+                    );
                 }
 
-                return item
+                return response;
             })
+            .finally((response) => {
+                loading.value = false;
 
-            const done = this.queue.reduce((carry, item) => carry && item.ratio === 100, true)
+                return response;
+            });
+    }
 
-            if (done && this.queue.length) {
-                setTimeout(async () => {
-                    this.closeModalsByName(MODALS.QUEUE);
-                    this.clearQueue()
+    return {
+        init,
+        //
+        isProcessing,
+        loading,
+        uploading,
+        fetchingDisks,
+        selecting,
+        multiple,
+        //
+        showFiles,
+        showFolders,
+        //
+        page,
+        perPage,
+        path,
+        search,
+        sort,
+        period,
+        disk,
+        //
+        selection,
+        modals,
+        queue,
+        selectionConfirms,
+        //
+        perPageOptions,
+        sorts,
+        disks,
+        periods,
+        //
+        data,
+        //
+        chunkSize,
+        //
 
-                    this.isUploading = false
-
-                    await this.fetch()
-                }, 1000)
-            }
-        },
-
-
-        /**
-         * Fetches
-         */
-
-        async getDisks() {
-            this.isFetchingDisks = true;
-
-            return Nova.request()
-                .get("/nova-vendor/nova-file-manager/disks/available")
-                .then((response: any) => {
-                    this.disks = response.data
-
-                    if (!this.disk) {
-                        this.disk = this.disks[0]
-                    }
-                })
-                .catch((error: any) => Nova.error(error.response.data.message || 'Something went wrong'))
-                .finally(() => this.isFetchingDisks = false);
-        },
-
-        async fetch() {
-            this.loading = true;
-
-            return Nova.request()
-                .get("/nova-vendor/nova-file-manager", {
-                    params: {
-                        page: this.page,
-                        perPage: this.perPage,
-                        path: this.path,
-                        search: this.search,
-                        sort: this.sort,
-                        disk: this.disk,
-                        period: this.period,
-                    },
-                })
-                .then((response: any) => {
-                    this.page = response.data.pagination.current_page;
-                    this.disk = response.data.disk;
-                    this.data = response.data;
-
-                    this.loading = false;
-                })
-                .catch((error) => {
-                    this.loading = false;
-
-                    Nova.error(error.response.data.message || 'Something went wrong');
-                });
-        },
-
-        upload(files: File[]) {
-            if (this.isUploading) {
-                return;
-            }
-
-            if (!this.modals.find(modal => modal.name === MODALS.QUEUE)) {
-                this.openModal(
-                    MODALS.QUEUE
-                );
-            }
-
-            this.isUploading = true
-
-            const uploader = new Resumable({
-                chunkSize: this.chunkSize,
-                simultaneousUploads: 1,
-                maxChunkRetries: 10,
-                testChunks: false,
-                target: '/nova-vendor/nova-file-manager/files/upload',
-                query: {
-                    path: this.path ?? '/',
-                    disk: this.disk,
-                },
-                headers: {
-                    Accept: 'application/json',
-                    'X-CSRF-TOKEN': csrf(),
-                },
-            })
-
-            files.forEach(file => {
-                uploader.addFile(file)
-
-                this.queueFile({ file })
-            })
-
-            uploader.on('fileAdded', () => uploader.upload())
-
-            uploader.on('fileSuccess', file => {
-                this.updateQueue({
-                    id: file.fileName,
-                    status: true,
-                })
-            })
-
-            uploader.on('fileProgress', file => {
-                this.updateQueue({
-                    id: file.fileName,
-                    ratio: Math.floor(file.progress(false) * 100),
-                })
-            })
-
-            uploader.on('error', (file, message) => {
-                console.log(file, message);
-
-            })
-
-            uploader.on('fileError', (file, message) => {
-                this.updateQueue({
-                    id: file.fileName,
-                    status: false,
-                })
-
-                window.Nova.error(JSON.parse(message).message)
-            })
-        },
-
-        async renameFile(from: string, to: string) {
-            return Nova.request()
-                .post("/nova-vendor/nova-file-manager/files/rename", {
-                    disk: this.disk,
-                    from: from,
-                    to: to,
-                })
-                .then((response: any) => {
-                    this.selection = this.selection.filter(value => value.path !== from)
-
-                    this.closeModals();
-                    this.fetch();
-
-                    if (response.data.message) {
-                        Nova.success(response.data.message);
-                    }
-
-                    return response;
-                })
-                .catch((error: any) => Nova.error(error.response.data.message || 'Something went wrong'));
-        },
-
-        async deleteFiles(paths: string[] = []) {
-            if (paths.length === 0) {
-                return
-            }
-
-            return Nova.request()
-                .post("/nova-vendor/nova-file-manager/files/delete", {
-                    disk: this.disk,
-                    paths: paths,
-                })
-                .then((response: any) => {
-                    this.selection = this.selection.filter(value => !paths.includes(value.path))
-
-                    this.closeModals();
-                    this.fetch();
-
-                    if (response.data.message) {
-                        Nova.success(response.data.message);
-                    }
-
-                    return response;
-                })
-                .catch((error: any) => Nova.error(error.response.data.message || 'Something went wrong'));
-        },
-
-        async unarchive(path: string) {
-            this.loading = true;
-
-            return Nova.request()
-                .post("/nova-vendor/nova-file-manager/files/unzip", {
-                    disk: this.disk,
-                    path: path,
-                })
-                .then((response: any) => {
-                    this.loading = false;
-
-                    this.closeModals();
-                    this.fetch();
-
-                    if (response.data.message) {
-                        Nova.success(response.data.message);
-                    }
-
-                    return response;
-                })
-                .catch((error: any) => {
-                    this.loading = false;
-
-                    Nova.error(error.response.data.message || 'Something went wrong');
-                });
-        },
-
-        async duplicate(path: string) {
-            this.loading = true;
-
-            return Nova.request()
-                .post("/nova-vendor/nova-file-manager/files/duplicate", {
-                    disk: this.disk,
-                    path: path,
-                })
-                .then((response: any) => {
-                    this.loading = false;
-
-                    this.closeModals();
-                    this.fetch();
-
-                    if (response.data.message) {
-                        Nova.success(response.data.message);
-                    }
-
-                    return response;
-                })
-                .catch((error: any) => {
-                    this.loading = false;
-
-                    Nova.error(error.response.data.message || 'Something went wrong');
-                });
-        },
-
-        async createFolder(path: string) {
-            return Nova.request()
-                .post("/nova-vendor/nova-file-manager/folders/create", {
-                    disk: this.disk,
-                    path: path,
-                })
-                .then((response: any) => {
-                    this.closeModals();
-                    this.fetch();
-
-                    if (response.data.message) {
-                        Nova.success(response.data.message);
-                    }
-
-                    return response;
-                })
-                .catch((error: any) => Nova.error(error.response.data.message || 'Something went wrong'));
-        },
-
-        async renameFolder(from: string, to: string) {
-            return Nova.request()
-                .post("/nova-vendor/nova-file-manager/folders/rename", {
-                    disk: this.disk,
-                    from: from,
-                    to: to,
-                })
-                .then((response: any) => {
-                    this.closeModals();
-                    this.fetch();
-
-                    if (response.data.message) {
-                        Nova.success(response.data.message);
-                    }
-
-                    return response;
-                })
-                .catch((error: any) => Nova.error(error.response.data.message || 'Something went wrong'));
-        },
-
-        async deleteFolder(path: string) {
-            return Nova.request()
-                .post("/nova-vendor/nova-file-manager/folders/delete", {
-                    disk: this.disk,
-                    path: path,
-                })
-                .then((response: any) => {
-                    this.closeModals();
-                    this.fetch();
-
-                    if (response.data.message) {
-                        Nova.success(response.data.message);
-                    }
-
-                    return response;
-                })
-                .catch((error: any) => Nova.error(error.response.data.message || 'Something went wrong'));
-        },
-    },
-
-    getters: {
-        isSelected() {
-            return (subject: any) => !!this.selection?.find(item => item.id === subject.id)
-        },
-
-        isProcessing(): boolean {
-            return this.loading || this.isUploading || this.isFetchingDisks
-        },
-    },
+        confirmSelection,
+        setPage,
+        setPerPage,
+        setPath,
+        setSearch,
+        setSort,
+        setDisk,
+        setPeriod,
+        //
+        openModal,
+        closeModal,
+        closeModalsByName,
+        closeModals,
+        //
+        select,
+        unselect,
+        setSelection,
+        clearSelection,
+        isSelected,
+        toggleSelection,
+        //
+        queueFile,
+        clearQueue,
+        updateQueue,
+        //
+        getDisks,
+        fetchData,
+        upload,
+        renameFile,
+        deleteFiles,
+        unarchive,
+        duplicate,
+        createFolder,
+        renameFolder,
+        deleteFolder,
+    };
 })
 
 export default useBrowserStore

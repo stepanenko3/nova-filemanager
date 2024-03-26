@@ -26,7 +26,7 @@
         />
 
         <ToolbarButton
-            @click.prevent="store.fetch()"
+            @click.prevent="store.fetchData()"
             type="refresh"
             v-tooltip="__('Refresh')"
         />
