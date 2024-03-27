@@ -17,16 +17,42 @@ class ToolServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
+        $this->loadTranslationsFrom(
+            path: __DIR__ . '/../lang',
+            namespace: 'nova-filemanager',
+        );
+
+        $this->loadJsonTranslationsFrom(
+            path: __DIR__ . '/../lang',
+        );
+
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/nova-file-manager.php',
+            'nova-file-manager',
+        );
+
+        $this->publishes(
+            [
+                __DIR__ . '/../config' => config_path(),
+            ],
+            'nova-file-manager-config'
+        );
+
         $this->app->booted(function (): void {
             $this->routes();
         });
 
-        $this->config();
-        $this->translations();
-
         Nova::serving(function (): void {
-            $this->loadTranslationsToNova();
-            $this->assets();
+            Nova::style(
+                'nova-file-manager',
+                __DIR__ . '/../dist/css/tool.css'
+            );
+            Nova::script(
+                'nova-file-manager',
+                __DIR__ . '/../dist/js/tool.js'
+            );
+
+            Nova::translations(__DIR__ . '/../lang/' . app()->getLocale() . '.json');
         });
     }
 
@@ -66,33 +92,6 @@ class ToolServiceProvider extends ServiceProvider
         );
     }
 
-    public function config(): void
-    {
-        $this->mergeConfigFrom(
-            __DIR__ . '/../config/nova-file-manager.php',
-            'nova-file-manager',
-        );
-
-        $this->publishes(
-            [
-                __DIR__ . '/../config' => config_path(),
-            ],
-            'nova-file-manager-config'
-        );
-    }
-
-    public function assets(): void
-    {
-        Nova::style(
-            'nova-file-manager',
-            __DIR__ . '/../dist/css/tool.css'
-        );
-        Nova::script(
-            'nova-file-manager',
-            __DIR__ . '/../dist/js/tool.js'
-        );
-    }
-
     protected function routes(): void
     {
         if ($this->app->routesAreCached()) {
@@ -115,30 +114,5 @@ class ToolServiceProvider extends ServiceProvider
         ])
             ->prefix('nova-vendor/nova-file-manager')
             ->group(__DIR__ . '/../routes/api.php');
-    }
-
-    protected function translations(): void
-    {
-        $this->loadTranslationsFrom(
-            __DIR__ . '/../lang',
-            'nova-file-manager'
-        );
-
-        $this->loadJsonTranslationsFrom(
-            __DIR__ . '/../lang'
-        );
-    }
-
-    protected function loadTranslationsToNova(): void
-    {
-        $translations = trans('nova-file-manager::ui');
-
-        if (!is_array($translations)) {
-            $translations = [];
-        }
-
-        // $translations = array_merge(trans('nova-file-manager::ui', [], 'en'), $translations);
-
-        Nova::translations($translations);
     }
 }

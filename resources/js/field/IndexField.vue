@@ -4,8 +4,9 @@
     </div>
 </template>
 
-<script>
-    export default {
-        props: ['resourceName', 'field'],
-    };
+<script setup lang="ts">
+defineProps<{
+    resourceName: string;
+    field: any;
+}>();
 </script>

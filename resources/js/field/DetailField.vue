@@ -8,8 +8,13 @@
     </template>
 </template>
 
-<script>
-export default {
-    props: ["resource", "resourceName", "resourceId", "field"],
-};
+<script setup lang="ts">
+defineProps<{
+    index: number;
+    resource: object;
+    resourceName: string;
+    resourceId: string;
+    field: object;
+}>();
 </script>
+

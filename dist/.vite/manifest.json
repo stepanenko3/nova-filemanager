@@ -1,0 +1,12 @@
+{
+  "resources/js/package.js": {
+    "file": "js/package.js",
+    "name": "package",
+    "src": "resources/js/package.js",
+    "isEntry": true
+  },
+  "style.css": {
+    "file": "css/tool.css",
+    "src": "style.css"
+  }
+}
