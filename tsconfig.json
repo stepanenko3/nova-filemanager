@@ -20,7 +20,8 @@
         "resources/**/*.ts",
         "resources/**/*.d.ts",
         "resources/**/*.tsx",
-        "resources/**/*.vue"
+        "resources/**/*.vue",
+        "resources/js/package.js"
     ],
     "references": [
         {

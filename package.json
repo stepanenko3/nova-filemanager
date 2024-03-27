@@ -12,24 +12,19 @@
         "lint": "eslint resources/js --fix --ext js,vue,ts",
         "nova:install": "npm --prefix='./vendor/laravel/nova' i"
     },
-    "files": [
-        "dist"
-    ],
-    "main": "./dist/js/package.umd.cjs",
     "devDependencies": {
         "@inertiajs/inertia": "^0.11.1",
-        "@rollup/plugin-alias": "^5.1.0",
-        "@vitejs/plugin-vue": "^4.6.2",
-        "@vue/compiler-sfc": "^3.2.22",
+        "@types/node": "^20.11.30",
+        "@vitejs/plugin-vue": "^5.0.4",
+        "@vue/compiler-sfc": "^3.4.21",
         "filesize": "^10.1.1",
         "md5": "^2.2.1",
-        "postcss": "^8.4.24",
+        "postcss": "^8.4.38",
         "postcss-import": "^16.1.0",
         "sass": "^1.72.0",
         "tailwindcss": "^3.4.1",
         "uuid": "^9.0.1",
-        "vite": "^4.3.9",
-        "vite-tsconfig-paths": "^4.2.0",
+        "vite": "^5.2.6",
         "vue-cropperjs": "^5.0.0"
     },
     "dependencies": {
@@ -43,5 +38,17 @@
         "pinia": "^2.1.7",
         "resumablejs": "^1.1.0",
         "vue": "^3.4.21"
+    },
+    "files": [
+        "dist/*"
+    ],
+    "type": "module",
+    "main": "./dist/js/tool.js",
+    "module": "./dist/js/package.js",
+    "exports": {
+        ".": {
+            "import": "./dist/js/package.js",
+            "require": "./dist/js/package.js"
+        }
     }
 }
