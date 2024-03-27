@@ -30,5 +30,7 @@
     "Name Asc": "Назва A-Я",
     "Name Desc": "Назва Я-А",
     "Size Asc": "Розмір 0-9",
-    "Size Desc": "Розмір 9-0"
+    "Size Desc": "Розмір 9-0",
+    "No files were found for your request": "По вашому запиту не знайдено файлів",
+    "You can upload a new file or create a new folder": "Ви можете завантажити файл, або створити нову папку"
 }

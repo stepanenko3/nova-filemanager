@@ -30,5 +30,7 @@
     "Name Asc": "Name asc",
     "Name Desc": "Name desc",
     "Size Asc": "Size asc",
-    "Size Desc": "Size desc"
+    "Size Desc": "Size desc",
+    "No files were found for your request": "No files were found for your request",
+    "You can upload a new file or create a new folder": "You can upload a new file or create a new folder"
 }
