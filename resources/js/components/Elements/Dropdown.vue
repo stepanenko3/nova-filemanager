@@ -5,7 +5,7 @@
         </div>
 
         <div
-            class="absolute p-1 mt-2 min-w-80 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-20"
+            class="absolute p-1 mt-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-20"
             :style="{
                 right: 0,
                 top: '100%',
@@ -28,9 +28,3 @@ const target = ref();
 
 onClickOutside(target, () => (state.value ? (state.value = false) : null));
 </script>
-
-<style>
-.min-w-80 {
-    min-width: 180px;
-}
-</style>

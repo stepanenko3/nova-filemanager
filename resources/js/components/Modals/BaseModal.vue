@@ -15,7 +15,7 @@
 
         <div
             ref="target"
-            class="relative bg-white w-full max-h-full overflow-y-auto overflow-x-hidden dark:bg-gray-800 z-10 rounded-lg shadow-lg base-modal-inner"
+            class="relative bg-white w-full max-h-full overflow-y-auto overflow-x-hidden scrollbar-hide dark:bg-gray-800 z-10 rounded-lg shadow-lg base-modal-inner"
             :class="{
                 'w-full max-w-full min-h-full': full,
                 'max-w-2xl': !full,
@@ -31,7 +31,7 @@
             </Transition>
 
             <div
-                class="flex items-center px-6 py-4 space-x-2 border-b border-gray-200 dark:border-gray-700"
+                class="flex items-center p-3 md:px-6 md:py-4 gap-2 border-b border-gray-200 dark:border-gray-700 overflow-x-auto scrollbar-hide"
             >
                 <ToolbarButton
                     v-if="closeButton && !disableClose"
@@ -45,7 +45,7 @@
 
             <div
                 v-if="slots.footer"
-                class="flex items-center px-6 py-4 space-x-2 border-t border-gray-200 dark:border-gray-700"
+                class="flex items-center p-3 md:px-6 md:py-4 gap-2 border-t border-gray-200 dark:border-gray-700"
             >
                 <slot name="footer" />
             </div>

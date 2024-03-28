@@ -5,7 +5,7 @@
         @click.prevent.stop="select"
     >
         <div
-            class="relative aspect-square flex items-center p-2 justify-center w-full h-full overflow-hidden rounded-lg hover:opacity-75 dark:bg-gray-900 border-2"
+            class="relative aspect-square flex items-center p-1 md:p-2 justify-center w-full h-full overflow-hidden rounded-lg hover:opacity-75 dark:bg-gray-900 border-2"
             :class="{
                 'border-primary-500': isSelected,
                 'border-gray-200 dark:border-gray-700': !isSelected,

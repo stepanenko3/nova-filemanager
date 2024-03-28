@@ -1,7 +1,7 @@
 <template>
     <BaseModal :modal="modal">
         <template #header>
-            <div>
+            <div class="hidden md:block">
                 {{ __("Details") }}
             </div>
 

@@ -37,6 +37,7 @@
         "lodash": "^4.17.21",
         "pinia": "^2.1.7",
         "resumablejs": "^1.1.0",
+        "tailwind-scrollbar-hide": "^1.1.7",
         "vue": "^3.4.21"
     },
     "files": [

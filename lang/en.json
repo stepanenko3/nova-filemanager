@@ -31,6 +31,13 @@
     "Name Desc": "Name desc",
     "Size Asc": "Size asc",
     "Size Desc": "Size desc",
+    "Rename file": "Rename file",
+    "Crop image": "Crop image",
+    "Confirm crop": "Confirm crop",
     "No files were found for your request": "No files were found for your request",
-    "You can upload a new file or create a new folder": "You can upload a new file or create a new folder"
+    "You can upload a new file or create a new folder": "You can upload a new file or create a new folder",
+    "Are you sure you want to remove this file?": "Are you sure you want to remove this file?",
+    "Remember: The file will be delete from your storage": "Remember: The file will be delete from your storage",
+    "Are you sure you want to remove this files?": "Are you sure you want to remove this files?",
+    "Remember: The files will be delete from your storage": "Remember: The files will be delete from your storage"
 }

@@ -16,7 +16,7 @@
 
         <div
             v-if="store.showFolders"
-            class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"
+            class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4"
         >
             <template v-for="folder in folders" :key="folder.id">
                 <BrowserFolder
@@ -45,7 +45,7 @@
 
         <div
             v-if="store.showFiles"
-            class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
+            class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-4"
         >
             <template v-for="file in files" :key="file.id">
                 <BrowserFile
