@@ -1,5 +1,5 @@
-import Tv, { effectScope as Rl, ref as we, markRaw as Il, toRaw as Ml, isRef as Ri, isReactive as gs, toRef as Rv, hasInjectionContext as Iv, inject as Mv, watch as Qr, reactive as Lv, getCurrentScope as Ll, onScopeDispose as Pl, nextTick as vs, toRefs as Pv, computed as At, defineComponent as ni, openBlock as L, createElementBlock as V, createElementVNode as j, Fragment as Ke, renderList as hr, toDisplayString as ie, resolveComponent as Ft, normalizeClass as pn, renderSlot as fr, createBlock as Oe, createCommentVNode as pe, unref as Q, onMounted as Nl, readonly as Nv, getCurrentInstance as Fv, shallowRef as Bv, withModifiers as Te, resolveDirective as $a, withDirectives as wt, createVNode as ue, createTextVNode as ut, withCtx as _e, useSlots as Uv, Transition as Ba, withKeys as $v, vModelText as zv, TransitionGroup as Fl, normalizeStyle as Wv } from "vue";
-var Hv = !1, Bl = { NVM_RC_VERSION: "", npm_package_dependencies__vueuse_core: "^10.1.2", npm_package_devDependencies_postcss_import: "^16.1.0", TERM_PROGRAM: "vscode", NODE: "/usr/local/bin/node", INIT_CWD: "/Users/stepanenko/Sites/_packages/nova-filemanager", _P9K_TTY: "/dev/ttys013", NVM_CD_FLAGS: "-q", npm_config_version_git_tag: "true", TERM: "xterm-256color", SHELL: "/bin/zsh", npm_package_devDependencies_vite: "^5.2.6", npm_package_dependencies__types_uuid: "^9.0.2", TMPDIR: "/var/folders/1d/_b63712j4hgbbsvgxrsjsqj80000gn/T/", npm_config_global_prefix: "/Users/stepanenko/.npm-global", npm_package_scripts_lint: "eslint resources/js --fix --ext js,vue,ts", npm_config_init_license: "MIT", npm_config_email: "stpnnk.artem@gmail.com", TERM_PROGRAM_VERSION: "1.87.2", npm_package_devDependencies__vitejs_plugin_vue: "^5.0.4", npm_package_scripts_dev: "NODE_ENV=development vite build --watch", ZDOTDIR: "/Users/stepanenko", ORIGINAL_XDG_CURRENT_DESKTOP: "undefined", MallocNanoZone: "0", npm_package_scripts_nova_install: "npm --prefix='./vendor/laravel/nova' i", COLOR: "1", npm_config_noproxy: "", npm_package_private: "true", npm_config_registry: "https://registry.yarnpkg.com", npm_config_local_prefix: "/Users/stepanenko/Sites/_packages/nova-filemanager", HERD_PHP_83_INI_SCAN_DIR: "/Users/stepanenko/Library/Application Support/Herd/config/php/83/", ZSH: "/Users/stepanenko/.oh-my-zsh", npm_package_readmeFilename: "README.md", NVM_DIR: "/Users/stepanenko/Library/Application Support/Herd/config/nvm", PHP_INI_SCAN_DIR: "/Users/stepanenko/Library/Application Support/Herd/config/php/:/Users/stepanenko/Library/Application Support/Herd/config/php/:", USER: "stepanenko", npm_package_description: "[![Latest Version on Packagist](https://img.shields.io/packagist/v/stepanenko3/nova-filemanager.svg?style=flat-square)](https://packagist.org/packages/stepanenko3/nova-filemanager) [![Total Downloads](https://img.shields.io/packagist/dt/stepanenko3/nova-filemanager.svg?style=flat-square)](https://packagist.org/packages/stepanenko3/nova-filemanager) [![License](https://poser.pugx.org/stepanenko3/nova-filemanager/license)](https://packagist.org/packages/stepanenko3/nova-filemanager)", npm_package_devDependencies_filesize: "^10.1.1", LS_COLORS: "di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43", npm_package_license: "MIT", COMMAND_MODE: "unix2003", npm_config_globalconfig: "/Users/stepanenko/.npm-global/etc/npmrc", npm_package_exports___import: "./dist/js/package.js", npm_package_devDependencies__inertiajs_inertia: "^0.11.1", SSH_AUTH_SOCK: "/private/tmp/com.apple.launchd.goxGzExCfF/Listeners", npm_package_dependencies_lodash: "^4.17.21", npm_package_scripts_dev_package: "NODE_ENV=development LIB=package vite build --watch", __CF_USER_TEXT_ENCODING: "0x1F5:0:0", npm_package_devDependencies_postcss: "^8.4.38", npm_execpath: "/usr/local/lib/node_modules/npm/bin/npm-cli.js", HERD_PHP_82_INI_SCAN_DIR: "/Users/stepanenko/Library/Application Support/Herd/config/php/82/", PAGER: "less", npm_package_module: "./dist/js/package.js", LSCOLORS: "Gxfxcxdxbxegedabagacad", npm_package_scripts_build_tool: "LIB_NAME=tool vite build", PATH: "/var/folders/1d/_b63712j4hgbbsvgxrsjsqj80000gn/T/yarn--1711547628697-0.13888073790336275:/Users/stepanenko/Sites/_packages/nova-filemanager/node_modules/.bin:/Users/stepanenko/.config/yarn/link/node_modules/.bin:/Users/stepanenko/.npm-global/bin:/usr/local/libexec/lib/node_modules/npm/bin/node-gyp-bin:/usr/local/lib/node_modules/npm/bin/node-gyp-bin:/usr/local/bin/node_modules/npm/bin/node-gyp-bin:/Users/stepanenko/Sites/_packages/nova-filemanager/node_modules/.bin:/Users/stepanenko/Sites/_packages/node_modules/.bin:/Users/stepanenko/Sites/node_modules/.bin:/Users/stepanenko/node_modules/.bin:/Users/node_modules/.bin:/node_modules/.bin:/usr/local/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/Users/stepanenko/Library/Application Support/Herd/bin/:/Users/Shared/DBngin/mysql/8.0.27/bin:~/.yarn/bin:~/.config/yarn/global/node_modules/.bin:/usr/local/sbin:~/.npm-global/bin:/usr/local/bin:/usr/local/sbin:~/bin:/usr/bin:/bin:/usr/sbin:/sbin:~/.composer/vendor/bin", npm_config_argv: '{"remain":[],"cooked":["run","build:package"],"original":["build:package"]}', npm_package_devDependencies_uuid: "^9.0.1", npm_package_json: "/Users/stepanenko/Sites/_packages/nova-filemanager/package.json", _: "/Users/stepanenko/Sites/_packages/nova-filemanager/node_modules/.bin/vite", npm_package_dependencies_vue: "^3.4.21", npm_config_userconfig: "/Users/stepanenko/.npmrc", npm_config_init_module: "/Users/stepanenko/.npm-init.js", USER_ZDOTDIR: "/Users/stepanenko", __CFBundleIdentifier: "com.microsoft.VSCode", npm_package_devDependencies_md5: "^2.2.1", npm_command: "run-script", PWD: "/Users/stepanenko/Sites/_packages/nova-filemanager", npm_package_devDependencies_tailwindcss: "^3.4.1", LIB_NAME: "package", VSCODE_NONCE: "4016f3ea-90ac-47c8-a8f5-5b9fb646038b", npm_lifecycle_event: "build:package", EDITOR: "vi", P9K_SSH: "0", P9K_TTY: "old", LANG: "en_US.UTF-8", npm_package_name: "", npm_package_dependencies_autoprefixer: "^10.4.14", npm_config_progress: "", npm_package_devDependencies_sass: "^1.72.0", npm_package_scripts_build: "yarn build:tool && yarn build:package", npm_config_version_commit_hooks: "true", npm_config_npm_version: "10.2.3", VSCODE_GIT_ASKPASS_EXTRA_ARGS: "", XPC_FLAGS: "0x0", npm_package_dependencies__pqina_pintura: "^8.60.2", npm_config_username: "stepanenko3", npm_config_bin_links: "true", npm_config_node_gyp: "/usr/local/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js", npm_package_main: "./dist/js/tool.js", XPC_SERVICE_NAME: "0", npm_package_version: "", VSCODE_INJECTION: "1", npm_package_dependencies_pinia: "^2.1.7", SHLVL: "3", HOME: "/Users/stepanenko", npm_package_type: "module", VSCODE_GIT_ASKPASS_MAIN: "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass-main.js", npm_config_save_prefix: "^", npm_config_strict_ssl: "true", npm_config_version_git_message: "v%s", npm_config_cache: "/Users/stepanenko/.npm", LESS: "-R", LOGNAME: "stepanenko", YARN_WRAP_OUTPUT: "false", npm_package_scripts_format: "prettier --write 'resources/js/**/*.{css,js,vue,ts}'", npm_lifecycle_script: "LIB_NAME=package vite build", npm_package_exports___require: "./dist/js/package.js", VSCODE_GIT_IPC_HANDLE: "/var/folders/1d/_b63712j4hgbbsvgxrsjsqj80000gn/T/vscode-git-cfef0277bb.sock", npm_package_scripts_package: "npm run format && npm run lint && npm run build", npm_config_user_agent: "yarn/1.22.19 npm/? node/v20.10.0 darwin x64", npm_package_devDependencies__vue_compiler_sfc: "^3.4.21", npm_package_scripts_check_format: "prettier --list-different 'resources/**/*.{css,js,vue,ts}'", npm_config_version_git_sign: "", npm_config_ignore_scripts: "", VSCODE_GIT_ASKPASS_NODE: "/Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin)", GIT_ASKPASS: "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass.sh", HERD_PHP_74_INI_SCAN_DIR: "/Users/stepanenko/Library/Application Support/Herd/config/php/74/", npm_package_dependencies__types_lodash: "^4.14.195", npm_package_devDependencies__types_node: "^20.11.30", npm_package_dependencies_resumablejs: "^1.1.0", npm_package_dependencies__pqina_vue_pintura: "^9.0.1", npm_package_files_0: "dist/*", npm_package_devDependencies_vue_cropperjs: "^5.0.0", npm_config_init_version: "1.0.0", npm_config_ignore_optional: "", npm_node_execpath: "/usr/local/bin/node", npm_config_prefix: "/Users/stepanenko/.npm-global", COLORTERM: "truecolor", npm_package_scripts_build_package: "LIB_NAME=package vite build", npm_config_version_tag_prefix: "v", NODE_ENV: "production" };
+import Tv, { effectScope as Rl, ref as we, markRaw as Il, toRaw as Ml, isRef as Ri, isReactive as gs, toRef as Rv, hasInjectionContext as Iv, inject as Mv, watch as Qr, reactive as Lv, getCurrentScope as Ll, onScopeDispose as Pl, nextTick as vs, toRefs as Pv, computed as At, defineComponent as ni, openBlock as L, createElementBlock as V, createElementVNode as j, Fragment as je, renderList as hr, toDisplayString as ie, resolveComponent as Ft, normalizeClass as pn, renderSlot as fr, createBlock as Oe, createCommentVNode as pe, unref as Q, onMounted as Nl, readonly as Nv, getCurrentInstance as Fv, shallowRef as Bv, withModifiers as Te, resolveDirective as $a, withDirectives as wt, createVNode as ue, createTextVNode as ut, withCtx as _e, useSlots as Uv, Transition as Ba, withKeys as $v, vModelText as zv, TransitionGroup as Fl, normalizeStyle as Wv } from "vue";
+var Hv = !1, Bl = { NVM_RC_VERSION: "", npm_package_dependencies__vueuse_core: "^10.1.2", npm_package_devDependencies_postcss_import: "^16.1.0", TERM_PROGRAM: "vscode", NODE: "/usr/local/bin/node", INIT_CWD: "/Users/stepanenko/Sites/_packages/nova-filemanager", _P9K_TTY: "/dev/ttys011", NVM_CD_FLAGS: "-q", npm_config_version_git_tag: "true", TERM: "xterm-256color", SHELL: "/bin/zsh", npm_package_devDependencies_vite: "^5.2.6", npm_package_dependencies__types_uuid: "^9.0.2", TMPDIR: "/var/folders/1d/_b63712j4hgbbsvgxrsjsqj80000gn/T/", npm_config_global_prefix: "/Users/stepanenko/.npm-global", npm_package_scripts_lint: "eslint resources/js --fix --ext js,vue,ts", npm_config_init_license: "MIT", npm_config_email: "stpnnk.artem@gmail.com", TERM_PROGRAM_VERSION: "1.87.2", npm_package_devDependencies__vitejs_plugin_vue: "^5.0.4", npm_package_scripts_dev: "NODE_ENV=development vite build --watch", ZDOTDIR: "/Users/stepanenko", ORIGINAL_XDG_CURRENT_DESKTOP: "undefined", MallocNanoZone: "0", npm_package_scripts_nova_install: "npm --prefix='./vendor/laravel/nova' i", COLOR: "1", npm_config_noproxy: "", npm_package_private: "true", npm_config_registry: "https://registry.yarnpkg.com", npm_config_local_prefix: "/Users/stepanenko/Sites/_packages/nova-filemanager", HERD_PHP_83_INI_SCAN_DIR: "/Users/stepanenko/Library/Application Support/Herd/config/php/83/", ZSH: "/Users/stepanenko/.oh-my-zsh", npm_package_readmeFilename: "README.md", NVM_DIR: "/Users/stepanenko/Library/Application Support/Herd/config/nvm", PHP_INI_SCAN_DIR: "/Users/stepanenko/Library/Application Support/Herd/config/php/:/Users/stepanenko/Library/Application Support/Herd/config/php/:", USER: "stepanenko", npm_package_description: "[![Latest Version on Packagist](https://img.shields.io/packagist/v/stepanenko3/nova-filemanager.svg?style=flat-square)](https://packagist.org/packages/stepanenko3/nova-filemanager) [![Total Downloads](https://img.shields.io/packagist/dt/stepanenko3/nova-filemanager.svg?style=flat-square)](https://packagist.org/packages/stepanenko3/nova-filemanager) [![License](https://poser.pugx.org/stepanenko3/nova-filemanager/license)](https://packagist.org/packages/stepanenko3/nova-filemanager)", npm_package_devDependencies_filesize: "^10.1.1", LS_COLORS: "di=1;36:ln=35:so=32:pi=33:ex=31:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43", npm_package_license: "MIT", COMMAND_MODE: "unix2003", npm_config_globalconfig: "/Users/stepanenko/.npm-global/etc/npmrc", npm_package_exports___import: "./dist/js/package.js", npm_package_devDependencies__inertiajs_inertia: "^0.11.1", SSH_AUTH_SOCK: "/private/tmp/com.apple.launchd.jniXs1jCz3/Listeners", npm_package_dependencies_lodash: "^4.17.21", npm_package_scripts_dev_package: "NODE_ENV=development LIB=package vite build --watch", __CF_USER_TEXT_ENCODING: "0x1F5:0:0", npm_package_devDependencies_postcss: "^8.4.38", npm_execpath: "/usr/local/lib/node_modules/npm/bin/npm-cli.js", HERD_PHP_82_INI_SCAN_DIR: "/Users/stepanenko/Library/Application Support/Herd/config/php/82/", PAGER: "less", npm_package_module: "./dist/js/package.js", LSCOLORS: "Gxfxcxdxbxegedabagacad", npm_package_scripts_build_tool: "LIB_NAME=tool vite build", PATH: "/var/folders/1d/_b63712j4hgbbsvgxrsjsqj80000gn/T/yarn--1711621958536-0.6877399082262852:/Users/stepanenko/Sites/_packages/nova-filemanager/node_modules/.bin:/Users/stepanenko/.config/yarn/link/node_modules/.bin:/Users/stepanenko/.npm-global/bin:/usr/local/libexec/lib/node_modules/npm/bin/node-gyp-bin:/usr/local/lib/node_modules/npm/bin/node-gyp-bin:/usr/local/bin/node_modules/npm/bin/node-gyp-bin:/Users/stepanenko/Sites/_packages/nova-filemanager/node_modules/.bin:/Users/stepanenko/Sites/_packages/node_modules/.bin:/Users/stepanenko/Sites/node_modules/.bin:/Users/stepanenko/node_modules/.bin:/Users/node_modules/.bin:/node_modules/.bin:/usr/local/lib/node_modules/npm/node_modules/@npmcli/run-script/lib/node-gyp-bin:/Users/stepanenko/Library/Application Support/Herd/bin/:/Users/Shared/DBngin/mysql/8.0.27/bin:~/.yarn/bin:~/.config/yarn/global/node_modules/.bin:/usr/local/sbin:~/.npm-global/bin:/usr/local/bin:/usr/local/sbin:~/bin:/usr/bin:/bin:/usr/sbin:/sbin:~/.composer/vendor/bin", npm_config_argv: '{"remain":[],"cooked":["run","build:package"],"original":["build:package"]}', npm_package_devDependencies_uuid: "^9.0.1", npm_package_json: "/Users/stepanenko/Sites/_packages/nova-filemanager/package.json", LaunchInstanceID: "57C7C76D-35E0-4BF6-AAC5-A66A60A47776", _: "/Users/stepanenko/Sites/_packages/nova-filemanager/node_modules/.bin/vite", npm_package_dependencies_vue: "^3.4.21", npm_config_userconfig: "/Users/stepanenko/.npmrc", npm_config_init_module: "/Users/stepanenko/.npm-init.js", USER_ZDOTDIR: "/Users/stepanenko", __CFBundleIdentifier: "com.microsoft.VSCode", npm_package_devDependencies_md5: "^2.2.1", npm_command: "run-script", PWD: "/Users/stepanenko/Sites/_packages/nova-filemanager", npm_package_devDependencies_tailwindcss: "^3.4.3", LIB_NAME: "package", VSCODE_NONCE: "ae572618-ad2c-4335-a636-494d109eec30", npm_lifecycle_event: "build:package", EDITOR: "vi", P9K_SSH: "0", P9K_TTY: "old", LANG: "en_US.UTF-8", npm_package_name: "", npm_package_dependencies_autoprefixer: "^10.4.14", npm_config_progress: "", npm_package_devDependencies_sass: "^1.72.0", npm_package_scripts_build: "yarn build:tool && yarn build:package", npm_config_version_commit_hooks: "true", npm_config_npm_version: "10.2.3", VSCODE_GIT_ASKPASS_EXTRA_ARGS: "", XPC_FLAGS: "0x0", npm_package_dependencies__pqina_pintura: "^8.60.2", npm_config_username: "stepanenko3", npm_config_bin_links: "true", npm_config_node_gyp: "/usr/local/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js", npm_package_main: "./dist/js/tool.js", XPC_SERVICE_NAME: "0", npm_package_version: "", VSCODE_INJECTION: "1", npm_package_dependencies_pinia: "^2.1.7", SHLVL: "3", HOME: "/Users/stepanenko", npm_package_type: "module", VSCODE_GIT_ASKPASS_MAIN: "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass-main.js", npm_config_save_prefix: "^", npm_config_strict_ssl: "true", npm_config_version_git_message: "v%s", npm_config_cache: "/Users/stepanenko/.npm", LESS: "-R", LOGNAME: "stepanenko", YARN_WRAP_OUTPUT: "false", npm_package_scripts_format: "prettier --write 'resources/js/**/*.{css,js,vue,ts}'", npm_lifecycle_script: "LIB_NAME=package vite build", npm_package_exports___require: "./dist/js/package.js", VSCODE_GIT_IPC_HANDLE: "/var/folders/1d/_b63712j4hgbbsvgxrsjsqj80000gn/T/vscode-git-d5d73a30ae.sock", npm_package_scripts_package: "npm run format && npm run lint && npm run build", npm_config_user_agent: "yarn/1.22.19 npm/? node/v20.10.0 darwin x64", npm_package_devDependencies__vue_compiler_sfc: "^3.4.21", npm_package_scripts_check_format: "prettier --list-different 'resources/**/*.{css,js,vue,ts}'", npm_config_version_git_sign: "", npm_config_ignore_scripts: "", VSCODE_GIT_ASKPASS_NODE: "/Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin)", GIT_ASKPASS: "/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/git/dist/askpass.sh", HERD_PHP_74_INI_SCAN_DIR: "/Users/stepanenko/Library/Application Support/Herd/config/php/74/", npm_package_dependencies_tailwind_scrollbar_hide: "^1.1.7", npm_package_dependencies__types_lodash: "^4.14.195", npm_package_devDependencies__types_node: "^20.11.30", npm_package_dependencies_resumablejs: "^1.1.0", npm_package_dependencies__pqina_vue_pintura: "^9.0.1", npm_package_files_0: "dist/*", npm_package_devDependencies_vue_cropperjs: "^5.0.0", npm_config_init_version: "1.0.0", npm_config_ignore_optional: "", SECURITYSESSIONID: "186be", npm_node_execpath: "/usr/local/bin/node", npm_config_prefix: "/Users/stepanenko/.npm-global", COLORTERM: "truecolor", npm_package_scripts_build_package: "LIB_NAME=package vite build", npm_config_version_tag_prefix: "v", NODE_ENV: "production" };
 let Ul;
 const za = (s) => Ul = s, $l = (
   /* istanbul ignore next */
@@ -126,11 +126,11 @@ function Wl(s, p, i = {}, h, C, W) {
     return function() {
       za(h);
       const ne = Array.from(arguments), ye = [], Pe = [];
-      function rt(je) {
-        ye.push(je);
+      function rt(Ke) {
+        ye.push(Ke);
       }
-      function ft(je) {
-        Pe.push(je);
+      function ft(Ke) {
+        Pe.push(Ke);
       }
       Kr(ae, {
         args: ne,
@@ -142,10 +142,10 @@ function Wl(s, p, i = {}, h, C, W) {
       let mt;
       try {
         mt = le.apply(this && this.$id === s ? this : te, ne);
-      } catch (je) {
-        throw Kr(Pe, je), je;
+      } catch (Ke) {
+        throw Kr(Pe, Ke), Ke;
       }
-      return mt instanceof Promise ? mt.then((je) => (Kr(ye, je), je)).catch((je) => (Kr(Pe, je), Promise.reject(je))) : (Kr(ye, mt), mt);
+      return mt instanceof Promise ? mt.then((Ke) => (Kr(ye, Ke), Ke)).catch((Ke) => (Kr(Pe, Ke), Promise.reject(Ke))) : (Kr(ye, mt), mt);
     };
   }
   const ee = {
@@ -234,7 +234,7 @@ var Ua = { exports: {} };
 Ua.exports;
 (function(s, p) {
   (function() {
-    var i, h = "4.17.21", C = 200, W = "Unsupported core-js use. Try https://npms.io/search?q=ponyfill.", B = "Expected a function", T = "Invalid `variable` option passed into `_.template`", $ = "__lodash_hash_undefined__", U = 500, Y = "__lodash_placeholder__", q = 1, ae = 2, H = 4, d = 1, E = 2, D = 1, S = 2, _ = 4, oe = 8, ee = 16, te = 32, ge = 64, De = 128, ce = 256, le = 512, ne = 30, ye = "...", Pe = 800, rt = 16, ft = 1, mt = 2, je = 3, $e = 1 / 0, xe = 9007199254740991, xn = 17976931348623157e292, Mn = NaN, gt = 4294967295, Vn = gt - 1, kn = gt >>> 1, Ln = [
+    var i, h = "4.17.21", C = 200, W = "Unsupported core-js use. Try https://npms.io/search?q=ponyfill.", B = "Expected a function", T = "Invalid `variable` option passed into `_.template`", $ = "__lodash_hash_undefined__", U = 500, Y = "__lodash_placeholder__", q = 1, ae = 2, H = 4, d = 1, E = 2, D = 1, S = 2, _ = 4, oe = 8, ee = 16, te = 32, ge = 64, De = 128, ce = 256, le = 512, ne = 30, ye = "...", Pe = 800, rt = 16, ft = 1, mt = 2, Ke = 3, $e = 1 / 0, xe = 9007199254740991, xn = 17976931348623157e292, Mn = NaN, gt = 4294967295, Vn = gt - 1, kn = gt >>> 1, Ln = [
       ["ary", De],
       ["bind", D],
       ["bindKey", S],
@@ -3817,7 +3817,7 @@ function print() { __p += __j.call(arguments, '') }
           return this.reverse()[e](n).reverse();
         };
       }), sn(["filter", "map", "takeWhile"], function(e, t) {
-        var n = t + 1, r = n == ft || n == je;
+        var n = t + 1, r = n == ft || n == Ke;
         Le.prototype[e] = function(o) {
           var f = this.clone();
           return f.__iteratees__.push({
@@ -3924,7 +3924,7 @@ const Vv = /* @__PURE__ */ ql(Zr), Zv = { class: "relative flex" }, Jv = ["value
         value: h.value,
         onChange: C[0] || (C[0] = (W) => i("change", W.target.value))
       }, [
-        (L(!0), V(Ke, null, hr(h.options, (W) => (L(), V("option", {
+        (L(!0), V(je, null, hr(h.options, (W) => (L(), V("option", {
           key: W.value,
           value: W.value
         }, ie(W.label), 9, Qv))), 128))
@@ -4407,8 +4407,8 @@ var Gl = { exports: {} };
           }
           var ft = C.getTarget("upload", ye), mt = _.getOpt("uploadMethod");
           _.xhr.open(mt, ft), _.getOpt("method") === "octet" && _.xhr.setRequestHeader("Content-Type", "application/octet-stream"), _.xhr.timeout = _.getOpt("xhrTimeout"), _.xhr.withCredentials = _.getOpt("withCredentials");
-          var je = _.getOpt("headers");
-          typeof je == "function" && (je = je(_.fileObj, _)), C.each(je, function($e, xe) {
+          var Ke = _.getOpt("headers");
+          typeof Ke == "function" && (Ke = Ke(_.fileObj, _)), C.each(Ke, function($e, xe) {
             _.xhr.setRequestHeader($e, xe);
           }), _.getOpt("chunkFormat") == "blob" && _.xhr.send(ne);
         }, _.abort = function() {
@@ -4879,7 +4879,7 @@ const Tt = Kv("nova-filemanager/browser", () => {
   function mt(Z) {
     U.value = "/", T.value = 1, Y.value = "", H.value = Z, xt();
   }
-  function je(Z) {
+  function Ke(Z) {
     ae.value = Z, T.value = 1, xt();
   }
   function $e(Z, ve = null) {
@@ -5165,7 +5165,7 @@ const Tt = Kv("nova-filemanager/browser", () => {
     setSearch: rt,
     setSort: ft,
     setDisk: mt,
-    setPeriod: je,
+    setPeriod: Ke,
     //
     openModal: $e,
     closeModal: xe,
@@ -5209,7 +5209,7 @@ const Tt = Kv("nova-filemanager/browser", () => {
         fr(h.$slots, "trigger")
       ]),
       j("div", {
-        class: pn(["absolute p-1 mt-2 min-w-80 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-20", {
+        class: pn(["absolute p-1 mt-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-20", {
           hidden: !p.value
         }]),
         style: {
@@ -5221,13 +5221,13 @@ const Tt = Kv("nova-filemanager/browser", () => {
       ], 2)
     ], 512));
   }
-}), Tm = { class: "flex items-center px-6 py-4 space-x-2 border-b border-gray-200 dark:border-gray-700" }, Rm = {
+}), Tm = { class: "flex items-center flex-wrap p-3 md:px-6 md:py-4 gap-2 border-b border-gray-200 dark:border-gray-700" }, Rm = {
   class: "rounded-lg cursor-pointer h-9 min-w-9 px-2 flex items-center justify-center focus:outline-none bg-primary-500 hover:bg-primary-600 shadow text-white dark:text-gray-900 dark:ring-gray-600",
   for: "fileUpload"
-}, Im = /* @__PURE__ */ j("div", { class: "flex-grow" }, null, -1), Mm = {
+}, Im = /* @__PURE__ */ j("div", { class: "flex-grow" }, null, -1), Mm = { class: "p-2 space-y-2 w-60" }, Lm = { class: "relative" }, Pm = ["placeholder", "aria-label"], Nm = { class: "text-gray-900 dark:text-gray-200 font-medium" }, Fm = {
   key: 0,
-  class: "flex items-center space-x-2"
-}, Lm = { class: "p-2 space-y-2 w-60" }, Pm = { class: "relative" }, Nm = ["placeholder", "aria-label"], Fm = { class: "text-gray-900 dark:text-gray-200 font-medium" }, Bm = { class: "text-gray-900 dark:text-gray-200 font-medium" }, Um = { class: "text-gray-900 dark:text-gray-200 font-medium" }, $m = {
+  class: "text-gray-900 dark:text-gray-200 font-medium"
+}, Bm = { class: "text-gray-900 dark:text-gray-200 font-medium" }, Um = {
   __name: "BrowserToolbar",
   emits: ["changeFile"],
   setup(s, { emit: p }) {
@@ -5277,17 +5277,17 @@ const Tt = Kv("nova-filemanager/browser", () => {
           }))
         }, null, 8, ["value", "options"]),
         Im,
-        Q(i).selection.length > 0 ? (L(), V("div", Mm, [
+        Q(i).selection.length > 0 ? (L(), V(je, { key: 0 }, [
           wt((L(), V("span", {
             onClick: $[3] || ($[3] = Te(() => Q(i).openModal(Q(nt).SELECTED), ["prevent"])),
-            class: "cursor-pointer hover:text-primary-500"
+            class: "cursor-pointer hover:text-primary-500 order-10 md:order-5"
           }, [
             ut(" Selected " + ie(Q(i).selection.length) + " files ", 1)
           ])), [
             [Y, T.__("Open selected files modal")]
           ]),
           wt(ue(Nt, {
-            class: "text-red-500",
+            class: "text-red-500 order-11 md:order-6",
             type: "trash",
             onClick: $[4] || ($[4] = Te(
               () => Q(i).openModal(Q(nt).DELETE, {
@@ -5301,14 +5301,14 @@ const Tt = Kv("nova-filemanager/browser", () => {
           ]),
           Q(i).selecting ? wt((L(), Oe(Nt, {
             key: 0,
-            class: "text-green-500",
+            class: "text-green-500 order-12 md:order-7",
             type: "check",
             onClick: $[5] || ($[5] = Te(() => Q(i).confirmSelection(), ["prevent"]))
           }, null, 512)), [
             [Y, T.__("Confirm selection")]
           ]) : pe("", !0)
-        ])) : pe("", !0),
-        ue(_s, null, {
+        ], 64)) : pe("", !0),
+        ue(_s, { class: "order-9 md:order-8" }, {
           trigger: _e(() => [
             wt(ue(Nt, {
               type: "filter",
@@ -5318,8 +5318,8 @@ const Tt = Kv("nova-filemanager/browser", () => {
             ])
           ]),
           default: _e(() => [
-            j("div", Lm, [
-              j("div", Pm, [
+            j("div", Mm, [
+              j("div", Lm, [
                 j("input", {
                   ref: "input",
                   type: "text",
@@ -5328,9 +5328,9 @@ const Tt = Kv("nova-filemanager/browser", () => {
                   "aria-label": T.__("Search"),
                   spellcheck: "false",
                   onInput: $[6] || ($[6] = (q) => Q(W)(q.target.value))
-                }, null, 40, Nm)
+                }, null, 40, Pm)
               ]),
-              j("p", Fm, ie(T.__("Per page")), 1),
+              j("p", Nm, ie(T.__("Per page")), 1),
               ue(Ma, {
                 options: Q(i).perPageOptions.map((q) => ({
                   label: q,
@@ -5339,16 +5339,16 @@ const Tt = Kv("nova-filemanager/browser", () => {
                 value: Q(i).perPage,
                 onChange: $[7] || ($[7] = (q) => Q(i).setPerPage(q))
               }, null, 8, ["options", "value"]),
-              j("p", Bm, ie(T.__("Period")), 1),
-              Q(i).periods ? (L(), Oe(Ma, {
-                key: 0,
+              Q(i).periods?.length ? (L(), V("p", Fm, ie(T.__("Period")), 1)) : pe("", !0),
+              Q(i).periods?.length ? (L(), Oe(Ma, {
+                key: 1,
                 options: Q(i).periods,
                 value: Q(i).period,
                 onChange: $[8] || ($[8] = (q) => Q(i).setPeriod(q))
               }, null, 8, ["options", "value"])) : pe("", !0),
-              j("p", Um, ie(T.__("Sort by")), 1),
+              j("p", Bm, ie(T.__("Sort by")), 1),
               Q(i).sorts ? (L(), Oe(Ma, {
-                key: 1,
+                key: 2,
                 options: Q(i).sorts,
                 value: Q(i).sort,
                 onChange: $[9] || ($[9] = (q) => Q(i).setSort(q))
@@ -5360,7 +5360,7 @@ const Tt = Kv("nova-filemanager/browser", () => {
       ]);
     };
   }
-}, zm = { class: "flex items-center pt-4" }, Wm = { class: "flex text-sm" }, Hm = ["disabled", "dusk", "onClick"], qm = { class: "hidden md:flex items-center justify-center text-xs px-4 ml-auto" }, Gm = {
+}, $m = { class: "flex items-center pt-4" }, zm = { class: "flex text-sm" }, Wm = ["disabled", "dusk", "onClick"], Hm = { class: "hidden md:flex items-center justify-center text-xs px-4 ml-auto" }, qm = {
   __name: "BrowserPagination",
   setup(s) {
     const p = Tt(), i = At(() => p.data?.pagination);
@@ -5370,8 +5370,8 @@ const Tt = Kv("nova-filemanager/browser", () => {
     const C = At(
       () => i.total > 0 ? `${i.from}-${i.to} of ${i.total}` : ""
     );
-    return (W, B) => (L(), V("nav", zm, [
-      j("div", Wm, [
+    return (W, B) => (L(), V("nav", $m, [
+      j("div", zm, [
         j("button", {
           class: pn(["hidden md:flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 text-xl h-9 min-w-9 px-2 focus:outline-none focus:bg-gray-50 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-500 mr-1", {
             disabled: i.value.current_page <= 1
@@ -5380,7 +5380,7 @@ const Tt = Kv("nova-filemanager/browser", () => {
           dusk: "previous",
           onClick: B[0] || (B[0] = Te((T) => h(i.value.current_page - 1), ["prevent"]))
         }, " ‹ ", 2),
-        (L(!0), V(Ke, null, hr(i.value.links, (T) => (L(), V(Ke, {
+        (L(!0), V(je, null, hr(i.value.links, (T) => (L(), V(je, {
           key: T.label
         }, [
           !isNaN(T.label) || T.label === "..." ? (L(), V("button", {
@@ -5391,7 +5391,7 @@ const Tt = Kv("nova-filemanager/browser", () => {
             disabled: T.label === "..." || T.active,
             dusk: `page:${T.label}`,
             onClick: Te(($) => T.label === "..." || T.active ? null : h(T.label), ["prevent"])
-          }, ie(T.label), 11, Hm)) : pe("", !0)
+          }, ie(T.label), 11, Wm)) : pe("", !0)
         ], 64))), 128)),
         j("button", {
           class: pn([{
@@ -5402,7 +5402,7 @@ const Tt = Kv("nova-filemanager/browser", () => {
           onClick: B[1] || (B[1] = Te((T) => h(i.value.current_page + 1), ["prevent"]))
         }, " › ", 2)
       ]),
-      j("span", qm, ie(C.value), 1)
+      j("span", Hm, ie(C.value), 1)
     ]));
   }
 }, Ii = {
@@ -5418,16 +5418,16 @@ const Tt = Kv("nova-filemanager/browser", () => {
 function ys(s, p, i = "...") {
   return s.slice(0, p) + (p < s.length ? i : "");
 }
-const Xm = {}, Ym = { class: "flex items-center cursor-pointer px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800" };
-function jm(s, p) {
-  return L(), V("div", Ym, [
+const Gm = {}, Xm = { class: "flex items-center cursor-pointer px-3 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800" };
+function Ym(s, p) {
+  return L(), V("div", Xm, [
     fr(s.$slots, "default")
   ]);
 }
-const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
+const cr = /* @__PURE__ */ ms(Gm, [["render", Ym]]), jm = {
   key: 0,
   class: "absolute top-0 right-0 p-2 text-primary-500"
-}, Vm = ["src"], Zm = { class: "w-full flex items-center mt-2" }, Jm = { class: "px-1 truncate text-gray-900 dark:text-gray-200 font-medium" }, Qm = { class: "cursor-pointer flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900" }, e0 = { class: "w-full px-2 text-xs" }, Kl = {
+}, Km = ["src"], Vm = { class: "w-full flex items-center mt-2" }, Zm = { class: "px-1 truncate text-gray-900 dark:text-gray-200 font-medium" }, Jm = { class: "cursor-pointer flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900" }, Qm = { class: "w-full px-2 text-xs" }, Kl = {
   __name: "BrowserFile",
   props: {
     file: {
@@ -5473,12 +5473,12 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
         onClick: Te(Y, ["prevent", "stop"])
       }, [
         j("div", {
-          class: pn(["relative aspect-square flex items-center p-2 justify-center w-full h-full overflow-hidden rounded-lg hover:opacity-75 dark:bg-gray-900 border-2", {
+          class: pn(["relative aspect-square flex items-center p-1 md:p-2 justify-center w-full h-full overflow-hidden rounded-lg hover:opacity-75 dark:bg-gray-900 border-2", {
             "border-primary-500": h.value,
             "border-gray-200 dark:border-gray-700": !h.value
           }])
         }, [
-          h.value ? (L(), V("div", Km, [
+          h.value ? (L(), V("div", jm, [
             ue(H, {
               type: "check-circle",
               width: "22",
@@ -5499,13 +5499,13 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
             src: s.file.url,
             class: "block w-full h-full",
             style: { "object-fit": "contain" }
-          }, null, 8, Vm)) : pe("", !0)
+          }, null, 8, Km)) : pe("", !0)
         ], 2),
-        j("div", Zm, [
-          j("p", Jm, ie(Q(ys)(s.file.name, 25)), 1),
+        j("div", Vm, [
+          j("p", Zm, ie(Q(ys)(s.file.name, 25)), 1),
           ue(_s, { class: "ml-auto" }, {
             trigger: _e(() => [
-              j("div", Qm, [
+              j("div", Jm, [
                 ue(H, {
                   type: "dots-vertical",
                   width: "16",
@@ -5606,11 +5606,11 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
             _: 1
           })
         ]),
-        j("div", e0, ie(s.file.sizeReadable), 1)
+        j("div", Qm, ie(s.file.sizeReadable), 1)
       ], 512);
     };
   }
-}, t0 = { class: "h-8 w-8 mr-1 flex items-center justify-center group-hover:opacity-75" }, n0 = { class: "truncate group-hover:opacity-75" }, r0 = { class: "cursor-pointer flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800" }, i0 = {
+}, e0 = { class: "h-8 w-8 mr-1 flex items-center justify-center group-hover:opacity-75" }, t0 = { class: "truncate group-hover:opacity-75" }, n0 = { class: "cursor-pointer flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800" }, r0 = {
   __name: "BrowserFolder",
   props: {
     folder: {
@@ -5639,20 +5639,20 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
         class: "relative flex p-1 items-center bg-gray-100 dark:bg-gray-900 rounded-lg cursor-pointer group",
         onClick: h
       }, [
-        j("div", t0, [
+        j("div", e0, [
           ue($, {
             type: Q(Ii).dir,
             width: "16",
             height: "16"
           }, null, 8, ["type"])
         ]),
-        j("p", n0, ie(Q(ys)(s.folder.name, 25)), 1),
+        j("p", t0, ie(Q(ys)(s.folder.name, 25)), 1),
         s.folder.id !== "parent" ? (L(), Oe(_s, {
           key: 0,
           class: "ml-auto"
         }, {
           trigger: _e(() => [
-            j("div", r0, [
+            j("div", n0, [
               ue($, {
                 type: "dots-vertical",
                 width: "16",
@@ -5696,7 +5696,7 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
       ], 512);
     };
   }
-}, a0 = { class: "text-center py-8" }, o0 = { class: "mt-2 text-sm font-medium text-gray-800 dark:text-gray-200" }, s0 = { class: "mt-1 text-sm text-gray-500" }, u0 = /* @__PURE__ */ ni({
+}, i0 = { class: "text-center py-8" }, a0 = { class: "mt-2 text-sm font-medium text-gray-800 dark:text-gray-200" }, o0 = { class: "mt-1 text-sm text-gray-500" }, s0 = /* @__PURE__ */ ni({
   __name: "Empty",
   props: {
     title: {},
@@ -5705,30 +5705,30 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
   setup(s) {
     return (p, i) => {
       const h = Ft("Icon");
-      return L(), V("div", a0, [
+      return L(), V("div", i0, [
         ue(h, {
           type: "folder",
           class: "h-16 w-16 mx-auto fill-current text-primary-500"
         }),
-        j("h3", o0, ie(p.title ?? p.__("No files were found for your request")), 1),
-        j("p", s0, ie(p.subtitle ?? p.__("You can upload a new file or create a new folder")), 1)
+        j("h3", a0, ie(p.title ?? p.__("No files were found for your request")), 1),
+        j("p", o0, ie(p.subtitle ?? p.__("You can upload a new file or create a new folder")), 1)
       ]);
     };
   }
-}), l0 = {
+}), u0 = {
   key: 0,
-  class: "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4"
+  class: "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-2 md:gap-4"
+}, l0 = {
+  key: 0,
+  class: "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-4"
 }, c0 = {
-  key: 0,
-  class: "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
-}, f0 = {
   __name: "BrowserContent",
   setup(s) {
     const p = Tt(), i = At(() => p.data?.files || []), h = At(() => p.data?.folders || []);
     return (C, W) => {
       const B = Ft("Icon"), T = Ft("Heading");
-      return L(), V(Ke, null, [
-        h.value.length > 0 ? (L(), V(Ke, { key: 0 }, [
+      return L(), V(je, null, [
+        h.value.length > 0 ? (L(), V(je, { key: 0 }, [
           ue(T, {
             level: "5",
             class: "cursor-pointer text-xs hover:opacity-75",
@@ -5744,8 +5744,8 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
             ]),
             _: 1
           }),
-          Q(p).showFolders ? (L(), V("div", l0, [
-            (L(!0), V(Ke, null, hr(h.value, ($) => (L(), Oe(i0, {
+          Q(p).showFolders ? (L(), V("div", u0, [
+            (L(!0), V(je, null, hr(h.value, ($) => (L(), Oe(r0, {
               key: $.id,
               ref_for: !0,
               ref: "folder_" + $.id,
@@ -5754,7 +5754,7 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
             }, null, 8, ["folder", "data-key"]))), 128))
           ])) : pe("", !0)
         ], 64)) : pe("", !0),
-        i.value.length > 0 ? (L(), V(Ke, { key: 1 }, [
+        i.value.length > 0 ? (L(), V(je, { key: 1 }, [
           ue(T, {
             level: "5",
             class: "cursor-pointer text-xs hover:opacity-75",
@@ -5770,8 +5770,8 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
             ]),
             _: 1
           }),
-          Q(p).showFiles ? (L(), V("div", c0, [
-            (L(!0), V(Ke, null, hr(i.value, ($) => (L(), Oe(Kl, {
+          Q(p).showFiles ? (L(), V("div", l0, [
+            (L(!0), V(je, null, hr(i.value, ($) => (L(), Oe(Kl, {
               key: $.id,
               ref_for: !0,
               ref: "file_" + $.id,
@@ -5780,16 +5780,16 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
             }, null, 8, ["file", "data-key"]))), 128))
           ])) : pe("", !0)
         ], 64)) : pe("", !0),
-        !i.value.length && !h.value.length ? (L(), Oe(u0, { key: 2 })) : pe("", !0)
+        !i.value.length && !h.value.length ? (L(), Oe(s0, { key: 2 })) : pe("", !0)
       ], 64);
     };
   }
-}, h0 = {
+}, f0 = {
   key: 0,
   class: "absolute rounded-lg inset-0 bg-white/50 dark:bg-gray-800/50 flex items-center justify-center flex-grow z-50"
-}, d0 = { class: "flex items-center px-6 py-4 space-x-2 border-b border-gray-200 dark:border-gray-700" }, p0 = {
+}, h0 = { class: "flex items-center p-3 md:px-6 md:py-4 gap-2 border-b border-gray-200 dark:border-gray-700 overflow-x-auto scrollbar-hide" }, d0 = {
   key: 0,
-  class: "flex items-center px-6 py-4 space-x-2 border-t border-gray-200 dark:border-gray-700"
+  class: "flex items-center p-3 md:px-6 md:py-4 gap-2 border-t border-gray-200 dark:border-gray-700"
 }, Dr = {
   __name: "BaseModal",
   props: {
@@ -5834,20 +5834,20 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
         j("div", {
           ref_key: "target",
           ref: W,
-          class: pn(["relative bg-white w-full max-h-full overflow-y-auto overflow-x-hidden dark:bg-gray-800 z-10 rounded-lg shadow-lg base-modal-inner", {
+          class: pn(["relative bg-white w-full max-h-full overflow-y-auto overflow-x-hidden scrollbar-hide dark:bg-gray-800 z-10 rounded-lg shadow-lg base-modal-inner", {
             "w-full max-w-full min-h-full": s.full,
             "max-w-2xl": !s.full
           }])
         }, [
           ue(Ba, null, {
             default: _e(() => [
-              Q(i).loading ? (L(), V("div", h0, [
+              Q(i).loading ? (L(), V("div", f0, [
                 ue(U)
               ])) : pe("", !0)
             ]),
             _: 1
           }),
-          j("div", d0, [
+          j("div", h0, [
             s.closeButton && !s.disableClose ? (L(), Oe(Nt, {
               key: 0,
               type: "chevron-left",
@@ -5856,28 +5856,28 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
             fr(T.$slots, "header")
           ]),
           fr(T.$slots, "default"),
-          Q(C).footer ? (L(), V("div", p0, [
+          Q(C).footer ? (L(), V("div", d0, [
             fr(T.$slots, "footer")
           ])) : pe("", !0)
         ], 2)
       ], 2);
     };
   }
-}, g0 = ["src"], v0 = {
+}, p0 = ["src"], g0 = {
   key: 1,
   ref: "audio",
   controls: ""
-}, m0 = ["src", "type"], _0 = {
+}, v0 = ["src", "type"], m0 = {
   key: 2,
   ref: "video",
   controls: "",
   crossorigin: "",
   playsinline: "",
   style: { width: "100%", height: "300px", "object-fit": "contain" }
-}, y0 = ["src", "type"], b0 = {
+}, _0 = ["src", "type"], y0 = {
   key: 3,
   class: "w-full p-4"
-}, w0 = ["textContent"], x0 = ["data"], k0 = ["src"], S0 = ["innerHTML"], C0 = /* @__PURE__ */ ni({
+}, b0 = ["textContent"], w0 = ["data"], x0 = ["src"], k0 = ["innerHTML"], S0 = /* @__PURE__ */ ni({
   __name: "DetailView",
   props: {
     file: {
@@ -5901,20 +5901,20 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
           class: "h-full w-full",
           src: s.file.url,
           style: { "object-fit": "contain" }
-        }, null, 8, g0)) : s.file.type == "audio" ? (L(), V("audio", v0, [
+        }, null, 8, p0)) : s.file.type == "audio" ? (L(), V("audio", g0, [
           j("source", {
             src: s.file.url,
             type: s.file.mime
-          }, null, 8, m0)
-        ], 512)) : s.file.type == "video" ? (L(), V("video", _0, [
+          }, null, 8, v0)
+        ], 512)) : s.file.type == "video" ? (L(), V("video", m0, [
           j("source", {
             src: s.file.url,
             type: s.file.mime
-          }, null, 8, y0)
-        ], 512)) : s.file.type == "text" ? (L(), V("pre", b0, [
+          }, null, 8, _0)
+        ], 512)) : s.file.type == "text" ? (L(), V("pre", y0, [
           j("code", {
             textContent: ie(s.file.meta.source)
-          }, null, 8, w0)
+          }, null, 8, b0)
         ])) : s.file.type == "pdf" ? (L(), V("object", {
           key: 4,
           data: s.file.url,
@@ -5931,9 +5931,9 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
             j("object", {
               class: "no-preview",
               innerHTML: s.file.image
-            }, null, 8, S0)
-          ], 8, k0)
-        ], 8, x0)) : (L(), Oe(h, {
+            }, null, 8, k0)
+          ], 8, x0)
+        ], 8, w0)) : (L(), Oe(h, {
           key: 5,
           type: Q(Ii)[s.file.type] || Q(Ii).text,
           width: "64",
@@ -5942,7 +5942,7 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
       ], 2);
     };
   }
-}), E0 = /* @__PURE__ */ j("div", { class: "flex-grow" }, null, -1), O0 = { class: "px-4 font-bold text-sm mt-2" }, D0 = { class: "table table-fixed text-left w-full" }, A0 = { key: 0 }, T0 = {
+}), C0 = { class: "hidden md:block" }, E0 = /* @__PURE__ */ j("div", { class: "flex-grow" }, null, -1), O0 = { class: "px-4 font-bold text-sm mt-2" }, D0 = { class: "table table-fixed text-left w-full" }, A0 = { key: 0 }, T0 = {
   class: "p-2 text-sm border-t border-gray-100 dark:border-gray-700 cursor-pointer td-fit pl-4 pr-4 dark:bg-gray-800 group-hover:bg-gray-50 dark:group-hover:bg-gray-900",
   style: { width: "115px" }
 }, R0 = {
@@ -6011,7 +6011,7 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
       const E = Ft("Icon"), D = $a("tooltip");
       return L(), Oe(Dr, { modal: s.modal }, {
         header: _e(() => [
-          j("div", null, ie(H.__("Details")), 1),
+          j("div", C0, ie(H.__("Details")), 1),
           E0,
           Q(p).selecting ? wt((L(), Oe(Nt, {
             key: 0,
@@ -6058,7 +6058,7 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
         ]),
         default: _e(() => [
           j("div", O0, ie(h.value.name), 1),
-          ue(C0, {
+          ue(S0, {
             class: "my-4",
             file: h.value
           }, null, 8, ["file"]),
@@ -6075,7 +6075,7 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
               j("td", N0, ie(H.__("Size")) + ": ", 1),
               j("td", F0, ie(h.value.sizeReadable), 1)
             ])) : pe("", !0),
-            h.value.meta ? (L(), V(Ke, { key: 3 }, [
+            h.value.meta ? (L(), V(je, { key: 3 }, [
               h.value.meta.width && h.value.meta.height ? (L(), V("tr", B0, [
                 j("td", U0, ie(H.__("Dimensions")) + ": ", 1),
                 j("td", $0, ie(h.value.meta.width) + "x" + ie(h.value.meta.height), 1)
@@ -6155,7 +6155,7 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
           })
         ]),
         Q(i).data.breadcrumbs.length > 0 ? (L(), V("div", e_, n_)) : pe("", !0),
-        (L(!0), V(Ke, null, hr(Q(i).data.breadcrumbs, (T) => (L(), V(Ke, {
+        (L(!0), V(je, null, hr(Q(i).data.breadcrumbs, (T) => (L(), V(je, {
           key: T.id
         }, [
           T.current ? (L(), V("div", {
@@ -6163,7 +6163,7 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
             class: "text-gray-800 dark:text-gray-200"
           }, [
             j("span", r_, ie(T.name), 1)
-          ])) : (L(), V(Ke, { key: 1 }, [
+          ])) : (L(), V(je, { key: 1 }, [
             (L(), V("div", {
               key: T.id
             }, [
@@ -6278,9 +6278,9 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
               onClick: Te(B, ["prevent"])
             }, {
               default: _e(() => [
-                W.value ? (L(), V(Ke, { key: 0 }, [
+                W.value ? (L(), V(je, { key: 0 }, [
                   ut(ie($.__("Creating")), 1)
-                ], 64)) : (L(), V(Ke, { key: 1 }, [
+                ], 64)) : (L(), V(je, { key: 1 }, [
                   ut(ie($.__("Create")), 1)
                 ], 64))
               ]),
@@ -6363,9 +6363,9 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
           onClick: Te(ae, ["prevent"])
         }, {
           default: _e(() => [
-            Y.value ? (L(), V(Ke, { key: 0 }, [
+            Y.value ? (L(), V(je, { key: 0 }, [
               ut(ie(d.__("Renaming")), 1)
-            ], 64)) : (L(), V(Ke, { key: 1 }, [
+            ], 64)) : (L(), V(je, { key: 1 }, [
               ut(ie(d.__("Rename")), 1)
             ], 64))
           ]),
@@ -6467,9 +6467,9 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
           onClick: Te(B, ["prevent"])
         }, {
           default: _e(() => [
-            C.value ? (L(), V(Ke, { key: 0 }, [
+            C.value ? (L(), V(je, { key: 0 }, [
               ut(ie(U.__("Deleting")), 1)
-            ], 64)) : (L(), V(Ke, { key: 1 }, [
+            ], 64)) : (L(), V(je, { key: 1 }, [
               ut(ie(U.__("Delete")), 1)
             ], 64))
           ]),
@@ -6478,17 +6478,17 @@ const cr = /* @__PURE__ */ ms(Xm, [["render", jm]]), Km = {
       ]),
       default: _e(() => [
         j("div", x_, [
-          s.modal.payload.type === Q(bt).FOLDER ? (L(), V(Ke, { key: 0 }, [
+          s.modal.payload.type === Q(bt).FOLDER ? (L(), V(je, { key: 0 }, [
             j("p", null, ie(U.__("Are you sure you want to remove this folder?")), 1),
             j("p", k_, ie(U.__(
               "Remember: The folder and all his contents will be delete from your storage"
             )), 1)
-          ], 64)) : s.modal.payload.type === Q(bt).FILE ? (L(), V(Ke, { key: 1 }, [
+          ], 64)) : s.modal.payload.type === Q(bt).FILE ? (L(), V(je, { key: 1 }, [
             j("p", null, ie(U.__("Are you sure you want to remove this file?")), 1),
             j("p", S_, ie(U.__(
               "Remember: The file will be delete from your storage"
             )), 1)
-          ], 64)) : s.modal.payload.type === Q(bt).FILES ? (L(), V(Ke, { key: 2 }, [
+          ], 64)) : s.modal.payload.type === Q(bt).FILES ? (L(), V(je, { key: 2 }, [
             j("p", null, ie(U.__("Are you sure you want to remove this files?")), 1),
             j("p", C_, ie(U.__(
               "Remember: The files will be delete from your storage"
@@ -6598,7 +6598,7 @@ var Vl = {}, Zl = { exports: {} };
       throw new TypeError(`Invalid attempt to spread non-iterable instance.
 In order to be iterable, non-array objects must have a [Symbol.iterator]() method.`);
     }
-    var E = typeof window < "u" && typeof window.document < "u", D = E ? window : {}, S = E && D.document.documentElement ? "ontouchstart" in D.document.documentElement : !1, _ = E ? "PointerEvent" in D : !1, oe = "cropper", ee = "all", te = "crop", ge = "move", De = "zoom", ce = "e", le = "w", ne = "s", ye = "n", Pe = "ne", rt = "nw", ft = "se", mt = "sw", je = "".concat(oe, "-crop"), $e = "".concat(oe, "-disabled"), xe = "".concat(oe, "-hidden"), xn = "".concat(oe, "-hide"), Mn = "".concat(oe, "-invisible"), gt = "".concat(oe, "-modal"), Vn = "".concat(oe, "-move"), kn = "".concat(oe, "Action"), Ln = "".concat(oe, "Preview"), qt = "crop", Pn = "move", Ar = "none", en = "crop", tn = "cropend", Sn = "cropmove", Cn = "cropstart", En = "dblclick", xt = S ? "touchstart" : "mousedown", Rt = S ? "touchmove" : "mousemove", Nn = S ? "touchend touchcancel" : "mouseup", Tr = _ ? "pointerdown" : xt, Bt = _ ? "pointermove" : Rt, dr = _ ? "pointerup pointercancel" : Nn, Rr = "ready", On = "resize", Qe = "wheel", Z = "zoom", ve = "image/jpeg", ze = /^e|w|s|n|se|sw|ne|nw|all|crop|move|zoom$/, kt = /^data:/, St = /^data:image\/jpeg;base64,/, Gt = /^img|canvas$/i, Fn = 200, Ir = 100, Mr = {
+    var E = typeof window < "u" && typeof window.document < "u", D = E ? window : {}, S = E && D.document.documentElement ? "ontouchstart" in D.document.documentElement : !1, _ = E ? "PointerEvent" in D : !1, oe = "cropper", ee = "all", te = "crop", ge = "move", De = "zoom", ce = "e", le = "w", ne = "s", ye = "n", Pe = "ne", rt = "nw", ft = "se", mt = "sw", Ke = "".concat(oe, "-crop"), $e = "".concat(oe, "-disabled"), xe = "".concat(oe, "-hidden"), xn = "".concat(oe, "-hide"), Mn = "".concat(oe, "-invisible"), gt = "".concat(oe, "-modal"), Vn = "".concat(oe, "-move"), kn = "".concat(oe, "Action"), Ln = "".concat(oe, "Preview"), qt = "crop", Pn = "move", Ar = "none", en = "crop", tn = "cropend", Sn = "cropmove", Cn = "cropstart", En = "dblclick", xt = S ? "touchstart" : "mousedown", Rt = S ? "touchmove" : "mousemove", Nn = S ? "touchend touchcancel" : "mouseup", Tr = _ ? "pointerdown" : xt, Bt = _ ? "pointermove" : Rt, dr = _ ? "pointerup pointercancel" : Nn, Rr = "ready", On = "resize", Qe = "wheel", Z = "zoom", ve = "image/jpeg", ze = /^e|w|s|n|se|sw|ne|nw|all|crop|move|zoom$/, kt = /^data:/, St = /^data:image\/jpeg;base64,/, Gt = /^img|canvas$/i, Fn = 200, Ir = 100, Mr = {
       // Define the view mode of the cropper
       viewMode: 0,
       // 0, 1, 2, 3
@@ -7228,7 +7228,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         }
       },
       dblclick: function() {
-        this.disabled || this.options.dragMode === Ar || this.setDragMode(Xa(this.dragBox, je) ? Pn : qt);
+        this.disabled || this.options.dragMode === Ar || this.setDragMode(Xa(this.dragBox, Ke) ? Pn : qt);
       },
       wheel: function(a) {
         var l = this, u = Number(this.options.wheelZoomRatio) || 0.1, b = 1;
@@ -7699,7 +7699,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
         var l = this.options, u = this.dragBox, b = this.face;
         if (this.ready && !this.disabled) {
           var m = a === qt, w = l.movable && a === Pn;
-          a = m || w ? a : Ar, l.dragMode = a, vr(u, kn, a), Dn(u, je, m), Dn(u, Vn, w), l.cropBoxMovable || (vr(b, kn, a), Dn(b, je, m), Dn(b, Vn, w));
+          a = m || w ? a : Ar, l.dragMode = a, vr(u, kn, a), Dn(u, Ke, m), Dn(u, Vn, w), l.cropBoxMovable || (vr(b, kn, a), Dn(b, Ke, m), Dn(b, Vn, w));
         }
         return this;
       }
@@ -8188,7 +8188,7 @@ const L_ = /* @__PURE__ */ j("div", { class: "flex-grow" }, null, -1), P_ = {
               class: "grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"
             }, {
               default: _e(() => [
-                (L(!0), V(Ke, null, hr(Q(h), (Y) => (L(), Oe(Kl, {
+                (L(!0), V(je, null, hr(Q(h), (Y) => (L(), Oe(Kl, {
                   key: Y.id,
                   ref_for: !0,
                   ref: "file_" + Y.id,
@@ -8303,7 +8303,7 @@ const X_ = { class: "p-6 grid grid-cols-2 md:grid-cols-4 gap-4" }, Y_ = {
         ]),
         default: _e(() => [
           j("div", X_, [
-            (L(!0), V(Ke, null, hr(i.value, (B) => (L(), V("div", {
+            (L(!0), V(je, null, hr(i.value, (B) => (L(), V("div", {
               key: B.id,
               ref_for: !0,
               ref: "card",
@@ -8353,7 +8353,7 @@ const X_ = { class: "p-6 grid grid-cols-2 md:grid-cols-4 gap-4" }, Y_ = {
 }), J_ = {
   key: 0,
   class: "absolute rounded-lg inset-0 bg-white/50 dark:bg-gray-800/50 flex items-center justify-center flex-grow z-50"
-}, Q_ = { class: "flex-grow py-4 px-6 space-y-4" }, ey = /* @__PURE__ */ ni({
+}, Q_ = { class: "flex-grow px-3 my-2 md:py-4 md:px-6 space-y-4" }, ey = /* @__PURE__ */ ni({
   __name: "Browser",
   props: {
     selecting: { type: Boolean, default: !1 },
@@ -8381,7 +8381,7 @@ const X_ = { class: "p-6 grid grid-cols-2 md:grid-cols-4 gap-4" }, Y_ = {
     return Qr(T, () => Y()), (q, ae) => {
       const H = Ft("Loader");
       return L(), V("div", {
-        class: pn(["relative h-full nova-file-manager", {
+        class: pn(["relative h-full nova-file-manager overflow-y-auto scrollbar-hide", {
           "pointer-events-none": Q(i).isProcessing
         }]),
         onDragover: ae[0] || (ae[0] = Te((d) => B.value = !0, ["prevent", "stop"])),
@@ -8402,15 +8402,15 @@ const X_ = { class: "p-6 grid grid-cols-2 md:grid-cols-4 gap-4" }, Y_ = {
           ]),
           _: 1
         }),
-        ue($m, { onChangeFile: U }),
+        ue(Um, { onChangeFile: U }),
         j("div", Q_, [
           Q(i).data?.breadcrumbs?.length > 0 ? (L(), Oe(s_, { key: 0 })) : pe("", !0),
-          ue(f0),
-          Q(i).data?.pagination?.last_page > 1 ? (L(), Oe(Gm, { key: 1 })) : pe("", !0)
+          ue(c0),
+          Q(i).data?.pagination?.last_page > 1 ? (L(), Oe(qm, { key: 1 })) : pe("", !0)
         ]),
         ue(Fl, { name: "list" }, {
           default: _e(() => [
-            (L(!0), V(Ke, null, hr(Q(i).modals, (d) => (L(), V(Ke, {
+            (L(!0), V(je, null, hr(Q(i).modals, (d) => (L(), V(je, {
               key: d.id
             }, [
               d.name === Q(nt).CREATE_FOLDER ? (L(), Oe(d_, {

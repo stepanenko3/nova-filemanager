@@ -1,6 +1,6 @@
 <template>
     <div
-        class="flex items-center px-6 py-4 space-x-2 border-b border-gray-200 dark:border-gray-700"
+        class="flex items-center flex-wrap p-3 md:px-6 md:py-4 gap-2 border-b border-gray-200 dark:border-gray-700"
     >
         <label
             class="rounded-lg cursor-pointer h-9 min-w-9 px-2 flex items-center justify-center focus:outline-none bg-primary-500 hover:bg-primary-600 shadow text-white dark:text-gray-900 dark:ring-gray-600"
@@ -44,20 +44,17 @@
 
         <div class="flex-grow"></div>
 
-        <div
-            class="flex items-center space-x-2"
-            v-if="store.selection.length > 0"
-        >
+        <template v-if="store.selection.length > 0">
             <span
                 @click.prevent="() => store.openModal(MODALS.SELECTED)"
                 v-tooltip="__('Open selected files modal')"
-                class="cursor-pointer hover:text-primary-500"
+                class="cursor-pointer hover:text-primary-500 order-10 md:order-5"
             >
                 Selected {{ store.selection.length }} files
             </span>
 
             <ToolbarButton
-                class="text-red-500"
+                class="text-red-500 order-11 md:order-6"
                 type="trash"
                 @click.prevent="
                     () =>
@@ -70,14 +67,14 @@
             />
             <ToolbarButton
                 v-if="store.selecting"
-                class="text-green-500"
+                class="text-green-500 order-12 md:order-7"
                 type="check"
                 @click.prevent="() => store.confirmSelection()"
                 v-tooltip="__('Confirm selection')"
             />
-        </div>
+        </template>
 
-        <Dropdown>
+        <Dropdown class="order-9 md:order-8">
             <template #trigger>
                 <ToolbarButton
                     type="filter"
@@ -117,12 +114,15 @@
                     @change="(e) => store.setPerPage(e)"
                 />
 
-                <p class="text-gray-900 dark:text-gray-200 font-medium">
+                <p
+                    v-if="store.periods?.length"
+                    class="text-gray-900 dark:text-gray-200 font-medium"
+                >
                     {{ __("Period") }}
                 </p>
 
                 <SelectControl
-                    v-if="store.periods"
+                    v-if="store.periods?.length"
                     :options="store.periods"
                     :value="store.period"
                     @change="(e) => store.setPeriod(e)"

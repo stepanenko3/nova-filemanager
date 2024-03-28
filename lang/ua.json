@@ -31,6 +31,13 @@
     "Name Desc": "Назва Я-А",
     "Size Asc": "Розмір 0-9",
     "Size Desc": "Розмір 9-0",
+    "Rename file": "Перейменувати файл",
+    "Crop image": "Обрізати зображення",
+    "Confirm crop": "Підтвердити",
     "No files were found for your request": "По вашому запиту не знайдено файлів",
-    "You can upload a new file or create a new folder": "Ви можете завантажити файл, або створити нову папку"
+    "You can upload a new file or create a new folder": "Ви можете завантажити файл, або створити нову папку",
+    "Are you sure you want to remove this file?": "Ви впевнені, що хочете видалити цей файл?",
+    "Remember: The file will be delete from your storage": "Памятайте: Файл буде видалено з вашого сховища",
+    "Are you sure you want to remove this files?": "Ви впевнені, що хочете видалити ці файли?",
+    "Remember: The files will be delete from your storage": "Памятайте: Файли буде видалено з вашого сховища"
 }

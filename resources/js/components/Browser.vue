@@ -1,6 +1,6 @@
 <template>
     <div
-        class="relative h-full nova-file-manager"
+        class="relative h-full nova-file-manager overflow-y-auto scrollbar-hide"
         :class="{
             'pointer-events-none': store.isProcessing,
         }"
@@ -23,7 +23,7 @@
 
         <BrowserToolbar @changeFile="changeFile" />
 
-        <div class="flex-grow py-4 px-6 space-y-4">
+        <div class="flex-grow px-3 my-2 md:py-4 md:px-6 space-y-4">
             <BrowserBreadcrumbs v-if="store.data?.breadcrumbs?.length > 0" />
 
             <BrowserContent />
