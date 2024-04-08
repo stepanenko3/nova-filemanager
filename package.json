@@ -14,7 +14,7 @@
     },
     "devDependencies": {
         "@inertiajs/inertia": "^0.11.1",
-        "@types/node": "^20.11.30",
+        "@types/node": "^20.12.5",
         "@vitejs/plugin-vue": "^5.0.4",
         "@vue/compiler-sfc": "^3.4.21",
         "filesize": "^10.1.1",
